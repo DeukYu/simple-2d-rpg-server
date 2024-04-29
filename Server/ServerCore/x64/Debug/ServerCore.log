@@ -1,0 +1,3 @@
+﻿  pch.cpp
+  CorePch.cpp
+  ServerCore.vcxproj -> D:\github\simple-3d-mmorpg-server\Server\Libraries\Debug\ServerCore.lib
