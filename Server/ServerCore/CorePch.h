@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>  
 #include "Types.h"
 
 #include <vector>
@@ -11,6 +12,7 @@
 #include <unordered_set>
 
 #include <iostream>
+
 using namespace std;
 
 void HelloWorld();
