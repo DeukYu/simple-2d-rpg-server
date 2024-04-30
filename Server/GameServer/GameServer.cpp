@@ -1,29 +1,32 @@
 ﻿#include "pch.h"
 #include <thread>
 
-void HelloThread()
-{
-    cout << "Hello Thread" << endl;
+atomic<int32> sum = 0;
+
+void Add() {
+	for (int32 i = 0; i < 100'0000; ++i)
+	{
+		sum.fetch_add(1);
+	}
 }
 
-void HelloThread_2(int32 num)
-{
-    cout << num << endl;
+void Sub() {
+	for (int32 i = 0; i < 100'0000; ++i)
+	{
+		sum.fetch_add(-1);
+	}
 }
 
 int main()
 {   
-    vector<thread> v;
+	Add();
+	Sub();
+	cout << sum << endl;
 
-    for (int32 i = 0; i < 10; ++i) {
-        v.emplace_back(thread(HelloThread_2, i));
-    }
+	std::thread t1(Add);
+	std::thread t2(Sub);
+	t1.join();
+	t2.join();
 
-    for (int32 i = 0; i < 10; ++i)
-    {
-        if (v[i].joinable())
-            v[i].join();
-    }
-
-    cout << "Hello Main" << endl;
+	cout << sum << endl;
 }
