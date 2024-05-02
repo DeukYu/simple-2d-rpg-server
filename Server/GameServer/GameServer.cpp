@@ -9,9 +9,8 @@ void Push()
 {
 	for (int32 i = 0; i < 100'000; ++i)
 	{
-		m.lock();
+		lock_guard<mutex> lockGuard(m);
 		v.emplace_back(i);
-		m.unlock();
 	}
 }
 
@@ -22,4 +21,6 @@ int main()
 
 	t1.join();
 	t2.join();
+
+	cout << v.size() << endl;
 }
