@@ -1,26 +1,27 @@
 ﻿#include "pch.h"
 #include <thread>
 #include <mutex>
+#include <CoreMacro.h>
+#include <ThreadManager.h>
 
-vector<int32> v;
-mutex m;
+CoreGlobal Core;
 
-void Push()
+void ThreadMain()
 {
-	for (int32 i = 0; i < 100'000; ++i)
+	while (true)
 	{
-		lock_guard<mutex> lockGuard(m);
-		v.emplace_back(i);
+		cout << " Hello Thread: " << LThreadId << endl;
+		this_thread::sleep_for(1s);
 	}
 }
 
 int main()
 {   
-	thread t1(Push);
-	thread t2(Push);
-
-	t1.join();
-	t2.join();
-
-	cout << v.size() << endl;
+	/*int32 a = 3;
+	ASSERT_CRASH(a != 3);*/
+	for (int32 i = 0; i < 5; ++i)
+	{
+		GThreadManager->Launch(ThreadMain);
+	}
+	GThreadManager->Join();
 }

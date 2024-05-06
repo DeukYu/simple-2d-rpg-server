@@ -1,4 +1,7 @@
 #pragma once
+#include <mutex>
+#include <atomic>
+#include <cstdint> 
 
 using BYTE = uint8_t;   
 using int8 = int8_t;   
