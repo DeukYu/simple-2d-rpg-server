@@ -1,5 +1,9 @@
 #pragma once
 
+#define USE_LOCK				Lock    _lock;
+#define READ_LOCK               ReadLockGuard readLockGuard(_lock, typeid(this).name());
+#define WRITE_LOCK          	WriteLockGuard writeLockGuard(_lock, typeid(this).name());
+
 inline void Crash(std::string_view message) {
     std::cerr << "Crash: " << message << std::endl;
     std::abort();

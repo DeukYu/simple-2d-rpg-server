@@ -3,40 +3,31 @@
 
 class Lock
 {
-	enum : uint32
-	{
-		ACQUIRE_TIMEOUT_TICK = 10000,
-		MAX_SPIN_COUNT = 5000,
-		WRITE_THREAD_MASK = 0xffff'0000,
-		READ_COUNT_MASK = 0x0000'FFFF,
-		EMPTY_FLAG = 0x0000'0000
-	};
 public:
-	void	WriteLock(const char* name);
-	void	WriteUnlock(const char* name);
-	void	ReadLock(const char* name);
-	void	ReadUnlock(const char* name);
+	void	WriteLock(string_view name);
+	void	WriteUnlock(string_view name);
+	void	ReadLock(string_view name);
+	void	ReadUnlock(string_view name);
 private:
-	atomic<uint32>	_lockFlag = EMPTY_FLAG;
-	uint16			_writeCount = 0;
+	shared_timed_mutex m_mutex;
 };
 
 class ReadLockGuard
 {
 public:
-	ReadLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name) { _lock.ReadLock(name); }
+	ReadLockGuard(Lock& lock, string_view name) : _lock(lock), _name(name) { _lock.ReadLock(name); }
 	~ReadLockGuard() { _lock.ReadUnlock(_name); }
 private:
 	Lock& _lock;
-	const char* _name;
+	string _name;
 };
 
 class WriteLockGuard
 {
 public:
-	WriteLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name) { _lock.WriteLock(name); }
+	WriteLockGuard(Lock& lock, string_view name) : _lock(lock), _name(name) { _lock.WriteLock(name); }
 	~WriteLockGuard() { _lock.WriteUnlock(_name); }
 private:
 	Lock& _lock;
-	const char* _name;
+	string _name;
 };
