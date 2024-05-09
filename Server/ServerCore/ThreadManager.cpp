@@ -15,9 +15,9 @@ ThreadManager::~ThreadManager()
 
 void ThreadManager::Launch(function<void(void)> callback)
 {
-	lock_guard<mutex> guard(m_lock);
+	lock_guard<mutex> guard(mMutex);
 
-	m_threads.emplace_back([=]() {
+	mThreads.emplace_back([=]() {
 		InitTLS();
 		callback();
 		DestroyTLS();
@@ -26,7 +26,7 @@ void ThreadManager::Launch(function<void(void)> callback)
 
 void ThreadManager::Join()
 {
-	for (thread& t : m_threads)
+	for (thread& t : mThreads)
 	{
 		if (t.joinable())
 			t.join();

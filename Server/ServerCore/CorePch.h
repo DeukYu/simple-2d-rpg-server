@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Types.h"
-//#include "CoreMacro.h"
 #include "CoreTLS.h"
 #include "CoreGlobal.h"
 
@@ -15,6 +14,7 @@
 #include <queue>
 
 #include <string_view>
+#include <format>
 #include <Windows.h>
 #include <shared_mutex>
 #include <iostream>
@@ -22,3 +22,4 @@
 using namespace std;
 
 #include "Lock.h"
+#include "CoreMacro.h"

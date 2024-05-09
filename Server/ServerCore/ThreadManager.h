@@ -15,7 +15,7 @@ public:
 	static void InitTLS();
 	static void DestroyTLS();
 private:
-	mutex			m_lock;
-	vector<thread> m_threads;
+	mutex			mMutex;
+	vector<thread> mThreads;
 };
 

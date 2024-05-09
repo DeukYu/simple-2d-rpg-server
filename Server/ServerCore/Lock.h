@@ -9,25 +9,25 @@ public:
 	void	ReadLock(string_view name);
 	void	ReadUnlock(string_view name);
 private:
-	shared_timed_mutex m_mutex;
+	shared_timed_mutex mMutex;
 };
 
 class ReadLockGuard
 {
 public:
-	ReadLockGuard(Lock& lock, string_view name) : _lock(lock), _name(name) { _lock.ReadLock(name); }
-	~ReadLockGuard() { _lock.ReadUnlock(_name); }
+	ReadLockGuard(Lock& lock, string_view name) : mLock(lock), mName(name) { mLock.ReadLock(name); }
+	~ReadLockGuard() { mLock.ReadUnlock(mName); }
 private:
-	Lock& _lock;
-	string _name;
+	Lock& mLock;
+	string mName;
 };
 
 class WriteLockGuard
 {
 public:
-	WriteLockGuard(Lock& lock, string_view name) : _lock(lock), _name(name) { _lock.WriteLock(name); }
-	~WriteLockGuard() { _lock.WriteUnlock(_name); }
+	WriteLockGuard(Lock& lock, string_view name) : mLock(lock), mName(name) { mLock.WriteLock(name); }
+	~WriteLockGuard() { mLock.WriteUnlock(mName); }
 private:
-	Lock& _lock;
-	string _name;
+	Lock& mLock;
+	string mName;
 };
