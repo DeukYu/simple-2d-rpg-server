@@ -64,8 +64,17 @@
 //	}
 //}
 
+#include "AccountManager.h"
+#include "PlayerManager.h"
+
 int main()
 {   
+	GThreadManager->Launch([=] {
+		while (true)
+		{
+			cout << "PlayerThenAccount" << endl;
+		}
+		})
 	/*for (int32 i = 0; i < 30; ++i)
 	{
 		GThreadManager->Launch(ThreadWrite);
