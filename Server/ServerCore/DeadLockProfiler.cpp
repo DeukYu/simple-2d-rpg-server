@@ -19,7 +19,7 @@ void DeadLockProfiler::PushLock(string_view name)
 		lockId = findIt->second;
 	}
 
-	if (!mLockStack.empty() == false)
+	if (!mLockStack.empty())
 	{
 		const int32 prevId = mLockStack.top();
 		if (lockId != prevId)

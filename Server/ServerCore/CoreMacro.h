@@ -11,7 +11,7 @@ inline void Crash(std::string_view message) {
 
 template <typename Expr>
 inline void AssertCrash(Expr expression, std::string_view expr_str, std::string_view file, int line) {
-    if (!expression) {
+    if (expression) {
         std::cerr << "Assertion failed: " << expr_str << " in file " << file << ", line " << line << std::endl;
         Crash("ASSERT_CRASH");
     }
