@@ -4,97 +4,42 @@
 #include <CoreMacro.h>
 #include <ThreadManager.h>
 
-//class TestLock
-//{
-//	USE_LOCK;
-//	//shared_mutex _mutex;
-//	
-//public:
-//	int32 testRead()
-//	{
-//		READ_LOCK;
-//
-//		//shared_lock<shared_mutex> lock(_mutex);
-//		if (m_queue.empty())
-//			return -1;
-//
-//		return m_queue.front();
-//	}
-//
-//	void TestPush()
-//	{
-//		WRITE_LOCK;
-//		testRead();
-//		//unique_lock<shared_mutex>	lock(_mutex);
-//		
-//		m_queue.push(rand() % 100);
-//
-//	}
-//	void TestPop()
-//	{
-//		WRITE_LOCK;
-//		//unique_lock<shared_mutex>	lock(_mutex);
-//		if (m_queue.empty() == false)
-//			m_queue.pop();
-//	}
-//private:
-//	queue<int32> m_queue;
-//};
-//
-//TestLock testLock;
-//
-//void ThreadWrite()
-//{
-//	while (true)
-//	{
-//		testLock.TestPush();
-//		this_thread::sleep_for(1s);
-//		testLock.TestPop();
-//	}
-//}
-//
-//void ThreadRead()
-//{
-//	while (true)
-//	{
-//		int32 value = testLock.testRead();
-//
-//		cout << value << endl;
-//		this_thread::sleep_for(1s);
-//	}
-//}
+class Wraight
+{
+public:
+	int mHp = 150;
+	int mPosX = 0;
+	int mPosY = 0;
+};
 
-#include "AccountManager.h"
-#include "PlayerManager.h"
+class Missile
+{
+public:
+	void SetTarget(Wraight* target)
+	{
+		_target = target;
+	}
+
+	void Update() {
+		int PosX = _target->mPosX;
+		int PosY = _target->mPosY;
+	}
+
+	Wraight* _target = nullptr;
+};
 
 int main()
 {   
-	GThreadManager->Launch([=] {
-		while (true)
-		{
-			cout << "PlayerThenAccount" << endl;
-			GPlayerManager.PlayerThenAccount();
-			this_thread::sleep_for(100ms);
-		}
-		});
+	Wraight* wraight = new Wraight();
+	Missile* missile = new Missile();
+	missile->SetTarget(wraight);
 
-	GThreadManager->Launch([=] {
-		while (true)
-		{
-			cout << "AccountThenPlayer" << endl;
-			GAccountManager.AccountThenPlayer();
-			this_thread::sleep_for(100ms);
-		}
-		});
+	wraight->mHp = 0;
+	delete wraight;
 
-	GThreadManager->Join();
-	/*for (int32 i = 0; i < 30; ++i)
+	while (true)
 	{
-		GThreadManager->Launch(ThreadWrite);
+		missile->Update();
 	}
-	for (int32 i = 0; i < 20; ++i)
-	{
-		GThreadManager->Launch(ThreadRead);
-	}
-	GThreadManager->Join();*/
+	delete missile;
 }
