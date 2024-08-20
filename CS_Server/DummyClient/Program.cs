@@ -40,6 +40,8 @@ namespace DummyClient
                     Console.WriteLine(e.ToString());
                 }
                 Thread.Sleep(100);
+
+
             }
         }
     }
