@@ -35,7 +35,7 @@ namespace ServerCore
             IPAddress ipAddr = ipHost.AddressList[0];
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-            _listener.Init(endPoint, OnAcceptHandler);
+            _listener.Initialize(endPoint, OnAcceptHandler);
 
             while (true)
             {

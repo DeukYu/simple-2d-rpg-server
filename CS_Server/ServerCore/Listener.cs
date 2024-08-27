@@ -1,33 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerCore
 {
     class Listener
     {
-        Socket? _listenSocket;
-        Action<Socket>? _onAceeptHandler;
-
-        public void Init(IPEndPoint endPoint, Action<Socket> onAcceptHandler)
+        Socket _listenSocket;
+        Action<Socket> _onAcceptHandler;
+        public void Initialize(IPEndPoint endPoint, Action<Socket> onAcceptHandler)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            _onAceeptHandler += onAcceptHandler;
+            _onAcceptHandler += onAcceptHandler;
 
-            _listenSocket?.Bind(endPoint);
-
-            _listenSocket?.Listen(10);
+            _listenSocket.Bind(endPoint);
+            _listenSocket.Listen(10);
 
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptCompleted);
-            RegisterAccept(args, Get_listenSocket());
+            RegisterAccept(args, GetListenSocket());
         }
 
-        private Socket? Get_listenSocket()
+        private Socket? GetListenSocket()
         {
             return _listenSocket;
         }
@@ -37,7 +30,7 @@ namespace ServerCore
             args.AcceptSocket = null;
 
             bool pending = _listenSocket.AcceptAsync(args);
-            if (pending == false)
+            if (!pending)
                 OnAcceptCompleted(null, args);
         }
 
@@ -45,20 +38,18 @@ namespace ServerCore
         {
             if(args.SocketError == SocketError.Success)
             {
-                _onAceeptHandler?.Invoke(args.AcceptSocket);
+                _onAcceptHandler?.Invoke(args.AcceptSocket);
             }
             else
             {
                 Console.WriteLine(args.SocketError.ToString());
             }
 
-            RegisterAccept(args, Get_listenSocket());
+            RegisterAccept(args, GetListenSocket());
         }
 
         public Socket Accept()
         {
-            
-
             return _listenSocket.Accept();
         }
     }
