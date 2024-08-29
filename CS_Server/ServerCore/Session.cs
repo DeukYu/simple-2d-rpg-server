@@ -22,10 +22,6 @@ namespace ServerCore
             RegisterReceive(receiveArgs);
         }
 
-        void TEST()
-        {
-
-        }
         public void Send(byte[] sendBuff)
         {
            _socket.Send(sendBuff);
