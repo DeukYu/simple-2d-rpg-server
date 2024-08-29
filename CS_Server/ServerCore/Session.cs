@@ -63,7 +63,7 @@ namespace ServerCore
             }
             else
             {
-                Console.WriteLine($"OnReceiveCompleted Failed {args.SocketError}");
+                Disconnect();
             }
         }
         #endregion
