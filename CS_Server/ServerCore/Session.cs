@@ -42,6 +42,26 @@ namespace ServerCore
         }
 
         #region Network communication
+        private void RegisterSend(SocketAsyncEventArgs args)
+        {
+            bool pending = _socket.SendAsync(args);
+            if(pending == false)
+            {
+                OnSendCompleted(null, args);
+            }
+        }
+        private void OnSendCompleted(object sender, SocketAsyncEventArgs args)
+        {
+            if(args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
+            {
+                Console.WriteLine($"Transferred bytes: {args.BytesTransferred}");
+                RegisterSend(args);
+            }
+            else
+            {
+                Disconnect();
+            }
+        }
         private void RegisterReceive(SocketAsyncEventArgs args)
         {
             bool pending = _socket.ReceiveAsync(args);
