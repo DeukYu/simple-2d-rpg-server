@@ -23,6 +23,7 @@ namespace DummyClient
                 {
                     socket.Connect(endPoint);
                     Console.WriteLine($"Connected To {socket.RemoteEndPoint}");
+                    
 
                     for(int i = 0; i < 5; i++)
                     {

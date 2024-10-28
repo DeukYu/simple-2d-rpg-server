@@ -1,12 +1,15 @@
-﻿using System.Net;
+﻿using NLog;
+using NLog.Fluent;
+using System.Net;
 using System.Net.Sockets;
 
 namespace ServerCore
 {
     public class Listener
     {
-        Socket _listenSocket;
-        Action<Socket> _onAcceptHandler;
+        private Socket _listenSocket;
+        private Action<Socket> _onAcceptHandler;
+
         public void Initialize(IPEndPoint endPoint, Action<Socket> onAcceptHandler)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -36,13 +39,13 @@ namespace ServerCore
 
         void OnAcceptCompleted(object? sender, SocketAsyncEventArgs args)
         {
-            if(args.SocketError == SocketError.Success)
+            if (args.SocketError == SocketError.Success)
             {
                 _onAcceptHandler?.Invoke(args.AcceptSocket);
             }
             else
             {
-                Console.WriteLine(args.SocketError.ToString());
+                Log.Warn(args.SocketError.ToString());
             }
 
             RegisterAccept(args, GetListenSocket());

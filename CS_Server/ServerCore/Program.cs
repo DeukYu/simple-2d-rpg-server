@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using NLog;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -6,7 +7,7 @@ namespace ServerCore
 {
     class Program
     {
-        static Listener _listener = new Listener();
+        static Listener _listener = new Listener(); 
         static void OnAcceptHandler(Socket clientSocket)
         {
             try
@@ -23,7 +24,7 @@ namespace ServerCore
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log.Error(e.ToString());
             }
 
         }

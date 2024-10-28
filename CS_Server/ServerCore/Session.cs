@@ -46,7 +46,7 @@ public class Session
     {
         if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
         {
-            Console.WriteLine($"Transferred bytes: {args.BytesTransferred}");
+            Log.Info($"Transferred bytes: {args.BytesTransferred}");
             RegisterSend(args);
         }
         else
@@ -69,12 +69,12 @@ public class Session
             try
             {
                 string recvData = Encoding.UTF8.GetString(args.Buffer, args.Offset, args.BytesTransferred);
-                Console.WriteLine($"[From Client] {recvData}");
+                Log.Info($"[From Client] {recvData}");
                 RegisterReceive(args);
             }
             catch (Exception e)
             {
-                Console.WriteLine($"OnReceiveCompleted Failed {e}");
+                Log.Error($"OnReceiveCompleted Failed {e}");
             }
         }
         else
