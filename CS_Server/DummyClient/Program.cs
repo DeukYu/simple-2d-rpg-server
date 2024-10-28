@@ -15,7 +15,7 @@ namespace DummyClient
             IPAddress ipAddr = ipHost.AddressList[0];
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-            while(true)
+            while (true)
             {
                 Socket socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -23,14 +23,14 @@ namespace DummyClient
                 {
                     socket.Connect(endPoint);
                     Console.WriteLine($"Connected To {socket.RemoteEndPoint}");
-                    
 
-                    for(int i = 0; i < 5; i++)
+
+                    for (int i = 0; i < 5; i++)
                     {
                         byte[] sendBuff = Encoding.UTF8.GetBytes($"Hello World! {i}");
                         int sendBytes = socket.Send(sendBuff);
                     }
-                   
+
                     byte[] recvBuff = new byte[1024];
                     int recvBytes = socket.Receive(recvBuff);
                     string recvData = Encoding.UTF8.GetString(recvBuff, 0, recvBytes);
@@ -44,8 +44,6 @@ namespace DummyClient
                     Console.WriteLine(e.ToString());
                 }
                 Thread.Sleep(100);
-
-
             }
         }
     }

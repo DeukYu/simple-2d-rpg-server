@@ -8,27 +8,22 @@ namespace ServerCore
     public class Listener
     {
         private Socket _listenSocket;
-        private Action<Socket> _onAcceptHandler;
+        private Func<Session> _sessionFactory;
 
-        public void Initialize(IPEndPoint endPoint, Action<Socket> onAcceptHandler)
+        public void Initialize(IPEndPoint endPoint, Func<Session> sessionFactory)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            _onAcceptHandler += onAcceptHandler;
+            _sessionFactory += sessionFactory;
 
             _listenSocket.Bind(endPoint);
             _listenSocket.Listen(10);
 
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptCompleted);
-            RegisterAccept(args, GetListenSocket());
+            RegisterAccept(args);
         }
 
-        private Socket? GetListenSocket()
-        {
-            return _listenSocket;
-        }
-
-        void RegisterAccept(SocketAsyncEventArgs args, Socket? _listenSocket)
+        void RegisterAccept(SocketAsyncEventArgs args)
         {
             args.AcceptSocket = null;
 
@@ -41,14 +36,16 @@ namespace ServerCore
         {
             if (args.SocketError == SocketError.Success)
             {
-                _onAcceptHandler?.Invoke(args.AcceptSocket);
+                Session session = _sessionFactory.Invoke();
+                session.Initialize(args.AcceptSocket);
+                session.OnConnected(args.AcceptSocket.RemoteEndPoint);
             }
             else
             {
-                Log.Warn(args.SocketError.ToString());
+                Log.Error(args.SocketError.ToString());
             }
 
-            RegisterAccept(args, GetListenSocket());
+            RegisterAccept(args);
         }
 
         public Socket Accept()

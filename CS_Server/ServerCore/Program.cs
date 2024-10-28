@@ -3,46 +3,53 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace ServerCore
+namespace ServerCore;
+
+class GameSession : Session
 {
-    class Program
+    public override void OnConnected(EndPoint endPoint)
     {
-        static Listener _listener = new Listener(); 
-        static void OnAcceptHandler(Socket clientSocket)
+        Log.Info($"OnConnected: {endPoint}");
+
+        byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
+        Send(sendBuff);
+        Thread.Sleep(1000);
+        Disconnect();
+    }
+    public override void OnDisConnected(EndPoint endPoint)
+    {
+        Log.Info($"OnDisConnected: {endPoint}");
+    }
+
+
+    public override void OnRecv(ArraySegment<byte> buffer)
+    {
+        string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+        Log.Info($"[From Client] {recvData}");
+    }
+
+    public override void OnSend(int numOfBytes)
+    {
+        Log.Info($"Transferred bytes: {numOfBytes}");
+    }
+}
+class Program
+{
+    static Listener _listener = new Listener();
+    static void Main(string[] args)
+    {
+        // DNS (Domain Name System)
+        string host = Dns.GetHostName();
+        IPHostEntry ipHost = Dns.GetHostEntry(host);
+        IPAddress ipAddr = ipHost.AddressList[0];
+        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+
+        _listener.Initialize(endPoint, () => { return new GameSession(); });
+
+        while (true)
         {
-            try
-            {
-                Session session = new Session();
-                session.Initialize(clientSocket);
-
-                byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
-                session.Send(sendBuff);
-
-                Thread.Sleep(1000);
-
-                session.Disconnect();
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.ToString());
-            }
-
+            ;
         }
-        static void Main(string[] args)
-        {
-            // DNS (Domain Name System)
-            string host = Dns.GetHostName();
-            IPHostEntry ipHost = Dns.GetHostEntry(host);
-            IPAddress ipAddr = ipHost.AddressList[0];
-            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-            _listener.Initialize(endPoint, OnAcceptHandler);
-
-            while (true)
-            {
-                ;
-            }
-
-        }
     }
 }
