@@ -22,10 +22,17 @@ class GameSession : Session
     }
 
 
-    public override void OnRecv(ArraySegment<byte> buffer)
+    public override int OnRecv(ArraySegment<byte> buffer)
     {
+        if(buffer.Array == null)
+        {
+            Log.Error("Buffer array is null");
+            return 0;
+        }
+
         string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
         Log.Info($"[From Client] {recvData}");
+        return buffer.Count;
     }
 
     public override void OnSend(int numOfBytes)

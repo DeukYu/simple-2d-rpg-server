@@ -5,28 +5,29 @@ namespace ServerCore;
 
 public abstract class Session
 {
-    private Socket _socket;
-    int _disconnected = 0;
-    object _lock = new object();
-    Queue<byte[]> _sendQueue = new Queue<byte[]>();
-    List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
-    SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
-    SocketAsyncEventArgs _receiveArgs = new SocketAsyncEventArgs();
+    private Socket _socket = null!;
+    private int _disconnected = 0;
+
+    RecvBuffer _recvBuffer = new RecvBuffer(1024);
+
+    private object _lock = new object();
+    private Queue<byte[]> _sendQueue = new Queue<byte[]>();
+    private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+    private SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
+    private SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
 
     public abstract void OnConnected(EndPoint endPoint);
     public abstract void OnDisConnected(EndPoint endPoint);
-    public abstract void OnRecv(ArraySegment<byte> buffer);
+    public abstract int OnRecv(ArraySegment<byte> buffer);
     public abstract void OnSend(int numOfBytes);
     public void Initialize(Socket socket)
     {
         _socket = socket;
 
-        _receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnReceiveCompleted);
-        _receiveArgs.SetBuffer(new byte[1024], 0, 1024);
-
+        _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
         _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
-        RegisterReceive();
+        RegisterRecvAsync();
     }
 
     public void Send(byte[] sendBuff)
@@ -35,7 +36,7 @@ public abstract class Session
         {
             _sendQueue.Enqueue(sendBuff);
             if (_pendingList.Count == 0)
-                RegisterSend();
+                RegisterSendAsync();
         }
     }
 
@@ -45,13 +46,19 @@ public abstract class Session
         if (Interlocked.Exchange(ref _disconnected, 1) == 1)
             return;
 
+        if (_socket.RemoteEndPoint == null)
+        {
+            Log.Error("Disconnect RemoteEndPoint is null");
+            return;
+        }
+
         OnDisConnected(_socket.RemoteEndPoint);
         _socket.Shutdown(SocketShutdown.Both);
         _socket.Close();
     }
 
     #region Network communication
-    private void RegisterSend()
+    private void RegisterSendAsync()
     {
         while (_sendQueue.Count > 0)
         {
@@ -66,7 +73,7 @@ public abstract class Session
             OnSendCompleted(null, _sendArgs);
         }
     }
-    private void OnSendCompleted(object sender, SocketAsyncEventArgs args)
+    private void OnSendCompleted(object? sender, SocketAsyncEventArgs args)
     {
         lock (_lock)
         {
@@ -81,7 +88,7 @@ public abstract class Session
 
                     if (_sendQueue.Count > 0)
                     {
-                        RegisterSend();
+                        RegisterSendAsync();
                     }
                 }
                 catch (Exception e)
@@ -95,22 +102,47 @@ public abstract class Session
             }
         }
     }
-    private void RegisterReceive()
+    private void RegisterRecvAsync()
     {
-        bool pending = _socket.ReceiveAsync(_receiveArgs);
+        _recvBuffer.Clean();
+        var segment = _recvBuffer.WriteSegment;
+        _recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
+
+        bool pending = _socket.ReceiveAsync(_recvArgs);
         if (pending == false)
         {
-            OnReceiveCompleted(null, _receiveArgs);
+            OnRecvCompleted(null, _recvArgs);
         }
     }
-    private void OnReceiveCompleted(object sender, SocketAsyncEventArgs args)
+    private void OnRecvCompleted(object? sender, SocketAsyncEventArgs args)
     {
         if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
         {
             try
             {
-                OnRecv(new ArraySegment<byte>(args.Buffer, args.Offset, args.BytesTransferred));
-                RegisterReceive();
+                // Write 커서 이동
+                if (_recvBuffer.OnWrite(args.BytesTransferred) == false)
+                {
+                    Disconnect();
+                    return;
+                }
+
+                // 컨텐츠 쪽으로 데이터를 넘겨주고 얼마나 처리했는지 받아옴
+                int processLen = OnRecv(_recvBuffer.ReadSegment);
+                if (processLen < 0 || _recvBuffer.DataSize < processLen)
+                {
+                    Disconnect();
+                    return;
+                }
+
+                // Read 커서 이동
+                if (_recvBuffer.OnRead(processLen) == false)
+                {
+                    Disconnect();
+                    return;
+                }
+
+                RegisterRecvAsync();
             }
             catch (Exception e)
             {

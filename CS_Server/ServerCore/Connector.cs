@@ -16,10 +16,10 @@ public class Connector
         args.RemoteEndPoint = endPoint;
         args.UserToken = socket;
 
-        RegisterConnect(args);
+        RegisterConnectAsync(args);
     }
 
-    void RegisterConnect(SocketAsyncEventArgs args)
+    void RegisterConnectAsync(SocketAsyncEventArgs args)
     {
         if (args.UserToken is not Socket socket)
         {

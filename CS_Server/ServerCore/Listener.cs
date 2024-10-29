@@ -23,10 +23,10 @@ namespace ServerCore
         {
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.Completed += OnAcceptCompleted;
-            RegisterAccept(args);
+            RegisterAcceptAsync(args);
         }
 
-        void RegisterAccept(SocketAsyncEventArgs args)
+        void RegisterAcceptAsync(SocketAsyncEventArgs args)
         {
             args.AcceptSocket = null;
 
@@ -53,7 +53,7 @@ namespace ServerCore
             session.Initialize(args.AcceptSocket);
             session.OnConnected(args.AcceptSocket.RemoteEndPoint);
 
-            RegisterAccept(args);
+            RegisterAcceptAsync(args);
         }
 
         public Socket Accept()
