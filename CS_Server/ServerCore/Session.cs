@@ -11,7 +11,7 @@ public abstract class Session
     RecvBuffer _recvBuffer = new RecvBuffer(1024);
 
     private object _lock = new object();
-    private Queue<byte[]> _sendQueue = new Queue<byte[]>();
+    private Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
     private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
     private SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
     private SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
@@ -30,7 +30,7 @@ public abstract class Session
         RegisterRecvAsync();
     }
 
-    public void Send(byte[] sendBuff)
+    public void Send(ArraySegment<byte> sendBuff)
     {
         lock (_lock)
         {
@@ -62,8 +62,8 @@ public abstract class Session
     {
         while (_sendQueue.Count > 0)
         {
-            byte[] buff = _sendQueue.Dequeue();
-            _pendingList.Add(new ArraySegment<byte>(buff, 0, buff.Length));
+            var buff = _sendQueue.Dequeue();
+            _pendingList.Add(buff);
         }
         _sendArgs.BufferList = _pendingList;
 
