@@ -1,10 +1,15 @@
 ﻿
 using ServerCore;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 
 namespace DummyClient;
+
+class Packet
+{
+    public ushort size;
+    public ushort packetId;
+}
 
 class GameSession : Session
 {
@@ -14,7 +19,14 @@ class GameSession : Session
 
         for (int i = 0; i < 5; i++)
         {
-            byte[] sendBuff = Encoding.UTF8.GetBytes($"Hello World! {i}");
+            Packet packet = new Packet() { size = 4, packetId = 10 };
+
+            var openSegment = SendBufferHelper.Open(4096);
+            var buffer1 = BitConverter.GetBytes(packet.size);
+            var buffer2 = BitConverter.GetBytes(packet.packetId);
+            Array.Copy(buffer1, 0, openSegment.Array, openSegment.Offset, buffer1.Length);
+            Array.Copy(buffer2, 0, openSegment.Array, openSegment.Offset + buffer1.Length, buffer2.Length);
+            var sendBuff = SendBufferHelper.Close(packet.size);
             Send(sendBuff);
         }
     }

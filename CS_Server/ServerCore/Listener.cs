@@ -8,13 +8,13 @@ namespace ServerCore
         private Socket _listenSocket = null!;
         private Func<Session> _sessionFactory = null!;
 
-        public void Initialize(IPEndPoint endPoint, Func<Session> sessionFactory)
+        public void Initialize(IPEndPoint endPoint, Func<Session> sessionFactory, int backLogCount = 10)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _sessionFactory += sessionFactory;
 
             _listenSocket.Bind(endPoint);
-            _listenSocket.Listen(10);
+            _listenSocket.Listen(backLogCount);
 
             AcceptLoop();
         }

@@ -3,6 +3,37 @@ using System.Net.Sockets;
 
 namespace ServerCore;
 
+public abstract class PacketSession : Session
+{
+    public static readonly int HeaderSize = 2;
+    public abstract void OnRecvPacket(ArraySegment<byte> buffer);
+    public sealed override int OnRecv(ArraySegment<byte> buffer)
+    {
+        int processLen = 0;
+        int packetCount = 0;
+
+        while (true)
+        {
+            if (buffer.Count < HeaderSize)
+                break;
+
+            ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            if (buffer.Count < dataSize)
+                break;
+
+            OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
+            processLen += dataSize;
+            packetCount++;
+
+            buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
+        }
+
+        if (packetCount > 1)
+            Log.Info($"Packet Count: {packetCount}");
+
+        return processLen;
+    }
+}
 public abstract class Session
 {
     private Socket _socket = null!;
