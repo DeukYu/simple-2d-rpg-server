@@ -10,6 +10,8 @@ class Program
     static Listener _listener = new Listener();
     static void Main(string[] args)
     {
+        PacketManager.Instance.Register();
+
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
