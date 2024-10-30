@@ -2,17 +2,20 @@
 
 namespace CS_Server;
 
-public class PacketHandler
+class PacketHandler
 {
-    public static void C2S_PlayerInfoReqHandler(PacketSession session, IPacket packet)
+    public static void C2S_ChatHandler(PacketSession session, IPacket packet)
     {
-        C2S_PlayerInfoReq req = packet as C2S_PlayerInfoReq;
+        C2S_Chat req = packet as C2S_Chat;
 
-        Log.Info($"PlayerInfoReq => {req.playerId} {req.name}");
+        ClientSession clientSession = session as ClientSession;
 
-        foreach (C2S_PlayerInfoReq.Skill skill in req.skills)
+        if(clientSession.Room == null)
         {
-            Log.Info($"Skill Info => {skill.id} {skill.level} {skill.duration}");
+            Log.Error("C2S_ChatHandler no room");
+            return;
         }
+
+        clientSession.Room.Broadcast(clientSession, req.chat);
     }
 }

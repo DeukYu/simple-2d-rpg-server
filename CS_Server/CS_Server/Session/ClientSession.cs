@@ -6,15 +6,22 @@ namespace CS_Server;
 
 class ClientSession : PacketSession
 {
+    public int SessionId { get; set; }
+    public GameRoom Room { get; set; }
     public override void OnConnected(EndPoint endPoint)
     {
         Log.Info($"OnConnected: {endPoint}");
 
-        Thread.Sleep(5000);
-        Disconnect();
+        Program.Room.Enter(this);
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
+        SessionManager.Instance.Remove(this);
+        if (Room != null)
+        {
+            Room.Leave(this);
+            Room = null;
+        }
         Log.Info($"OnDisConnected: {endPoint}");
     }
 

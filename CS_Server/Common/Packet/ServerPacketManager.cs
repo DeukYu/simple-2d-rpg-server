@@ -5,7 +5,7 @@ using System.Collections.Generic;
 class PacketManager
 {
 	#region Singleton
-	static PacketManager _instance;
+    static PacketManager _instance = new PacketManager();
 	public static PacketManager Instance
 	{
 		get
@@ -17,13 +17,18 @@ class PacketManager
 	}
 	#endregion
 
+	PacketManager()
+    {
+        Register();
+    }
+
 	Dictionary<ushort, Action<PacketSession, ArraySegment<byte>>> _onRecv = new Dictionary<ushort, Action<PacketSession, ArraySegment<byte>>>();
 	Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
 		
 	public void Register()
 	{
-		_onRecv.Add((ushort)PacketID.C2S_PlayerInfoReq, MakePacket<C2S_PlayerInfoReq>);
-		_handler.Add((ushort)PacketID.C2S_PlayerInfoReq, PacketHandler.C2S_PlayerInfoReqHandler);
+		_onRecv.Add((ushort)PacketID.C2S_Chat, MakePacket<C2S_Chat>);
+		_handler.Add((ushort)PacketID.C2S_Chat, PacketHandler.C2S_ChatHandler);
 
 	}
 

@@ -51,6 +51,15 @@ public abstract class Session
     public abstract void OnDisConnected(EndPoint endPoint);
     public abstract int OnRecv(ArraySegment<byte> buffer);
     public abstract void OnSend(int numOfBytes);
+
+    void Clear()
+    {
+        lock (_lock)
+        {
+            _sendQueue.Clear();
+            _pendingList.Clear();
+        }
+    }
     public void Initialize(Socket socket)
     {
         _socket = socket;
@@ -86,11 +95,15 @@ public abstract class Session
         OnDisConnected(_socket.RemoteEndPoint);
         _socket.Shutdown(SocketShutdown.Both);
         _socket.Close();
+        Clear();
     }
 
     #region Network communication
     private void RegisterSendAsync()
     {
+        if (_disconnected == 1)
+            return;
+
         while (_sendQueue.Count > 0)
         {
             var buff = _sendQueue.Dequeue();
@@ -98,11 +111,18 @@ public abstract class Session
         }
         _sendArgs.BufferList = _pendingList;
 
-        bool pending = _socket.SendAsync(_sendArgs);
-        if (pending == false)
+        try
         {
-            OnSendCompleted(null, _sendArgs);
+            bool pending = _socket.SendAsync(_sendArgs);
+            if (pending == false)
+            {
+                OnSendCompleted(null, _sendArgs);
+            }
         }
+        catch (Exception e)
+        {
+            Log.Error($"RegisterSendAsync Failed {e}");
+        }   
     }
     private void OnSendCompleted(object? sender, SocketAsyncEventArgs args)
     {
@@ -135,15 +155,26 @@ public abstract class Session
     }
     private void RegisterRecvAsync()
     {
+        if(_disconnected == 1)
+            return;
+
         _recvBuffer.Clean();
         var segment = _recvBuffer.WriteSegment;
         _recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
 
-        bool pending = _socket.ReceiveAsync(_recvArgs);
-        if (pending == false)
+        try
         {
-            OnRecvCompleted(null, _recvArgs);
+            bool pending = _socket.ReceiveAsync(_recvArgs);
+            if (pending == false)
+            {
+                OnRecvCompleted(null, _recvArgs);
+            }
         }
+        catch(Exception e)
+        {
+            Log.Error($"RegisterRecvAsync Failed {e}");
+        }
+        
     }
     private void OnRecvCompleted(object? sender, SocketAsyncEventArgs args)
     {
