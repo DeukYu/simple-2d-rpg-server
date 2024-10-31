@@ -14,7 +14,21 @@ dotnet add package NLog.Config
 # Server
 ## ServerCore
 - 서버 핵심 기능들 구현
-
+### Network
+- 서버 네트워크 통신 관련 기능
+```
+Connector
+Listener
+Session
+RecvBuffer
+SendBuffer
+```
+### Job
+- 서버 패킷 관련 한번에 모아 보내기 위한 부분과 일정 시간마다 패킷을 전송할 수 있도록 하는 기능
+```
+JobQueue
+JobTimer
+```
 ### Logger
 - 로그 관련 처리하기 위하여 NLog 라이브러리를 맵핑하여 사용 (추후 수정될 소지가 있습니다.)
 ```
@@ -32,4 +46,4 @@ DnsUtil : 로컬 IP 주소 관련
 - 더미 클라이언트 테스트용
 
 ## CS_Server
-- 기본 게임 서버 
+- 기본 게임 서버를 위한 로직 처리
