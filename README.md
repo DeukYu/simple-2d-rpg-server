@@ -15,6 +15,7 @@ dotnet add package NLog.Config
 # Server (CS_Server)
 ## ServerCore
 - 서버 핵심 기능들 구현
+- 현재는 기능이 많지 않아 ServerCore에 모든 Common 부분들을 관리하고 있습니다.
 ### Network
 - 서버 네트워크 통신 관련 기능
 ```
