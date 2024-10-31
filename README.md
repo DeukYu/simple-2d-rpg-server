@@ -1,5 +1,5 @@
 # simple-3d-mmorpg-server
-
+- Client : https://github.com/kdh0794/GuardianOfNature2D  
 ## 환경설정
 - Visual Studio 2022
 - C# .Net 8.0
@@ -11,6 +11,7 @@ dotnet add package NLog
 dotnet add package NLog.Config
 ```
 
+# Server
 ## ServerCore
 - 서버 핵심 기능들 구현
 
@@ -22,3 +23,8 @@ Log
 NLogLogger
 ```
 
+## DummyClient
+- 더미 클라이언트 테스트용
+
+## CS_Server
+- 기본 게임 서버 
