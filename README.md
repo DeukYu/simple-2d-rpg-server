@@ -1,4 +1,4 @@
-# simple-3d-mmorpg-server
+# simple-2d-mmorpg-server
 - 현재는 C# 서버를 구축하고 있습니다.
 - Client : https://github.com/kdh0794/GuardianOfNature2D  
 ## 환경설정
