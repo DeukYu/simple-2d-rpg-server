@@ -41,6 +41,7 @@ NLogLogger
 - 가볍게 쓸 수 있는 Util 파일 관련 
 ```
 DnsUtil : 로컬 IP 주소 관련
+AtomicFlag : Flag가 필요할 경우, thread safe를 위해 사용
 ```
 
 ## DummyClient

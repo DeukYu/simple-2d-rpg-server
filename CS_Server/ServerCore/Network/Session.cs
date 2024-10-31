@@ -37,7 +37,7 @@ public abstract class PacketSession : Session
 public abstract class Session
 {
     private Socket _socket = null!;
-    private int _disconnected = 0;
+    private readonly AtomicFlag _disconnected = new AtomicFlag();
 
     RecvBuffer _recvBuffer = new RecvBuffer(65535);
 
@@ -98,7 +98,7 @@ public abstract class Session
     public void Disconnect()
     {
         // 이미 끊겼다면 return (두번의 Disconnect를 방지)
-        if (Interlocked.Exchange(ref _disconnected, 1) == 1)
+        if (_disconnected.Set() == false)
             return;
 
         if (_socket.RemoteEndPoint == null)
@@ -116,7 +116,7 @@ public abstract class Session
     #region Network communication
     private void RegisterSendAsync()
     {
-        if (_disconnected == 1)
+        if (_disconnected)
             return;
 
         while (_sendQueue.Count > 0)
@@ -170,7 +170,7 @@ public abstract class Session
     }
     private void RegisterRecvAsync()
     {
-        if(_disconnected == 1)
+        if(_disconnected)
             return;
 
         _recvBuffer.Clean();
