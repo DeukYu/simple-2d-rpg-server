@@ -22,6 +22,11 @@ LoggerBase
 Log
 NLogLogger
 ```
+### Util
+- 가볍게 쓸 수 있는 Util 파일 관련 
+```
+DnsUtil : 로컬 IP 주소 관련
+```
 
 ## DummyClient
 - 더미 클라이언트 테스트용

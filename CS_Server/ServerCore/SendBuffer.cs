@@ -4,7 +4,7 @@ public class SendBufferHelper
 {
     private static ThreadLocal<SendBuffer> CurrentBuffer = new ThreadLocal<SendBuffer>(() => { return null; });
 
-    private const int ChunkSize = 4096 * 100;
+    private const int ChunkSize = 1024 * 1024;
     public static ArraySegment<byte> Open(int reserveSize)
     {
         if (CurrentBuffer.Value == null)

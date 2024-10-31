@@ -10,12 +10,13 @@ class PacketHandler
 
         ClientSession clientSession = session as ClientSession;
 
-        if(clientSession.Room == null)
+        if (clientSession.Room == null)
         {
             Log.Error("C2S_ChatHandler no room");
             return;
         }
 
-        clientSession.Room.Broadcast(clientSession, req.chat);
+        var room = clientSession.Room;
+        room.Push(() => room.Broadcast(clientSession, req.chat));
     }
 }

@@ -9,8 +9,8 @@ class PacketHandler
         S2C_Chat pkt = packet as S2C_Chat;
         ServerSession serverSession = session as ServerSession;
 
-        if (pkt.playerId == 1)
-            Log.Info($"[PacketHandler] S2C_ChatHandler: {pkt.chat}");
+        //if (pkt.playerId == 1)
+        //    Log.Info($"[PacketHandler] S2C_ChatHandler: {pkt.chat}");
 
     }
 }

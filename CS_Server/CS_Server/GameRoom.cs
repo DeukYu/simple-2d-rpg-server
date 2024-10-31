@@ -1,9 +1,26 @@
-﻿namespace CS_Server;
+﻿using ServerCore;
 
-class GameRoom
+namespace CS_Server;
+
+class GameRoom : IJobQueue
 {
     List<ClientSession> _sessions = new List<ClientSession>();
-    object _lock = new object();
+    JobQueue _jobQueue = new JobQueue();
+    List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+
+    public void Push(Action job)
+    {
+        _jobQueue.Push(job);
+    }
+
+    public void Flush()
+    {
+        foreach (ClientSession s in _sessions)
+            s.Send(_pendingList);
+
+        Log.Info($"Flushed {_pendingList.Count} items");
+        _pendingList.Clear();
+    }
 
     public void Broadcast(ClientSession session, string chat)
     {
@@ -12,28 +29,17 @@ class GameRoom
         res.chat = chat + $"I am {res.playerId}";
         ArraySegment<byte> segment = res.Write();
 
-        lock (_lock)
-        {
-            foreach (ClientSession s in _sessions)
-                s.Send(segment);
-        }
+        _pendingList.Add(segment);
     }
 
     public void Enter(ClientSession session)
     {
-        lock (_lock)
-        {
-            _sessions.Add(session);
-            session.Room = this;
-        }
-
+        _sessions.Add(session);
+        session.Room = this;
     }
 
     public void Leave(ClientSession session)
     {
-        lock (_lock)
-        {
-            _sessions.Remove(session);
-        }
+        _sessions.Remove(session);
     }
 }

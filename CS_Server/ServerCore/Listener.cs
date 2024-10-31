@@ -8,22 +8,25 @@ namespace ServerCore
         private Socket _listenSocket = null!;
         private Func<Session> _sessionFactory = null!;
 
-        public void Initialize(IPEndPoint endPoint, Func<Session> sessionFactory, int backLogCount = 10)
+        public void Initialize(IPEndPoint endPoint, Func<Session> sessionFactory, int register = 10, int backLog = 100)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _sessionFactory += sessionFactory;
 
             _listenSocket.Bind(endPoint);
-            _listenSocket.Listen(backLogCount);
+            _listenSocket.Listen(backLog);
 
-            AcceptLoop();
+            AcceptLoop(register);
         }
 
-        private void AcceptLoop()
+        private void AcceptLoop(int register)
         {
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += OnAcceptCompleted;
-            RegisterAcceptAsync(args);
+            for (int i = 0; i < register; i++)
+            {
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.Completed += OnAcceptCompleted;
+                RegisterAcceptAsync(args);
+            }
         }
 
         void RegisterAcceptAsync(SocketAsyncEventArgs args)

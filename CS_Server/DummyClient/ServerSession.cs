@@ -23,6 +23,6 @@ class ServerSession : PacketSession
 
     public override void OnSend(int numOfBytes)
     {
-        Log.Info($"Transferred bytes: {numOfBytes}");
+        //Log.Info($"Transferred bytes: {numOfBytes}");
     }
 }

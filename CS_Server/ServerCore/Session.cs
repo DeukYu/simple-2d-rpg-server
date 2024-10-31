@@ -39,7 +39,7 @@ public abstract class Session
     private Socket _socket = null!;
     private int _disconnected = 0;
 
-    RecvBuffer _recvBuffer = new RecvBuffer(1024);
+    RecvBuffer _recvBuffer = new RecvBuffer(65535);
 
     private object _lock = new object();
     private Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
@@ -68,6 +68,21 @@ public abstract class Session
         _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
         RegisterRecvAsync();
+    }
+
+    public void Send(List<ArraySegment<byte>> sendBuffList)
+    {
+        if (sendBuffList.Count == 0)
+            return;
+
+        lock (_lock)
+        {
+            foreach (ArraySegment<byte> sendBuff in sendBuffList)
+                _sendQueue.Enqueue(sendBuff);
+
+            if (_pendingList.Count == 0)
+                RegisterSendAsync();
+        }
     }
 
     public void Send(ArraySegment<byte> sendBuff)

@@ -12,14 +12,15 @@ class ClientSession : PacketSession
     {
         Log.Info($"OnConnected: {endPoint}");
 
-        Program.Room.Enter(this);
+        Program.Room.Push(() => Program.Room.Enter(this));
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
         SessionManager.Instance.Remove(this);
         if (Room != null)
         {
-            Room.Leave(this);
+            GameRoom room = Room;
+            room.Push(() => room.Leave(this));
             Room = null;
         }
         Log.Info($"OnDisConnected: {endPoint}");
@@ -32,6 +33,6 @@ class ClientSession : PacketSession
 
     public override void OnSend(int numOfBytes)
     {
-        Log.Info($"Transferred bytes: {numOfBytes}");
+        //Log.Info($"Transferred bytes: {numOfBytes}");
     }
 }
