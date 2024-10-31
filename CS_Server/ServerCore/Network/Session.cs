@@ -44,6 +44,7 @@ public abstract class Session
     private object _lock = new object();
     private Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
     private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+
     private SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
     private SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
 
@@ -137,7 +138,7 @@ public abstract class Session
         catch (Exception e)
         {
             Log.Error($"RegisterSendAsync Failed {e}");
-        }   
+        }
     }
     private void OnSendCompleted(object? sender, SocketAsyncEventArgs args)
     {
@@ -170,7 +171,7 @@ public abstract class Session
     }
     private void RegisterRecvAsync()
     {
-        if(_disconnected)
+        if (_disconnected)
             return;
 
         _recvBuffer.Clean();
@@ -185,11 +186,11 @@ public abstract class Session
                 OnRecvCompleted(null, _recvArgs);
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Log.Error($"RegisterRecvAsync Failed {e}");
         }
-        
+
     }
     private void OnRecvCompleted(object? sender, SocketAsyncEventArgs args)
     {
