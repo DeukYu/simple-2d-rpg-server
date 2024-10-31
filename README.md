@@ -1,4 +1,5 @@
 # simple-3d-mmorpg-server
+- 현재는 C# 서버를 구축하고 있습니다.
 - Client : https://github.com/kdh0794/GuardianOfNature2D  
 ## 환경설정
 - Visual Studio 2022
@@ -11,7 +12,7 @@ dotnet add package NLog
 dotnet add package NLog.Config
 ```
 
-# Server
+# Server (CS_Server)
 ## ServerCore
 - 서버 핵심 기능들 구현
 ### Network
