@@ -114,7 +114,6 @@ public abstract class Session
         Clear();
     }
 
-    #region Network communication
     private void RegisterSendAsync()
     {
         if (_disconnected)
@@ -232,5 +231,4 @@ public abstract class Session
             Disconnect();
         }
     }
-    #endregion
 }

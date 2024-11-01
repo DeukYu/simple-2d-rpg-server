@@ -36,8 +36,6 @@ class PacketHandler
             return;
         }
 
-        //Log.Info($"C2S_MoveHandler: {movePacket.posX}, {movePacket.posY}, {movePacket.posZ}");
-
         GameRoom room = clientSession.Room;
         room.Push(() => room.Move(clientSession, movePacket));
     }
