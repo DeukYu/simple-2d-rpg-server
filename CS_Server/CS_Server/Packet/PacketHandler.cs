@@ -4,19 +4,41 @@ namespace CS_Server;
 
 class PacketHandler
 {
-    public static void C2S_ChatHandler(PacketSession session, IPacket packet)
+    public static void C2S_LeaveGameHandler(PacketSession session, IPacket packet)
     {
-        C2S_Chat req = packet as C2S_Chat;
-
-        ClientSession clientSession = session as ClientSession;
-
-        if (clientSession.Room == null)
+        ClientSession? clientSession = session as ClientSession;
+        if (clientSession == null)
         {
-            Log.Error("C2S_ChatHandler no room");
             return;
         }
 
-        var room = clientSession.Room;
-        room.Push(() => room.Broadcast(clientSession, req.chat));
+        if (clientSession.Room == null)
+        {
+            return;
+        }
+
+        GameRoom room = clientSession.Room;
+        room.Push(() => room.Leave(clientSession));
+    }
+
+    public static void C2S_MoveHandler(PacketSession session, IPacket packet)
+    {
+        C2S_Move? movePacket = packet as C2S_Move;
+        ClientSession? clientSession = session as ClientSession;
+
+        if (clientSession == null || movePacket == null)
+        {
+            return;
+        }
+
+        if (clientSession.Room == null)
+        {
+            return;
+        }
+
+        //Log.Info($"C2S_MoveHandler: {movePacket.posX}, {movePacket.posY}, {movePacket.posZ}");
+
+        GameRoom room = clientSession.Room;
+        room.Push(() => room.Move(clientSession, movePacket));
     }
 }

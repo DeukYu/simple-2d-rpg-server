@@ -7,6 +7,7 @@ class SessionManager
     int _sessionId = 0;
     List<ServerSession> _sessions = new List<ServerSession>();
     object _lock = new object();
+    Random _rand = new Random();
 
     public void SendForEach()
     {
@@ -14,11 +15,12 @@ class SessionManager
         {
             foreach (ServerSession session in _sessions)
             {
-                C2S_Chat req = new C2S_Chat();
-                req.chat = $"Hello Server!";
-                ArraySegment<byte> segment = req.Write();
+                C2S_Move movePacket = new C2S_Move();
+                movePacket.posX = _rand.Next(-50, 50);
+                movePacket.posY = 2;
+                movePacket.posZ = _rand.Next(-50, 50);
 
-                session.Send(segment);
+                session.Send(movePacket.Write());
             }
         }
     }
