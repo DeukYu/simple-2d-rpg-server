@@ -1,4 +1,6 @@
-﻿using ServerCore;
+﻿using Google.Protobuf;
+using Google.Protobuf.Protocol;
+using ServerCore;
 
 namespace CS_Server;
 
@@ -36,25 +38,26 @@ class GameRoom : IJobQueue
         S2C_PlayerList res = new S2C_PlayerList();
         foreach (ClientSession s in _sessions)
         {
-            res.players.Add(new S2C_PlayerList.Player()
+            res.Players.Add(new S2C_PlayerList.Types.Player()
             {
-                isSelf = (s == session),
-                playerId = s.SessionId,
-                posX = s.PosX,
-                posY = s.PosY,
-                posZ = s.PosZ
+                IsSelf = (s == session),
+                PlayerId = s.SessionId,
+                PosX = s.PosX,
+                PosY = s.PosY,
+                PosZ = s.PosZ
             });
         }
-        session.Send(res.Write());
+
+        session.Send(res.ToByteArray());
 
         // 새로운 플레이어 입장을 모두에게 알림
         S2C_BroadcastEnterGame enter = new S2C_BroadcastEnterGame();
 
-        enter.playerId = session.SessionId;
-        enter.posX = session.PosX;
-        enter.posY = session.PosY;
-        enter.posZ = session.PosZ;
-        Broadcast(enter.Write());
+        enter.PlayerId = session.SessionId;
+        enter.PosX = session.PosX;
+        enter.PosY = session.PosY;
+        enter.PosZ = session.PosZ;
+        Broadcast(enter.ToByteArray());
     }
 
     public void Leave(ClientSession session)
@@ -64,23 +67,24 @@ class GameRoom : IJobQueue
 
         // 모두에게 알림
         S2C_BroadcastLeaveGame leave = new S2C_BroadcastLeaveGame();
-        leave.playerId = session.SessionId;
-        Broadcast(leave.Write());
+        leave.PlayerId = session.SessionId;
+
+        Broadcast(leave.ToByteArray());
     }
 
     public void Move(ClientSession session, C2S_Move packet)
     {
-        session.PosX = packet.posX;
-        session.PosY = packet.posY;
-        session.PosZ = packet.posZ;
+        session.PosX = packet.PosX;
+        session.PosY = packet.PosY;
+        session.PosZ = packet.PosZ;
 
         S2C_BroadcastMove move = new S2C_BroadcastMove();
-        move.playerId = session.SessionId;
-        move.posX = session.PosX;
-        move.posY = session.PosY;
-        move.posZ = session.PosZ;
+        move.PlayerId = session.SessionId;
+        move.PosX = session.PosX;
+        move.PosY = session.PosY;
+        move.PosZ = session.PosZ;
 
         // 모두에게 알림
-        Broadcast(move.Write());
+        Broadcast(move.ToByteArray());
     }
 }

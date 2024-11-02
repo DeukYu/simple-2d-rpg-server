@@ -11,6 +11,10 @@
 dotnet add package NLog
 dotnet add package NLog.Config
 ```
+- ProtoBuf
+```
+dotnet add package Google.Protobuf
+```
 
 # Server (CS_Server)
 ## ServerCore

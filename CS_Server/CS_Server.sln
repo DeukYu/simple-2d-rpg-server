@@ -7,14 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CS_Server", "CS_Server\CS_S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerCore", "ServerCore\ServerCore.csproj", "{1A2A0823-E4F9-41EA-A35E-CCA5E5143463}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyClient", "DummyClient\DummyClient.csproj", "{BA4977AC-3E52-4809-94E6-B25D18D03B12}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0572449-FB1C-444A-BD34-C38B2CFF0CC4}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketGenerator", "PacketGenerator\PacketGenerator.csproj", "{A10A7E7D-A2C4-4E6F-8F2F-CF7989239E6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacketGenerator", "PacketGenerator\PacketGenerator.csproj", "{A10A7E7D-A2C4-4E6F-8F2F-CF7989239E6E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9E054767-A7C0-47F5-81C6-D48637F5C20D}"
 EndProject
@@ -32,10 +30,6 @@ Global
 		{1A2A0823-E4F9-41EA-A35E-CCA5E5143463}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A2A0823-E4F9-41EA-A35E-CCA5E5143463}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A2A0823-E4F9-41EA-A35E-CCA5E5143463}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA4977AC-3E52-4809-94E6-B25D18D03B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA4977AC-3E52-4809-94E6-B25D18D03B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA4977AC-3E52-4809-94E6-B25D18D03B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA4977AC-3E52-4809-94E6-B25D18D03B12}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A10A7E7D-A2C4-4E6F-8F2F-CF7989239E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A10A7E7D-A2C4-4E6F-8F2F-CF7989239E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A10A7E7D-A2C4-4E6F-8F2F-CF7989239E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU

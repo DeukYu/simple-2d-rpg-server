@@ -1,71 +1,66 @@
 using CS_Server;
+using Google.Protobuf;
+using Google.Protobuf.Protocol;
+using Google.Protobuf.Reflection;
 using ServerCore;
-using System;
-using System.Collections.Generic;
+using System.Reflection;
 
-public class PacketManager
+[AttributeUsage(AttributeTargets.Class)]
+public class MsgIdAttribute : Attribute
 {
-	#region Singleton
-    static PacketManager _instance = new PacketManager();
-	public static PacketManager Instance
-	{
-		get
-		{
-			if (_instance == null)
-				_instance = new PacketManager();
-			return _instance;
-		}
-	}
-	#endregion
 
-	PacketManager()
+}
+
+class PacketManager
+{
+    #region Singleton
+    static PacketManager _instance = new PacketManager();
+    public static PacketManager Instance { get { return _instance; } }
+    #endregion
+
+    PacketManager()
     {
         Register();
     }
 
-	Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>>();
-	Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
-		
-	public void Register()
-	{
-		_makeFunc.Add((ushort)PacketID.C2S_LeaveGame, MakePacket<C2S_LeaveGame>);
-		_handler.Add((ushort)PacketID.C2S_LeaveGame, PacketHandler.C2S_LeaveGameHandler);
-		_makeFunc.Add((ushort)PacketID.C2S_Move, MakePacket<C2S_Move>);
-		_handler.Add((ushort)PacketID.C2S_Move, PacketHandler.C2S_MoveHandler);
+    Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>> _onRecv = new Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>>();
+    Dictionary<ushort, Action<PacketSession, IMessage>> _handler = new Dictionary<ushort, Action<PacketSession, IMessage>>();
 
-	}
-
-	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer, Action<PacketSession, IPacket> onRecvCallback = null)
-	{
-		ushort count = 0;
-
-		ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-		count += 2;
-		ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-		count += 2;
-
-		Func<PacketSession, ArraySegment<byte>, IPacket> func = null;
-        if (_makeFunc.TryGetValue(id, out func))
-        {
-            IPacket packet = func.Invoke(session, buffer);
-            if(onRecvCallback != null)
-                onRecvCallback.Invoke(session, packet);
-            else
-                HandlerPacket(session, packet);
-        }
-	}
-
-	T MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
-	{
-		T pkt = new T();
-        pkt.Read(buffer);
-        return pkt;
-	}
-
-	public void HandlerPacket(PacketSession session, IPacket packet)
+    public void Register()
     {
-        Action<PacketSession, IPacket> action = null;
-        if (_handler.TryGetValue(packet.Protocol, out action))
-            action.Invoke(session, packet);
+        _onRecv.Add((ushort)MsgId.C2SLeavegame, MakePacket<C2S_LeaveGame>);
+        _handler.Add((ushort)MsgId.C2SLeavegame, PacketHandler.C2S_LeaveGameHandler);
+        _onRecv.Add((ushort)MsgId.C2SMove, MakePacket<C2S_Move>);
+        _handler.Add((ushort)MsgId.C2SMove, PacketHandler.C2S_MoveHandler);
+    }
+
+    public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
+    {
+        ushort count = 0;
+
+        ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+        count += 2;
+        ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+        count += 2;
+
+        if (_onRecv.TryGetValue(id, out Action<PacketSession, ArraySegment<byte>, ushort>? action))
+            action.Invoke(session, buffer, id);
+    }
+
+    void MakePacket<T>(PacketSession session, ArraySegment<byte> buffer, ushort id) where T : IMessage, new()
+    {
+        T pkt = new T();
+        pkt.MergeFrom(buffer.Array, buffer.Offset + 4, buffer.Count - 4);
+        if (_handler.TryGetValue(id, out Action<PacketSession, IMessage>? action))
+            action.Invoke(session, pkt);
+    }
+
+    public Action<PacketSession, IMessage>? GetPacketHandler(ushort id)
+    {
+        if (_handler.TryGetValue(id, out Action<PacketSession, IMessage>? action))
+        {
+            return action;
+        }
+        return null;
     }
 }
