@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Common;
 using Google.Protobuf.Protocol;
 using ServerCore;
 
@@ -38,7 +39,7 @@ class GameRoom : IJobQueue
         S2C_PlayerList res = new S2C_PlayerList();
         foreach (ClientSession s in _sessions)
         {
-            res.Players.Add(new S2C_PlayerList.Types.Player()
+            res.Players.Add(new TPlayer
             {
                 IsSelf = (s == session),
                 PlayerId = s.SessionId,

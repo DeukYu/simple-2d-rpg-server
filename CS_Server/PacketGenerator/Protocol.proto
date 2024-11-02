@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package Protocol;
 
+import "Common.proto";
+
 option csharp_namespace = "Google.Protobuf.Protocol";
 
 enum MsgId{
@@ -29,15 +31,7 @@ message S2C_BroadcastLeaveGame {
 }
 
 message S2C_PlayerList {
-    repeated Player players = 1;
-
-    message Player {
-        bool isSelf = 1;
-        int32 playerId = 2;
-        float posX = 3;
-        float posY = 4;
-        float posZ = 5;
-    }
+    repeated TPlayer players = 1;
 }
 
 message C2S_Move {

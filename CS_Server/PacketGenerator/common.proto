@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package Protocol;
+
+option csharp_namespace = "Google.Protobuf.Common";
+
+message TPlayer {
+    bool isSelf = 1;
+    int32 playerId = 2;
+    float posX = 3;
+    float posY = 4;
+    float posZ = 5;
+}
