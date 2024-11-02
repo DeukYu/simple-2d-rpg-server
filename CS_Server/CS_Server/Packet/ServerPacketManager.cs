@@ -1,5 +1,6 @@
 using CS_Server;
 using Google.Protobuf;
+using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Google.Protobuf.Reflection;
 using ServerCore;

@@ -6,32 +6,33 @@ import "Common.proto";
 
 option csharp_namespace = "Google.Protobuf.Protocol";
 
-enum MsgId{
-    None = 0;
-    S2C_BROADCASTENTERGAME = 1;
-    C2S_LEAVEGAME = 2;
-    S2C_BROADCASTLEAVEGAME = 3;
-    S2C_PLAYERLIST = 4;
-    C2S_MOVE = 5;
-    S2C_BROADCASTMOVE = 6;
+message C2S_Login{
+    string userId = 1;
+}
+
+message S2C_Login{
+    int32 result = 1;
 }
 
 message S2C_BroadcastEnterGame {
-    int32 playerId = 1;
-    float posX = 2;
-    float posY = 3;
-    float posZ = 4;
+    int32 result = 1;
+    int32 playerId = 2;
+    float posX = 3;
+    float posY = 4;
+    float posZ = 5;
 }
 
 message C2S_LeaveGame {
 }
 
 message S2C_BroadcastLeaveGame {
-    int32 playerId = 1;
+    int32 result = 1;
+    int32 playerId = 2;
 }
 
 message S2C_PlayerList {
-    repeated TPlayer players = 1;
+    int32 result = 1;
+    repeated TPlayer players = 2;
 }
 
 message C2S_Move {
@@ -41,8 +42,9 @@ message C2S_Move {
 }
 
 message S2C_BroadcastMove {
-    int32 playerId = 1;
-    float posX = 2;
-    float posY = 3;
-    float posZ = 4;
+    int32 result = 1;
+    int32 playerId = 2;
+    float posX = 3;
+    float posY = 4;
+    float posZ = 5;
 }

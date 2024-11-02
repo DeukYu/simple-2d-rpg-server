@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package Protocol;
+
+option csharp_namespace = "Google.Protobuf.Enum";
+
+enum MsgId{
+    None = 0;
+    S2C_BROADCASTENTERGAME = 1;
+    C2S_LEAVEGAME = 2;
+    S2C_BROADCASTLEAVEGAME = 3;
+    S2C_PLAYERLIST = 4;
+    C2S_MOVE = 5;
+    S2C_BROADCASTMOVE = 6;
+}
+
+enum ErrorType{
+    Success = 0;
+    Fail = 1;
+}

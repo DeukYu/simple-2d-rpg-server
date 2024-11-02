@@ -1,7 +1,9 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Common;
+using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using System.Resources;
 
 namespace CS_Server;
 
@@ -49,6 +51,7 @@ class GameRoom : IJobQueue
             });
         }
 
+        res.Result = (int)ErrorType.Success;
         session.Send(res.ToByteArray());
 
         // 새로운 플레이어 입장을 모두에게 알림
@@ -58,6 +61,8 @@ class GameRoom : IJobQueue
         enter.PosX = session.PosX;
         enter.PosY = session.PosY;
         enter.PosZ = session.PosZ;
+
+        enter.Result = (int)ErrorType.Success;
         Broadcast(enter.ToByteArray());
     }
 
@@ -70,6 +75,7 @@ class GameRoom : IJobQueue
         S2C_BroadcastLeaveGame leave = new S2C_BroadcastLeaveGame();
         leave.PlayerId = session.SessionId;
 
+        leave.Result = (int)ErrorType.Success;
         Broadcast(leave.ToByteArray());
     }
 
@@ -86,6 +92,7 @@ class GameRoom : IJobQueue
         move.PosZ = session.PosZ;
 
         // 모두에게 알림
+        move.Result = (int)ErrorType.Success;
         Broadcast(move.ToByteArray());
     }
 }
