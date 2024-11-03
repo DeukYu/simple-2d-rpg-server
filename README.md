@@ -35,23 +35,19 @@ dotnet add package Google.Protobuf
 
 ### Job
 - 서버 패킷 관련 한번에 모아 보내기 위한 부분과 일정 시간마다 패킷을 전송할 수 있도록 하는 기능
-```
-JobQueue
-JobTimer
-```
+    - JobQueue
+    - JobTimer
+
 ### Logger
 - 로그 관련 처리하기 위하여 NLog 라이브러리를 맵핑하여 사용
-```
-LoggerBase
-Log
-NLogLogger
-```
+    - LoggerBase
+    - Log
+    - NLogLogger
+
 ### Util
 - 가볍게 쓸 수 있는 Util 파일 관련 
-```
-DnsUtil : 로컬 IP 주소 관련
-AtomicFlag : Flag가 필요할 경우, thread safe를 위해 사용
-```
+    - DnsUtil : 로컬 IP 주소 관련
+    - AtomicFlag : Flag가 필요할 경우, thread safe를 위해 사용
 
 <details>
 <summary> AtomicFlag </summary>
@@ -89,17 +85,16 @@ public sealed class AtomicFlag
 - 기본 게임 서버를 위한 로직 처리
 
 ### Session
-```
-SessionManager : Client Session 관리
-ClientSession
-```
+- Session 관련
+    - SessionManager : Client Session 관리
+    - ClientSession
 
 ### Packet
-```
-Common, Enum, Protocol : proto 에서 생성한 파일
-ServerPacketManager : Server Packet 관리
-PacketHandler : Recv Packet 처리
-```
+- Packet 관련
+    - Common, Enum, Protocol : proto 에서 생성한 파일
+    - ServerPacketManager : Server Packet 관리
+    - PacketHandler : Recv Packet 처리
+    
 <details> 
 <summary>PacketManager - Packet Register</summary>
 
