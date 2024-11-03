@@ -8,12 +8,11 @@ option csharp_namespace = "Google.Protobuf.WebProtocol";
 
 message LoginAccountReq
 {
-	string AccountId = 1;
-	string Password = 2;
+	string AccountName = 1;
 }
 
 message LoginAccountRes
 {
 	int32 Result = 1;
-	int32 PlayerId = 2;
+	int64 PlayerId = 2;
 }
