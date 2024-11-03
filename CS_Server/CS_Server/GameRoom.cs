@@ -3,7 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Resources;
+using System.Diagnostics.Metrics;
 
 namespace CS_Server;
 
@@ -23,7 +23,8 @@ class GameRoom : IJobQueue
         foreach (ClientSession s in _sessions)
             s.Send(_pendingList);
 
-        Log.Info($"Flushed {_pendingList.Count} items");
+        if (_pendingList.Count > 0)
+            Log.Info($"Flushed {_pendingList.Count} items");
         _pendingList.Clear();
     }
 
@@ -37,33 +38,60 @@ class GameRoom : IJobQueue
         _sessions.Add(session);
         session.Room = this;
 
-        // 모든 플레이어 목록 전송
-        S2C_PlayerList res = new S2C_PlayerList();
-        foreach (ClientSession s in _sessions)
         {
-            res.Players.Add(new TPlayer
+            // 모든 플레이어 목록 전송
+            S2C_PlayerList res = new S2C_PlayerList();
+            foreach (ClientSession s in _sessions)
             {
-                IsSelf = (s == session),
-                PlayerId = s.SessionId,
-                PosX = s.PosX,
-                PosY = s.PosY,
-                PosZ = s.PosZ
-            });
+                res.Players.Add(new TPlayer
+                {
+                    IsSelf = (s == session),
+                    PlayerId = s.SessionId,
+                    PosX = s.PosX,
+                    PosY = s.PosY,
+                    PosZ = s.PosZ
+                });
+            }
+            res.Result = (int)ErrorType.Success;
+
+            ushort size = (ushort)res.CalculateSize();
+
+            byte[] sendBuffer = new byte[size + 4];
+            Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
+
+            ushort protocolId = PacketManager.Instance.GetMessageId(res.GetType());
+            Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
+            
+            Array.Copy(res.ToByteArray(), 0, sendBuffer, 4, size);
+            var buff = new ArraySegment<byte>(sendBuffer);
+            session.Send(buff);
         }
 
-        res.Result = (int)ErrorType.Success;
-        session.Send(res.ToByteArray());
 
         // 새로운 플레이어 입장을 모두에게 알림
-        S2C_BroadcastEnterGame enter = new S2C_BroadcastEnterGame();
+        {
+            S2C_BroadcastEnterGame enter = new S2C_BroadcastEnterGame();
 
-        enter.PlayerId = session.SessionId;
-        enter.PosX = session.PosX;
-        enter.PosY = session.PosY;
-        enter.PosZ = session.PosZ;
+            enter.PlayerId = session.SessionId;
+            enter.PosX = session.PosX;
+            enter.PosY = session.PosY;
+            enter.PosZ = session.PosZ;
 
-        enter.Result = (int)ErrorType.Success;
-        Broadcast(enter.ToByteArray());
+            enter.Result = (int)ErrorType.Success;
+
+            ushort size = (ushort)enter.CalculateSize();
+
+            byte[] sendBuffer = new byte[size + 4];
+            Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
+
+            ushort protocolId = PacketManager.Instance.GetMessageId(enter.GetType());
+            Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
+
+            Array.Copy(enter.ToByteArray(), 0, sendBuffer, 4, size);
+            var buff = new ArraySegment<byte>(sendBuffer);
+
+            Broadcast(buff);
+        }
     }
 
     public void Leave(ClientSession session)
@@ -76,7 +104,17 @@ class GameRoom : IJobQueue
         leave.PlayerId = session.SessionId;
 
         leave.Result = (int)ErrorType.Success;
-        Broadcast(leave.ToByteArray());
+
+        ushort size = (ushort)leave.CalculateSize();
+        byte[] sendBuffer = new byte[size + 4];
+        Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
+        ushort protocolId = (ushort)MsgId.S2CBroadcastleavegame;
+        Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
+        Array.Copy(leave.ToByteArray(), 0, sendBuffer, 4, size);
+        var buff = new ArraySegment<byte>(sendBuffer);
+
+
+        Broadcast(buff);
     }
 
     public void Move(ClientSession session, C2S_Move packet)
@@ -93,6 +131,15 @@ class GameRoom : IJobQueue
 
         // 모두에게 알림
         move.Result = (int)ErrorType.Success;
-        Broadcast(move.ToByteArray());
+
+        ushort size = (ushort)move.CalculateSize();
+        byte[] sendBuffer = new byte[size + 4];
+        Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
+        ushort protocolId = (ushort)MsgId.S2CBroadcastmove;
+        Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
+        Array.Copy(move.ToByteArray(), 0, sendBuffer, 4, size);
+        var buff = new ArraySegment<byte>(sendBuffer);
+
+        Broadcast(buff);
     }
 }

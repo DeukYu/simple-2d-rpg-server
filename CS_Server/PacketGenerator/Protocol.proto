@@ -48,3 +48,13 @@ message S2C_BroadcastMove {
     float posY = 4;
     float posZ = 5;
 }
+
+message C2S_Chat{
+    string chat = 2;
+}
+
+message S2C_BroadcastChat{
+    int32 result = 1;
+    int32 playerId = 2;
+    string chat = 3;
+}
