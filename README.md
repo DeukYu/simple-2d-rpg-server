@@ -27,13 +27,12 @@ dotnet add package Google.Protobuf
 - 현재는 기능이 많지 않아 ServerCore에 모든 Common 부분들을 관리하고 있습니다.
 ### Network
 - 서버 네트워크 통신 관련 기능
-```
-Connector : Client에서 Connect 하기 위해 사용
-Listener : Server에서 Client 연결을 확인하기 위한 용도
-Session
-RecvBuffer
-SendBuffer : protobuf 로 인하여 필요 없어져서 삭제
-```
+    - Connector : Client에서 Connect 하기 위해 사용
+    - Listener : Server에서 Client 연결을 확인하기 위한 용도
+    - Session
+    - RecvBuffer
+    - ~~SendBuffer : protobuf 로 인하여 필요 없어져서 삭제~~
+
 ### Job
 - 서버 패킷 관련 한번에 모아 보내기 위한 부분과 일정 시간마다 패킷을 전송할 수 있도록 하는 기능
 ```
