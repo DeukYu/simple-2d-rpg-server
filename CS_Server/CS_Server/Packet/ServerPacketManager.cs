@@ -6,12 +6,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
-[AttributeUsage(AttributeTargets.Class)]
-public class MsgIdAttribute : Attribute
-{
-
-}
-
 class PacketManager
 {
     #region Singleton

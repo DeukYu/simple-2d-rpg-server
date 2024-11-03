@@ -7,7 +7,7 @@ internal class SessionManager
     static SessionManager _session = new SessionManager();
     public static SessionManager Instance { get { return _session; } }
     int _sessionId = 0;
-    Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
+    Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();    // <SessionId, ClientSession>
     object _lock = new object();
 
     public ClientSession Generate()
