@@ -1,4 +1,4 @@
-# simple-2d-mmorpg-server
+# simple-2d-rpg-server
 - C# 서버를 제작중입니다.
 - Client : https://github.com/kdh0794/GuardianOfNature2D  
 
