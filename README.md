@@ -2,10 +2,6 @@
 - C# 서버를 제작중입니다.
 - Client : https://github.com/kdh0794/GuardianOfNature2D  
 
-## 제작 인원
-- 서버 : 이득유
-- 클라이언트 : 김다혜
-
 ## 환경설정
 - Visual Studio 2022
 - C# .Net 8.0
