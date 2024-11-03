@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package Protocol;
+
+import "Common.proto";
+
+option csharp_namespace = "Google.Protobuf.WebProtocol";
+
+message LoginAccountReq
+{
+	string AccountId = 1;
+	string Password = 2;
+}
+
+message LoginAccountRes
+{
+	int32 Result = 1;
+	int32 PlayerId = 2;
+}
