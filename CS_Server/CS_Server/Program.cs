@@ -8,7 +8,7 @@ namespace CS_Server;
 class Program
 {
     static Listener _listener = new Listener();
-    public static GameRoom Room = new GameRoom();
+    public static GameZone Room = new GameZone();
     static void FlushRoom()
     {
         Room.Push(() => Room.Flush());
@@ -16,8 +16,6 @@ class Program
     }
     static void Main(string[] args)
     {
-        //PacketManager.Instance.RegisterTest();
-
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);

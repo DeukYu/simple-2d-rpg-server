@@ -3,11 +3,10 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Diagnostics.Metrics;
 
 namespace CS_Server;
 
-class GameRoom : IJobQueue
+class GameZone : IJobQueue
 {
     List<ClientSession> _sessions = new List<ClientSession>();
     JobQueue _jobQueue = new JobQueue();
@@ -20,12 +19,10 @@ class GameRoom : IJobQueue
 
     public void Flush()
     {
-        foreach (ClientSession s in _sessions)
-            s.Send(_pendingList);
-
-        if (_pendingList.Count > 0)
-            Log.Info($"Flushed {_pendingList.Count} items");
-        _pendingList.Clear();
+        foreach (ClientSession session in _sessions)
+        {
+            session.Send(_pendingList);
+        }
     }
 
     public void Broadcast(ArraySegment<byte> segment)
@@ -36,7 +33,8 @@ class GameRoom : IJobQueue
     public void Enter(ClientSession session)
     {
         _sessions.Add(session);
-        session.Room = this;
+
+        session.Zone = this;
 
         {
             // 모든 플레이어 목록 전송
@@ -61,7 +59,7 @@ class GameRoom : IJobQueue
 
             ushort protocolId = PacketManager.Instance.GetMessageId(res.GetType());
             Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
-            
+
             Array.Copy(res.ToByteArray(), 0, sendBuffer, 4, size);
             var buff = new ArraySegment<byte>(sendBuffer);
             session.Send(buff);

@@ -11,18 +11,12 @@ class PacketHandler
 {
     public static Action<PacketSession, IMessage>? GetHandler(Type packetType)
     {
-        // 핸들러 이름 생성 규칙에 맞춰 이름 설정 (예: 타입 이름 + "Handler")
         string handlerMethodName = $"{packetType.Name}Handler";
 
-        // 현재 클래스(PacketHandler)에서 해당 이름을 가진 메서드를 찾음
-        var methodInfo = typeof(PacketHandler).GetMethod(handlerMethodName,
-                            BindingFlags.Public | BindingFlags.Static);
-
-        // 핸들러가 없으면 null 반환
+        var methodInfo = typeof(PacketHandler).GetMethod(handlerMethodName, BindingFlags.Public | BindingFlags.Static);
         if (methodInfo == null)
             return null;
 
-        // 메서드 정보를 Action<PacketSession, IMessage> 델리게이트로 변환
         return (Action<PacketSession, IMessage>)Delegate.CreateDelegate(
             typeof(Action<PacketSession, IMessage>), methodInfo);
     }
@@ -35,13 +29,13 @@ class PacketHandler
             return;
         }
 
-        if (clientSession.Room == null)
+        if (clientSession.Zone == null)
         {
             return;
         }
 
-        GameRoom room = clientSession.Room;
-        room.Push(() => room.Leave(clientSession));
+        GameZone zone = clientSession.Zone;
+        zone.Push(() => zone.Leave(clientSession));
     }
 
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
@@ -54,12 +48,12 @@ class PacketHandler
             return;
         }
 
-        if (clientSession.Room == null)
+        if (clientSession.Zone == null)
         {
             return;
         }
 
-        GameRoom room = clientSession.Room;
+        GameZone room = clientSession.Zone;
         room.Push(() => room.Move(clientSession, movePacket));
     }
 
@@ -67,8 +61,7 @@ class PacketHandler
     {
         C2S_Chat? chatPacket = packet as C2S_Chat;
         ClientSession? clientSession = session as ClientSession;
-
-        if(clientSession == null || chatPacket == null)
+        if (clientSession == null || chatPacket == null)
         {
             return;
         }
