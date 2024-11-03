@@ -101,6 +101,9 @@ class PacketManager
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
     {
+        if(buffer.Array == null)
+            return;
+
         ushort count = 0;
 
         ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);

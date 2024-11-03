@@ -21,6 +21,12 @@ class PacketHandler
             typeof(Action<PacketSession, IMessage>), methodInfo);
     }
 
+    public static void C2S_LoginHandler(PacketSession session, IMessage packet)
+    {
+        S2C_Login loginPacket = new S2C_Login();
+        loginPacket.Result = (int)ErrorType.Success;
+    }
+
     public static void C2S_LeaveGameHandler(PacketSession session, IMessage packet)
     {
         ClientSession? clientSession = session as ClientSession;

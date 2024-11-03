@@ -10,13 +10,13 @@
 - Visual Studio 2022
 - C# .Net 8.0
 
-## 라이브러리
+## Nuget Package
 - NLog
 ```
 dotnet add package NLog
 dotnet add package NLog.Config
 ```
-- ProtoBuf
+- ProtoBuf (3.28.3)
 ```
 dotnet add package Google.Protobuf
 ```
@@ -140,3 +140,6 @@ private ushort ComputeMessageId(string messageName)
 }
 ```
 </details>
+
+## Web Server
+- 로그인 기능 및 웹 API 관련을 위한 서버
