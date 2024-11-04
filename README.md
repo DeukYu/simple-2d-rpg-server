@@ -5,6 +5,7 @@
 ## 환경설정
 - Visual Studio 2022
 - C# .Net 8.0
+- MySQL
 
 ## Nuget Package
 - NLog
@@ -15,6 +16,10 @@ dotnet add package NLog.Config
 - ProtoBuf (3.28.3)
 ```
 dotnet add package Google.Protobuf
+```
+- MySql.EntityFrameworkCore
+```
+dotnet add package MySql.EntityFrameworkCore
 ```
 
 # Server (CS_Server)
@@ -94,7 +99,7 @@ public sealed class AtomicFlag
 <details> 
 <summary>PacketManager - Packet Register</summary>
 
-- C# reflection을 통하여 기존 MsgId 를 통하여 Packet Register를 하였으나, Packet이 늘어남에 따라 Enum MsgId를 추가해야하는 번거로움으로 인하여 MsgId 값을 Msg Name을 통하여 SHA256 을 통한 해쉬값을 ushort 값으로 받아와 MsgId로 사용하도록 하였습니다.
+- C# 기존 MsgId 를 통하여 Packet Register를 하였으나, Packet이 늘어남에 따라 Enum MsgId를 추가해야하는 번거로움으로 인하여 MsgId 값을 relfection을 이용하여 Msg Name을 통하여 SHA256 을 통한 해쉬값을 ushort 값으로 받아와 MsgId로 사용하도록 하였습니다.
 
 ```
 private void Register()
