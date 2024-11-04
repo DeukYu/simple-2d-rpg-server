@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using WebServer.DB;
 
 namespace WebServer;
 
@@ -7,12 +6,15 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        ConfigManager.LoadConfig();
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+
         builder.Services.AddDbContext<AccountDB>(options =>
         {
-            options.UseMySQL(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+            options.UseMySQL(ConfigManager.DatabaseConfig.GetConnectionConfig());
         });
 
         builder.Services.AddControllers();
