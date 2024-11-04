@@ -10,6 +10,6 @@ namespace WebServer;
 public class AccountInfo
 {
     [Key]
-    public long Id { get; set; }
-    public string AccountName { get; set; }
+    public long Id { get; set; } = 0;
+    public string AccountName { get; set; } = string.Empty;
 }
