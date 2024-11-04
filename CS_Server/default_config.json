@@ -1,7 +1,7 @@
 {
   "Address": "localhost",
   "Port": "3306",
-  "Name": "account_db",
-  "Account": "root",
-  "Password": "deukyu1874!"
+  "Name": "database",
+  "Account": "account",
+  "Password": "password"
 }
