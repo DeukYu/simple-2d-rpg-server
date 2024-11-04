@@ -21,6 +21,10 @@ dotnet add package Google.Protobuf
 ```
 dotnet add package MySql.EntityFrameworkCore
 ```
+- Newtonsoft.Json
+```
+dotnet add package Newtonsoft.Json
+```
 
 # Server (CS_Server)
 ## ServerCore
@@ -144,3 +148,17 @@ private ushort ComputeMessageId(string messageName)
 
 ## Web Server
 - 로그인 기능 및 웹 API 관련을 위한 서버
+
+### Config
+- Config 파일 Load 하여 사용할 수 있도록 만들었는데, 현재는 하나의 Config.json 파일에서 DatabaseConfig만 존재하므로 통합하여 config.json 으로 사용
+    - ConfigManager
+    - DatabaseConfig 
+
+### Controllers
+- AccountController : 계정 관련 담당한 Controllers
+
+### DB
+- Database 관련 
+
+### Packet
+- Packet 관련 

@@ -8,6 +8,7 @@ public class ConfigManager
 {
     // Config는 외부에서 readonly로 접근 가능하도록 설정
     public static DatabaseConfig DatabaseConfig { get; private set; } = new DatabaseConfig();
+
     public static void LoadConfig()
     {
         string json = File.ReadAllText("../config.json");
