@@ -9,7 +9,7 @@ namespace CS_Server;
 class ClientSession : PacketSession
 {
     public int SessionId { get; set; }
-    public GameZone Zone { get; set; }
+    public Zone Zone { get; set; }
     public float PosX { get; set; }
     public float PosY { get; set; }
     public float PosZ { get; set; }
@@ -39,7 +39,7 @@ class ClientSession : PacketSession
         SessionManager.Instance.Remove(this);
         if (Zone != null)
         {
-            GameZone zone = Zone;
+            Zone zone = Zone;
             zone.Push(() => zone.Leave(this));
             Zone = null;
         }

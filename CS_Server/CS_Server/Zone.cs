@@ -6,7 +6,7 @@ using ServerCore;
 
 namespace CS_Server;
 
-class GameZone : IJobQueue
+public class Zone : IJobQueue
 {
     List<ClientSession> _sessions = new List<ClientSession>();
     JobQueue _jobQueue = new JobQueue();

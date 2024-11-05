@@ -8,7 +8,7 @@ namespace CS_Server;
 class Program
 {
     static Listener _listener = new Listener();
-    public static GameZone Room = new GameZone();
+    public static Zone Room = new Zone();
     static void FlushRoom()
     {
         Room.Push(() => Room.Flush());

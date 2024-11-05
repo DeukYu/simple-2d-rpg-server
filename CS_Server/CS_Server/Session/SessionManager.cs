@@ -2,7 +2,7 @@
 
 namespace CS_Server;
 
-internal class SessionManager
+class SessionManager
 {
     static SessionManager _session = new SessionManager();
     public static SessionManager Instance { get { return _session; } }

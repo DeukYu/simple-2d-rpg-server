@@ -34,7 +34,7 @@ class PacketHandler
             return;
         }
 
-        GameZone zone = clientSession.Zone;
+        Zone zone = clientSession.Zone;
         zone.Push(() => zone.Leave(clientSession));
     }
 
@@ -53,7 +53,7 @@ class PacketHandler
             return;
         }
 
-        GameZone room = clientSession.Zone;
+        Zone room = clientSession.Zone;
         room.Push(() => room.Move(clientSession, movePacket));
     }
 
