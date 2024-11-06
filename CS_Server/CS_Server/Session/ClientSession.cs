@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CS_Server;
 
-class ClientSession : PacketSession
+public class ClientSession : PacketSession
 {
     public int SessionId { get; set; }
     public Zone Zone { get; set; }

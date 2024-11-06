@@ -8,8 +8,8 @@ namespace PacketGenerator
 {
     class Program
     {
-        static string clientRegister;
-        static string serverRegister;
+        static string clientRegister = string.Empty;
+        static string serverRegister = string.Empty;
 
         static void Main(string[] args)
         {
