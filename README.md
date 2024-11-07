@@ -148,6 +148,7 @@ private ushort ComputeMessageId(string messageName)
 
 ## Web Server
 - 로그인 기능 및 웹 API 관련을 위한 서버
+- MySQL 연동하여 계정 관련 기능 작업
 
 ### Config
 - Config 파일 Load 하여 사용할 수 있도록 만들었는데, 현재는 하나의 Config.json 파일에서 DatabaseConfig만 존재하므로 통합하여 config.json 으로 사용
