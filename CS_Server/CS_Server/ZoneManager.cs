@@ -4,11 +4,13 @@ namespace CS_Server;
 
 class ZoneManager
 {
-    private readonly ConcurrentDictionary<long, Zone> zoneDict = new ConcurrentDictionary<long, Zone>();
+    public static ZoneManager Instance { get; } = new ZoneManager();
+    private readonly ConcurrentDictionary<long, Zone> zones = new ConcurrentDictionary<long, Zone>();
+    private long _zoneId = 1;
 
     public Zone? FindZone(long zoneId)
     {
-        if (zoneDict.TryGetValue(zoneId, out Zone? zone))
+        if (zones.TryGetValue(zoneId, out Zone? zone))
             return zone;
         return null;
     }
