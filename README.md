@@ -118,21 +118,19 @@ private void Register()
         // Descriptor를 가져오고, null 체크
         var descriptor = GetMessageDescriptor(packetType);
         if (descriptor == null)
+        {
+            Log.Error($"Descriptor not found for packet type: {packetType.Name}");
             continue;
+        }
 
         // 메시지 이름으로 메시지 ID 계산
         ushort messageId = ComputeMessageId(descriptor.Name);
-        if (_onRecv.ContainsKey(messageId))
+        if (_onRecv.TryAdd(messageId, CreateMakePacketAction(packetType)) == false)
         {
             Log.Error($"Already registered message: {messageId}");
             continue;
         }
 
-        // MakePacket<T>를 호출하는 델리게이트 생성
-        var makePacketAction = CreateMakePacketAction(packetType);
-
-        // 델리게이트 및 핸들러 등록 (Send 할 때, MsgId를 가져오기 위한 typeToMsgId 등록)
-        _onRecv.Add(messageId, makePacketAction);
         RegisterHandler(messageId, packetType);
         _typeToMsgId.Add(packetType, messageId);
     }
