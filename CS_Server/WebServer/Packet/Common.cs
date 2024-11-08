@@ -24,14 +24,13 @@ namespace Google.Protobuf.Common {
     static CommonReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgxDb21tb24ucHJvdG8SCFByb3RvY29sIlUKB1RQbGF5ZXISDgoGaXNTZWxm",
-            "GAEgASgIEhAKCHBsYXllcklkGAIgASgFEgwKBHBvc1gYAyABKAISDAoEcG9z",
-            "WRgEIAEoAhIMCgRwb3NaGAUgASgCQhmqAhZHb29nbGUuUHJvdG9idWYuQ29t",
-            "bW9uYgZwcm90bzM="));
+            "CgxDb21tb24ucHJvdG8SCFByb3RvY29sIkUKB1RQbGF5ZXISEAoIcGxheWVy",
+            "SWQYASABKAMSDAoEbmFtZRgCIAEoCRIMCgRwb3NYGAMgASgCEgwKBHBvc1kY",
+            "BCABKAJCGaoCFkdvb2dsZS5Qcm90b2J1Zi5Db21tb25iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.TPlayer), global::Google.Protobuf.Common.TPlayer.Parser, new[]{ "IsSelf", "PlayerId", "PosX", "PosY", "PosZ" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.TPlayer), global::Google.Protobuf.Common.TPlayer.Parser, new[]{ "PlayerId", "Name", "PosX", "PosY" }, null, null, null, null)
           }));
     }
     #endregion
@@ -72,11 +71,10 @@ namespace Google.Protobuf.Common {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public TPlayer(TPlayer other) : this() {
-      isSelf_ = other.isSelf_;
       playerId_ = other.playerId_;
+      name_ = other.name_;
       posX_ = other.posX_;
       posY_ = other.posY_;
-      posZ_ = other.posZ_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -86,27 +84,27 @@ namespace Google.Protobuf.Common {
       return new TPlayer(this);
     }
 
-    /// <summary>Field number for the "isSelf" field.</summary>
-    public const int IsSelfFieldNumber = 1;
-    private bool isSelf_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsSelf {
-      get { return isSelf_; }
-      set {
-        isSelf_ = value;
-      }
-    }
-
     /// <summary>Field number for the "playerId" field.</summary>
-    public const int PlayerIdFieldNumber = 2;
-    private int playerId_;
+    public const int PlayerIdFieldNumber = 1;
+    private long playerId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int PlayerId {
+    public long PlayerId {
       get { return playerId_; }
       set {
         playerId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -134,18 +132,6 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "posZ" field.</summary>
-    public const int PosZFieldNumber = 5;
-    private float posZ_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float PosZ {
-      get { return posZ_; }
-      set {
-        posZ_ = value;
-      }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -161,11 +147,10 @@ namespace Google.Protobuf.Common {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (IsSelf != other.IsSelf) return false;
       if (PlayerId != other.PlayerId) return false;
+      if (Name != other.Name) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosX, other.PosX)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosY, other.PosY)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosZ, other.PosZ)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -173,11 +158,10 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (IsSelf != false) hash ^= IsSelf.GetHashCode();
-      if (PlayerId != 0) hash ^= PlayerId.GetHashCode();
+      if (PlayerId != 0L) hash ^= PlayerId.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (PosX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosX);
       if (PosY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosY);
-      if (PosZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosZ);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -196,13 +180,13 @@ namespace Google.Protobuf.Common {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (IsSelf != false) {
+      if (PlayerId != 0L) {
         output.WriteRawTag(8);
-        output.WriteBool(IsSelf);
+        output.WriteInt64(PlayerId);
       }
-      if (PlayerId != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(PlayerId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
       }
       if (PosX != 0F) {
         output.WriteRawTag(29);
@@ -211,10 +195,6 @@ namespace Google.Protobuf.Common {
       if (PosY != 0F) {
         output.WriteRawTag(37);
         output.WriteFloat(PosY);
-      }
-      if (PosZ != 0F) {
-        output.WriteRawTag(45);
-        output.WriteFloat(PosZ);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -226,13 +206,13 @@ namespace Google.Protobuf.Common {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (IsSelf != false) {
+      if (PlayerId != 0L) {
         output.WriteRawTag(8);
-        output.WriteBool(IsSelf);
+        output.WriteInt64(PlayerId);
       }
-      if (PlayerId != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(PlayerId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
       }
       if (PosX != 0F) {
         output.WriteRawTag(29);
@@ -241,10 +221,6 @@ namespace Google.Protobuf.Common {
       if (PosY != 0F) {
         output.WriteRawTag(37);
         output.WriteFloat(PosY);
-      }
-      if (PosZ != 0F) {
-        output.WriteRawTag(45);
-        output.WriteFloat(PosZ);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -256,19 +232,16 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (IsSelf != false) {
-        size += 1 + 1;
+      if (PlayerId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(PlayerId);
       }
-      if (PlayerId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(PlayerId);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (PosX != 0F) {
         size += 1 + 4;
       }
       if (PosY != 0F) {
-        size += 1 + 4;
-      }
-      if (PosZ != 0F) {
         size += 1 + 4;
       }
       if (_unknownFields != null) {
@@ -283,20 +256,17 @@ namespace Google.Protobuf.Common {
       if (other == null) {
         return;
       }
-      if (other.IsSelf != false) {
-        IsSelf = other.IsSelf;
-      }
-      if (other.PlayerId != 0) {
+      if (other.PlayerId != 0L) {
         PlayerId = other.PlayerId;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       if (other.PosX != 0F) {
         PosX = other.PosX;
       }
       if (other.PosY != 0F) {
         PosY = other.PosY;
-      }
-      if (other.PosZ != 0F) {
-        PosZ = other.PosZ;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -314,11 +284,11 @@ namespace Google.Protobuf.Common {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            IsSelf = input.ReadBool();
+            PlayerId = input.ReadInt64();
             break;
           }
-          case 16: {
-            PlayerId = input.ReadInt32();
+          case 18: {
+            Name = input.ReadString();
             break;
           }
           case 29: {
@@ -327,10 +297,6 @@ namespace Google.Protobuf.Common {
           }
           case 37: {
             PosY = input.ReadFloat();
-            break;
-          }
-          case 45: {
-            PosZ = input.ReadFloat();
             break;
           }
         }
@@ -349,11 +315,11 @@ namespace Google.Protobuf.Common {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            IsSelf = input.ReadBool();
+            PlayerId = input.ReadInt64();
             break;
           }
-          case 16: {
-            PlayerId = input.ReadInt32();
+          case 18: {
+            Name = input.ReadString();
             break;
           }
           case 29: {
@@ -362,10 +328,6 @@ namespace Google.Protobuf.Common {
           }
           case 37: {
             PosY = input.ReadFloat();
-            break;
-          }
-          case 45: {
-            PosZ = input.ReadFloat();
             break;
           }
         }

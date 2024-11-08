@@ -9,6 +9,7 @@ namespace CS_Server;
 public class ClientSession : PacketSession
 {
     public int SessionId { get; set; }
+    public Player GamePlayer { get; set; }
     public Zone Zone { get; set; }
     public float PosX { get; set; }
     public float PosY { get; set; }
@@ -19,7 +20,7 @@ public class ClientSession : PacketSession
         ushort size = (ushort)packet.CalculateSize();
         byte[] sendBuffer = new byte[size + 4];
 
-        Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)(size + 4)), 0, sendBuffer, 0, sizeof(ushort));
 
         ushort protocolId = PacketManager.Instance.GetMessageId(packet.GetType());
         Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
@@ -32,17 +33,19 @@ public class ClientSession : PacketSession
     {
         Log.Info($"OnConnected: {endPoint}");
 
-        Program.Room.Push(() => Program.Room.Enter(this));
+        GamePlayer = PlayerManager.Instance.Add(this);
+        {
+            GamePlayer._playerInfo.Name = $"Player_{GamePlayer._playerInfo.PlayerId}";
+            GamePlayer._playerInfo.PosX = 0;
+            GamePlayer._playerInfo.PosY = 0;
+        }
+
+        ZoneManager.Instance.FindZone(1).EnterZone(GamePlayer);
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
-        SessionManager.Instance.Remove(this);
-        if (Zone != null)
-        {
-            Zone zone = Zone;
-            zone.Push(() => zone.Leave(this));
-            Zone = null;
-        }
+        ZoneManager.Instance.FindZone(1).LeaveZone(GamePlayer._playerInfo.PlayerId);
+
         Log.Info($"OnDisConnected: {endPoint}");
     }
 
