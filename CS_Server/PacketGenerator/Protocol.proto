@@ -7,7 +7,11 @@ import "Common.proto";
 option csharp_namespace = "Google.Protobuf.Protocol";
 
 message C2S_EnterGame{
-    TPlayer player_info = 1;
+}
+
+message S2C_EnterGame{
+    int32 result = 1;
+    TPlayer player_info = 2;
 }
 
 message S2C_LeaveGame{
