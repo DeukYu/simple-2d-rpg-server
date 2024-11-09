@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Protocol;
+﻿using Google.Protobuf.Enum;
+using Google.Protobuf.Protocol;
 using ServerCore;
 
 namespace CS_Server;
@@ -24,8 +25,12 @@ public class Zone
             player.EnterZone(this);
 
             {
-                C2S_EnterGame pkt = new C2S_EnterGame();
-                pkt.PlayerInfo = player._playerInfo;
+                S2C_EnterGame pkt = new S2C_EnterGame
+                {
+                    Result = (int)ErrorType.Success,
+                    PlayerInfo = player._playerInfo
+                };
+                
                 player.Send(pkt);
 
                 S2C_Spawn spawn = new S2C_Spawn();
