@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
@@ -39,10 +40,9 @@ public class Zone
                 {
                     if (player != p)
                         spawn.Players.Add(p._playerInfo);
-
-                    if (spawn.Players.Count > 0)
-                        player.Send(spawn);
                 }
+                if (spawn.Players.Count > 0)
+                    player.Send(spawn);
             }
 
             {
@@ -83,6 +83,62 @@ public class Zone
                         p.Send(despawn);
                 }
             }
+        }
+    }
+    public void HandleMove(Player player, C2S_Move packet)
+    {
+        if(player == null)
+        {
+            Log.Error("HandleMove player is null");
+            return;
+        }
+
+        lock (_lock)
+        {
+            PlayerInfo playerInfo = player._playerInfo;
+            playerInfo.PosInfo = packet.PosInfo;
+
+            S2C_Move res = new S2C_Move
+            {
+                PlayerId = player._playerInfo.PlayerId,
+                PosInfo = packet.PosInfo,
+            };
+
+            BroadCast(res);
+        }   
+    }
+
+    public void HandleSkill(Player player, C2S_Skill packet)
+    {
+        if (player == null)
+        {
+            Log.Error("HandleSkill player is null");
+            return;
+        }
+
+        lock (_lock)
+        {
+            PlayerInfo info = player._playerInfo;
+            if(info.PosInfo.State != CreatureState.Idle)
+            {
+                Log.Error("HandleSkill player is not idle");
+                return;
+            }
+
+            info.PosInfo.State = CreatureState.Attack;
+
+            S2C_Skill res = new S2C_Skill
+            {
+                PlayerId = player._playerInfo.PlayerId,
+                SkillInfo = new SkillInfo
+                {
+                    SkillId = 1,
+                }
+            };
+
+            BroadCast(res);
+
+            // TODO : 데미지 판정
         }
     }
 

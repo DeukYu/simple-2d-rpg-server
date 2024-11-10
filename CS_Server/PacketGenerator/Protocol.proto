@@ -35,3 +35,13 @@ message S2C_Move{
     int64 playerId = 2;
     PositionInfo pos_info = 3;
 }
+
+message C2S_Skill{
+    SkillInfo skill_info = 1;
+}
+
+message S2C_Skill{
+    int32 result = 1;
+	int64 playerId = 2;
+    SkillInfo skill_info = 3;
+}

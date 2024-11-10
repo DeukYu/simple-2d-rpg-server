@@ -44,31 +44,45 @@ class PacketHandler
 
         if (clientSession == null || movePacket == null)
         {
+            Log.Error("C2S_MoveHandler: Invalid packet");
             return;
         }
 
-        if (clientSession.GamePlayer._zone == null)
+        var player = clientSession.GamePlayer;
+        if(player == null)
         {
+            Log.Error("C2S_MoveHandler: GamePlayer is null");
             return;
         }
 
-        Log.Info($"C2S_MoveHandler: {clientSession.GamePlayer._playerInfo.PlayerId} {movePacket.PosInfo.PosX}, {movePacket.PosInfo.PosY}");
-
-        if(clientSession.GamePlayer == null)
+        var zone = player._zone;
+        if (zone == null)
         {
+            Log.Error("C2S_MoveHandler: Zone is null");
             return;
         }
 
-        // TODO: 검증 필요
-        PlayerInfo playerInfo = clientSession.GamePlayer._playerInfo;
-        playerInfo.PosInfo = movePacket.PosInfo;
+        zone.HandleMove(player, movePacket);
+    }
 
-        S2C_Move res = new S2C_Move
+    public static void C2S_SkillHandler(PacketSession session, IMessage packet)
+    {
+        C2S_Skill? skillPacket = packet as C2S_Skill;
+        ClientSession? clientSession = session as ClientSession;
+
+        var player  = clientSession.GamePlayer;
+        if (player == null)
         {
-            PlayerId = clientSession.GamePlayer._playerInfo.PlayerId,
-            PosInfo = movePacket.PosInfo,
-        };
+            Log.Error("C2S_SkillHandler: GamePlayer is null");
+            return;
+        }
+        var zone = player._zone;
+        if (zone == null)
+        {
+            Log.Error("C2S_SkillHandler: Zone is null");
+            return;
+        }
 
-        clientSession.GamePlayer._zone.BroadCast(res);
+        zone.HandleSkill(player, skillPacket);
     }
 }
