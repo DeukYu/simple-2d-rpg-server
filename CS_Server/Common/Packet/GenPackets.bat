@@ -1,4 +1,4 @@
- protoc --proto_path=../../PacketGenerator --csharp_out=./ Common.proto Protocol.proto Enum.proto WebProtocol.proto
+ protoc --proto_path=../../PacketGenerator --csharp_out=./ Enum.proto Common.proto Protocol.proto WebProtocol.proto
 IF ERRORLEVEL 1 PAUSE
 
 REM START ../../PacketGenerator/bin/Debug/PacketGenerator.exe ../../PacketGenerator/Protocol.proto

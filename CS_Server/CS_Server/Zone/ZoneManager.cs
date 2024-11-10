@@ -8,7 +8,7 @@ public class ZoneManager
 {
     public static ZoneManager Instance { get; } = new ZoneManager();
     private readonly ConcurrentDictionary<long, Zone> zones = new ConcurrentDictionary<long, Zone>();
-    private long _zoneId = 1;
+    private long _zoneId = 0;
     private object _lock = new object();    
 
     public Zone? Add()

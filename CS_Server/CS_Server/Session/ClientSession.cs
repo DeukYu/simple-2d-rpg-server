@@ -1,8 +1,6 @@
 ﻿using Google.Protobuf;
-using Google.Protobuf.Enum;
 using ServerCore;
 using System.Net;
-using System.Text;
 
 namespace CS_Server;
 
@@ -10,10 +8,6 @@ public class ClientSession : PacketSession
 {
     public int SessionId { get; set; }
     public Player GamePlayer { get; set; }
-    public Zone Zone { get; set; }
-    public float PosX { get; set; }
-    public float PosY { get; set; }
-    public float PosZ { get; set; }
 
     public void Send(IMessage packet)
     {
@@ -34,17 +28,21 @@ public class ClientSession : PacketSession
         Log.Info($"OnConnected: {endPoint}");
 
         GamePlayer = PlayerManager.Instance.Add(this);
+
+        var zone = ZoneManager.Instance.FindZone(1);
+        if(zone == null)
         {
-            GamePlayer._playerInfo.Name = $"Player_{GamePlayer._playerInfo.PlayerId}";
-            GamePlayer._playerInfo.PosX = 0;
-            GamePlayer._playerInfo.PosY = 0;
+            Log.Error("OnConnected: zone is null");
+            return;
         }
 
-        ZoneManager.Instance.FindZone(1).EnterZone(GamePlayer);
+        zone.EnterZone(GamePlayer);
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
         ZoneManager.Instance.FindZone(1).LeaveZone(GamePlayer._playerInfo.PlayerId);
+
+        SessionManager.Instance.Remove(this);
 
         Log.Info($"OnDisConnected: {endPoint}");
     }

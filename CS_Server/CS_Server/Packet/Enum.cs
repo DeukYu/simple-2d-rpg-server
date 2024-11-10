@@ -24,28 +24,32 @@ namespace Google.Protobuf.Enum {
     static EnumReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpFbnVtLnByb3RvEghQcm90b2NvbCqVAQoFTXNnSWQSCAoETm9uZRAAEhoK",
-            "FlMyQ19CUk9BRENBU1RFTlRFUkdBTUUQARIRCg1DMlNfTEVBVkVHQU1FEAIS",
-            "GgoWUzJDX0JST0FEQ0FTVExFQVZFR0FNRRADEhIKDlMyQ19QTEFZRVJMSVNU",
-            "EAQSDAoIQzJTX01PVkUQBRIVChFTMkNfQlJPQURDQVNUTU9WRRAGKiIKCUVy",
-            "cm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABQheqAhRHb29nbGUuUHJv",
-            "dG9idWYuRW51bWIGcHJvdG8z"));
+            "CgpFbnVtLnByb3RvEghQcm90b2NvbCo5Cg1DcmVhdHVyZVN0YXRlEggKBElk",
+            "bGUQABIICgRNb3ZlEAESCgoGQXR0YWNrEAISCAoERGVhZBADKjoKB01vdmVE",
+            "aXISCAoETm9uZRAAEgYKAlVwEAESCAoERG93bhACEggKBExlZnQQAxIJCgVS",
+            "aWdodBAEKiIKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABQheq",
+            "AhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.MsgId), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
   }
   #region Enums
-  public enum MsgId {
+  public enum CreatureState {
+    [pbr::OriginalName("Idle")] Idle = 0,
+    [pbr::OriginalName("Move")] Move = 1,
+    [pbr::OriginalName("Attack")] Attack = 2,
+    [pbr::OriginalName("Dead")] Dead = 3,
+  }
+
+  public enum MoveDir {
     [pbr::OriginalName("None")] None = 0,
-    [pbr::OriginalName("S2C_BROADCASTENTERGAME")] S2CBroadcastentergame = 1,
-    [pbr::OriginalName("C2S_LEAVEGAME")] C2SLeavegame = 2,
-    [pbr::OriginalName("S2C_BROADCASTLEAVEGAME")] S2CBroadcastleavegame = 3,
-    [pbr::OriginalName("S2C_PLAYERLIST")] S2CPlayerlist = 4,
-    [pbr::OriginalName("C2S_MOVE")] C2SMove = 5,
-    [pbr::OriginalName("S2C_BROADCASTMOVE")] S2CBroadcastmove = 6,
+    [pbr::OriginalName("Up")] Up = 1,
+    [pbr::OriginalName("Down")] Down = 2,
+    [pbr::OriginalName("Left")] Left = 3,
+    [pbr::OriginalName("Right")] Right = 4,
   }
 
   public enum ErrorType {

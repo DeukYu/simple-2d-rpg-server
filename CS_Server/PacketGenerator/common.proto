@@ -2,11 +2,19 @@ syntax = "proto3";
 
 package Protocol;
 
+import "Enum.proto";
+
 option csharp_namespace = "Google.Protobuf.Common";
 
-message TPlayer {
+message PositionInfo{
+    CreatureState state = 1;
+    MoveDir move_dir = 2; 
+    int32 pos_x = 3;
+    int32 pos_y = 4;
+}
+
+message PlayerInfo{
     int64 playerId = 1;
     string name = 2;
-    float posX = 3;
-    float posY = 4;
+    PositionInfo pos_info = 3;
 }

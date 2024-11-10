@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Common;
+using Google.Protobuf.Enum;
 using System.Collections.Concurrent;
 
 namespace CS_Server;
@@ -11,12 +12,17 @@ public class PlayerManager
 
     public Player? Add(ClientSession session)
     {
-        TPlayer playerInfo = new TPlayer
+        PlayerInfo playerInfo = new PlayerInfo
         {
             PlayerId = Interlocked.Increment(ref _playerId),
             Name = "Player" + _playerId,
-            PosX = 0,
-            PosY = 0,
+            PosInfo = new PositionInfo
+            {
+                State = CreatureState.Idle,
+                MoveDir = MoveDir.Down,
+                PosX = 0,
+                PosY = 0,
+            },
         };
 
         Player player = new Player(session, playerInfo);

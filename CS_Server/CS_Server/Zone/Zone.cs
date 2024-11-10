@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Enum;
+﻿using Google.Protobuf;
+using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
 
@@ -9,7 +10,7 @@ public class Zone
     public long ZoneId { get; set; }
     object _lock = new object();
 
-    List<Player> _players = new List<Player>();
+    Dictionary<long, Player> _players = new Dictionary<long, Player>();
 
     public void EnterZone(Player player)
     {
@@ -21,7 +22,7 @@ public class Zone
 
         lock (_lock)
         {
-            _players.Add(player);
+            _players.Add(player._playerInfo.PlayerId, player);
             player.EnterZone(this);
 
             {
@@ -30,23 +31,24 @@ public class Zone
                     Result = (int)ErrorType.Success,
                     PlayerInfo = player._playerInfo
                 };
-                
+
                 player.Send(pkt);
 
                 S2C_Spawn spawn = new S2C_Spawn();
-                foreach (Player p in _players)
+                foreach(var p in _players.Values)
                 {
                     if (player != p)
                         spawn.Players.Add(p._playerInfo);
 
-                    player.Send(spawn);
+                    if (spawn.Players.Count > 0)
+                        player.Send(spawn);
                 }
             }
 
             {
                 S2C_Spawn spawn = new S2C_Spawn();
                 spawn.Players.Add(player._playerInfo);
-                foreach (var p in _players)
+                foreach (var p in _players.Values)
                 {
                     if (player != p)
                         p.Send(spawn);
@@ -59,14 +61,13 @@ public class Zone
     {
         lock (_lock)
         {
-            var player = _players.Find(p => p._playerInfo.PlayerId == playerId);
-            if (player == null)
+            if(_players.TryGetValue(playerId, out var player) == false)
             {
                 Log.Error("LeaveZone player is null");
                 return;
             }
 
-            _players.Remove(player);
+            _players.Remove(playerId);
             player.LeaveZone();
             {
                 S2C_LeaveGame leave = new S2C_LeaveGame();
@@ -76,11 +77,22 @@ public class Zone
             {
                 S2C_Despawn despawn = new S2C_Despawn();
                 despawn.PlayerIds.Add(playerId);
-                foreach (var p in _players)
+                foreach (var p in _players.Values)
                 {
                     if (player != p)
                         p.Send(despawn);
                 }
+            }
+        }
+    }
+
+    public void BroadCast(IMessage packet)
+    {
+        lock (_lock)
+        {
+            foreach (var player in _players.Values)
+            {
+                player.Send(packet);
             }
         }
     }

@@ -1,8 +1,10 @@
 ﻿
 using Google.Protobuf;
+using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace CS_Server;
@@ -29,12 +31,10 @@ class PacketHandler
             return;
         }
 
-        if (clientSession.Zone == null)
+        if (clientSession.GamePlayer._zone == null)
         {
             return;
         }
-
-        Zone zone = clientSession.Zone;
     }
 
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
@@ -47,11 +47,28 @@ class PacketHandler
             return;
         }
 
-        if (clientSession.Zone == null)
+        if (clientSession.GamePlayer._zone == null)
         {
             return;
         }
 
-        Zone room = clientSession.Zone;
+        Log.Info($"C2S_MoveHandler: {clientSession.GamePlayer._playerInfo.PlayerId} {movePacket.PosInfo.PosX}, {movePacket.PosInfo.PosY}");
+
+        if(clientSession.GamePlayer == null)
+        {
+            return;
+        }
+
+        // TODO: 검증 필요
+        PlayerInfo playerInfo = clientSession.GamePlayer._playerInfo;
+        playerInfo.PosInfo = movePacket.PosInfo;
+
+        S2C_Move res = new S2C_Move
+        {
+            PlayerId = clientSession.GamePlayer._playerInfo.PlayerId,
+            PosInfo = movePacket.PosInfo,
+        };
+
+        clientSession.GamePlayer._zone.BroadCast(res);
     }
 }

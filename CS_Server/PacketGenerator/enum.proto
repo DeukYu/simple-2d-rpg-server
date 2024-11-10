@@ -4,14 +4,19 @@ package Protocol;
 
 option csharp_namespace = "Google.Protobuf.Enum";
 
-enum MsgId{
+enum CreatureState{
+	Idle = 0;
+	Move = 1;
+	Attack = 2;
+	Dead = 3;
+}
+
+enum MoveDir{
     None = 0;
-    S2C_BROADCASTENTERGAME = 1;
-    C2S_LEAVEGAME = 2;
-    S2C_BROADCASTLEAVEGAME = 3;
-    S2C_PLAYERLIST = 4;
-    C2S_MOVE = 5;
-    S2C_BROADCASTMOVE = 6;
+	Up = 1;
+	Down = 2;
+	Left = 3;
+	Right = 4;
 }
 
 enum ErrorType{

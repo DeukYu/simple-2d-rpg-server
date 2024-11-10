@@ -27,6 +27,10 @@ dotnet add package MySql.EntityFrameworkCore
 dotnet add package Newtonsoft.Json
 ```
 
+## 컨텐츠 구현 내용
+- 플레이어 이동 동기화 구현
+
+
 # Server (CS_Server)
 ## ServerCore
 - 서버 핵심 기능들 구현

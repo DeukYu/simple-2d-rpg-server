@@ -6,10 +6,10 @@ namespace CS_Server;
 public class Player
 {
     private readonly ClientSession _session;
-    private Zone? _zone;
-    public TPlayer _playerInfo;
+    public Zone? _zone;
+    public PlayerInfo _playerInfo;
 
-    public Player(ClientSession session, TPlayer tPlayer)
+    public Player(ClientSession session, PlayerInfo tPlayer)
     {
         _session = session;
         _playerInfo = tPlayer;
@@ -19,7 +19,6 @@ public class Player
     public void EnterZone(Zone zone)
     {
         _zone = zone;
-        zone.EnterZone(this);
     }
 
     public void LeaveZone()

@@ -11,15 +11,15 @@ message C2S_EnterGame{
 
 message S2C_EnterGame{
     int32 result = 1;
-    TPlayer player_info = 2;
+    PlayerInfo player_info = 2;
 }
 
 message S2C_LeaveGame{
-
+    int32 result = 1;
 }
 
 message S2C_Spawn{
-    repeated TPlayer players = 1;
+    repeated PlayerInfo players = 1;
 }
 
 message S2C_Despawn{
@@ -27,14 +27,11 @@ message S2C_Despawn{
 }
 
 message C2S_Move {
-    float posX = 1;
-    float posY = 2;
+    PositionInfo pos_info = 1;
 }
 
 message S2C_Move{
     int32 result = 1;
-    int32 playerId = 2;
-    float posX = 3;
-    float posY = 4;
-    float posZ = 5;
+    int64 playerId = 2;
+    PositionInfo pos_info = 3;
 }
