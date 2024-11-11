@@ -16,7 +16,7 @@ jobs:
         id: readme
         run: |
           # README.md 파일의 내용을 안전하게 JSON 형식으로 변환
-          README_CONTENT=$(cat README.md | jq -Rs .)  # jq를 사용하여 JSON 형식으로 변환
+          README_CONTENT=$(cat README.md)
           echo "content=$README_CONTENT" >> $GITHUB_ENV  # 환경 파일에 변수 저장
 
       - name: Update Notion Page
@@ -33,13 +33,12 @@ jobs:
           BLOCKS=""
 
           while [ $START_INDEX -lt $CONTENT_LENGTH ]; do
-            # 텍스트의 길이가 2000자를 넘지 않도록 잘라서 JSON 형식으로 변환
-            PART=$(echo "${README_CONTENT:$START_INDEX:$MAX_LENGTH}" | jq -Rs .)
+            # 텍스트 자르기 (최대 2000자)
+            PART="${README_CONTENT:$START_INDEX:$MAX_LENGTH}"
 
-            # 만약 자른 텍스트의 길이가 2000자 이상이라면 2000자로 자른다.
-            PART_CONTENT=$(echo $PART | jq -r '. | length')
-            if [ $PART_CONTENT -gt $MAX_LENGTH ]; then
-              PART=$(echo "${README_CONTENT:$START_INDEX:$MAX_LENGTH}")
+            # 만약 자른 부분이 2000자를 초과하면 강제로 잘라서 2000자 이하로 설정
+            if [ ${#PART} -gt $MAX_LENGTH ]; then
+              PART="${PART:0:$MAX_LENGTH}"
             fi
 
             # JSON 포맷에 맞게 블록을 추가
@@ -52,7 +51,7 @@ jobs:
                   {
                     \"type\": \"text\",
                     \"text\": {
-                      \"content\": $PART
+                      \"content\": \"$PART\"
                     }
                   }
                 ]
