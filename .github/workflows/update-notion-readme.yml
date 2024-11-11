@@ -59,6 +59,9 @@ jobs:
             END_INDEX=$((END_INDEX + MAX_LENGTH))
           done
 
+          # 생성된 JSON 확인용 로그 출력
+          echo "Generated JSON: $BLOCKS"
+
           # Notion API 요청 보내기
           curl -v -X PATCH "https://api.notion.com/v1/blocks/${{ secrets.NOTION_PAGE_ID }}/children" \
           -H "Authorization: Bearer ${{ secrets.NOTION_API_KEY }}" \
