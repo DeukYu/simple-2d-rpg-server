@@ -1,7 +1,8 @@
 # simple-2d-rpg-server
 - C# 서버를 제작중입니다.
 - 현재는 Unity 로 Object 관련 작업과 동기화 작업 중에 있습니다.
-- Client : https://github.com/kdh0794/GuardianOfNature2D  
+- Client : https://github.com/kdh0794/GuardianOfNature2D
+- notion action test
 
 ## 환경설정
 - Visual Studio 2022
