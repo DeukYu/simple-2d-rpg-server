@@ -9,20 +9,20 @@
 - MySQL
 
 ## Nuget Package
-- NLog
+- NLog : 서버 내에서 로그를 남기기 위하여 사용됩니다.
 ```
 dotnet add package NLog
 dotnet add package NLog.Config
 ```
-- ProtoBuf (3.28.3)
+- ProtoBuf (3.28.3) : 패킷 직렬화를 위해 사용합니다.
 ```
 dotnet add package Google.Protobuf
 ```
-- MySql.EntityFrameworkCore
+- MySql.EntityFrameworkCore : MySQL 연동을 위해 사용합니다.
 ```
 dotnet add package MySql.EntityFrameworkCore
 ```
-- Newtonsoft.Json
+- Newtonsoft.Json : 각종 Data, Config 파일을 가져오기 위해 사용합니다.
 ```
 dotnet add package Newtonsoft.Json
 ```
