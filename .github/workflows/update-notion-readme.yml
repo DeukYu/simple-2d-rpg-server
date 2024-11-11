@@ -33,7 +33,15 @@ jobs:
           BLOCKS=""
 
           while [ $START_INDEX -lt $CONTENT_LENGTH ]; do
-            PART=$(echo "${README_CONTENT:$START_INDEX:$MAX_LENGTH}" | jq -Rs .)  # 2000자 이하로 잘라서 JSON 형식으로 변환
+            # 텍스트의 길이가 2000자를 넘지 않도록 잘라서 JSON 형식으로 변환
+            PART=$(echo "${README_CONTENT:$START_INDEX:$MAX_LENGTH}" | jq -Rs .)
+
+            # 만약 자른 텍스트의 길이가 2000자 이상이라면 2000자로 자른다.
+            PART_CONTENT=$(echo $PART | jq -r '. | length')
+            if [ $PART_CONTENT -gt $MAX_LENGTH ]; then
+              PART=$(echo "${README_CONTENT:$START_INDEX:$MAX_LENGTH}")
+            fi
+
             # JSON 포맷에 맞게 블록을 추가
             BLOCKS="$BLOCKS
             {
@@ -50,6 +58,7 @@ jobs:
                 ]
               }
             }"
+            
             # 블록 구분을 위한 쉼표 추가
             if [ $START_INDEX -lt $((CONTENT_LENGTH - MAX_LENGTH)) ]; then
               BLOCKS="$BLOCKS,"
