@@ -24,11 +24,11 @@ namespace Google.Protobuf.Enum {
     static EnumReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpFbnVtLnByb3RvEghQcm90b2NvbCo5Cg1DcmVhdHVyZVN0YXRlEggKBElk",
-            "bGUQABIICgRNb3ZlEAESCgoGQXR0YWNrEAISCAoERGVhZBADKjoKB01vdmVE",
-            "aXISCAoETm9uZRAAEgYKAlVwEAESCAoERG93bhACEggKBExlZnQQAxIJCgVS",
-            "aWdodBAEKiIKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABQheq",
-            "AhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
+            "CgpFbnVtLnByb3RvEghQcm90b2NvbCo4Cg1DcmVhdHVyZVN0YXRlEggKBElk",
+            "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqOgoHTW92ZURp",
+            "chIICgROb25lEAASBgoCVXAQARIICgREb3duEAISCAoETGVmdBADEgkKBVJp",
+            "Z2h0EAQqIgoJRXJyb3JUeXBlEgsKB1N1Y2Nlc3MQABIICgRGYWlsEAFCF6oC",
+            "FEdvb2dsZS5Qcm90b2J1Zi5FbnVtYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
@@ -40,7 +40,7 @@ namespace Google.Protobuf.Enum {
   public enum CreatureState {
     [pbr::OriginalName("Idle")] Idle = 0,
     [pbr::OriginalName("Move")] Move = 1,
-    [pbr::OriginalName("Attack")] Attack = 2,
+    [pbr::OriginalName("Skill")] Skill = 2,
     [pbr::OriginalName("Dead")] Dead = 3,
   }
 

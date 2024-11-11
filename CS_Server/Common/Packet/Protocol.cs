@@ -28,15 +28,15 @@ namespace Google.Protobuf.Protocol {
             "MlNfRW50ZXJHYW1lIkoKDVMyQ19FbnRlckdhbWUSDgoGcmVzdWx0GAEgASgF",
             "EikKC3BsYXllcl9pbmZvGAIgASgLMhQuUHJvdG9jb2wuUGxheWVySW5mbyIf",
             "Cg1TMkNfTGVhdmVHYW1lEg4KBnJlc3VsdBgBIAEoBSIyCglTMkNfU3Bhd24S",
-            "JQoHcGxheWVycxgBIAMoCzIULlByb3RvY29sLlBsYXllckluZm8iIAoLUzJD",
-            "X0Rlc3Bhd24SEQoJcGxheWVySWRzGAEgAygDIjQKCEMyU19Nb3ZlEigKCHBv",
-            "c19pbmZvGAEgASgLMhYuUHJvdG9jb2wuUG9zaXRpb25JbmZvIlYKCFMyQ19N",
-            "b3ZlEg4KBnJlc3VsdBgBIAEoBRIQCghwbGF5ZXJJZBgCIAEoAxIoCghwb3Nf",
-            "aW5mbxgDIAEoCzIWLlByb3RvY29sLlBvc2l0aW9uSW5mbyI0CglDMlNfU2tp",
-            "bGwSJwoKc2tpbGxfaW5mbxgBIAEoCzITLlByb3RvY29sLlNraWxsSW5mbyJW",
-            "CglTMkNfU2tpbGwSDgoGcmVzdWx0GAEgASgFEhAKCHBsYXllcklkGAIgASgD",
-            "EicKCnNraWxsX2luZm8YAyABKAsyEy5Qcm90b2NvbC5Ta2lsbEluZm9CG6oC",
-            "GEdvb2dsZS5Qcm90b2J1Zi5Qcm90b2NvbGIGcHJvdG8z"));
+            "JQoHcGxheWVycxgBIAMoCzIULlByb3RvY29sLlBsYXllckluZm8iIQoLUzJD",
+            "X0Rlc3Bhd24SEgoKcGxheWVyX2lkcxgBIAMoAyI0CghDMlNfTW92ZRIoCghw",
+            "b3NfaW5mbxgBIAEoCzIWLlByb3RvY29sLlBvc2l0aW9uSW5mbyJXCghTMkNf",
+            "TW92ZRIOCgZyZXN1bHQYASABKAUSEQoJcGxheWVyX2lkGAIgASgDEigKCHBv",
+            "c19pbmZvGAMgASgLMhYuUHJvdG9jb2wuUG9zaXRpb25JbmZvIjQKCUMyU19T",
+            "a2lsbBInCgpza2lsbF9pbmZvGAEgASgLMhMuUHJvdG9jb2wuU2tpbGxJbmZv",
+            "IlYKCVMyQ19Ta2lsbBIOCgZyZXN1bHQYASABKAUSEAoIcGxheWVySWQYAiAB",
+            "KAMSJwoKc2tpbGxfaW5mbxgDIAEoCzITLlByb3RvY29sLlNraWxsSW5mb0Ib",
+            "qgIYR29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Common.CommonReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -853,7 +853,7 @@ namespace Google.Protobuf.Protocol {
       return new S2C_Despawn(this);
     }
 
-    /// <summary>Field number for the "playerIds" field.</summary>
+    /// <summary>Field number for the "player_ids" field.</summary>
     public const int PlayerIdsFieldNumber = 1;
     private static readonly pb::FieldCodec<long> _repeated_playerIds_codec
         = pb::FieldCodec.ForInt64(10);
@@ -1245,7 +1245,7 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
-    /// <summary>Field number for the "playerId" field.</summary>
+    /// <summary>Field number for the "player_id" field.</summary>
     public const int PlayerIdFieldNumber = 2;
     private long playerId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

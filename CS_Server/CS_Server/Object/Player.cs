@@ -26,6 +26,7 @@ public class Player
         _zone = null;
     }
 
+    // TODO : 추후 JobTimer로 될 예정이나, 현재는 임시로 Send를 보낸다.
     public void Send(IMessage packet)
     {
         _session.Send(packet);

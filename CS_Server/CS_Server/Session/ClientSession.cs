@@ -7,7 +7,7 @@ namespace CS_Server;
 public class ClientSession : PacketSession
 {
     public int SessionId { get; set; }
-    public Player GamePlayer { get; set; }
+    public Player? GamePlayer { get; set; }
 
     public void Send(IMessage packet)
     {
@@ -27,7 +27,15 @@ public class ClientSession : PacketSession
     {
         Log.Info($"OnConnected: {endPoint}");
 
+        // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
         GamePlayer = PlayerManager.Instance.Add(this);
+
+
+        if(GamePlayer == null)
+        {
+            Log.Error("OnConnected: GamePlayer is null.");
+            return;
+        }
 
         var zone = ZoneManager.Instance.FindZone(1);
         if(zone == null)

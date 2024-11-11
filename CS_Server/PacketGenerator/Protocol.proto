@@ -23,7 +23,7 @@ message S2C_Spawn{
 }
 
 message S2C_Despawn{
-    repeated int64 playerIds = 1;
+    repeated int64 player_ids = 1;
 }
 
 message C2S_Move {
@@ -32,7 +32,7 @@ message C2S_Move {
 
 message S2C_Move{
     int32 result = 1;
-    int64 playerId = 2;
+    int64 player_id = 2;
     PositionInfo pos_info = 3;
 }
 

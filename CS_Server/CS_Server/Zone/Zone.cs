@@ -3,6 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using System.Collections.Concurrent;
 
 namespace CS_Server;
 
@@ -11,7 +12,7 @@ public class Zone
     public long ZoneId { get; set; }
     object _lock = new object();
 
-    Dictionary<long, Player> _players = new Dictionary<long, Player>();
+    Dictionary<long, Player> _players = new Dictionary<long, Player>(); // TODO : JobQueue 형식으로 변경시, ConcurrentDictionary 으로 변경하여, 락프리(?)로 변경한다.
 
     public void EnterZone(Player player)
     {
@@ -35,19 +36,21 @@ public class Zone
 
                 player.Send(pkt);
 
-                S2C_Spawn spawn = new S2C_Spawn();
-                foreach(var p in _players.Values)
+                var filteredPlayers = _players.Values.Where(p => player != p).Select(p => p._playerInfo).ToList();
+                if (filteredPlayers.Count > 0)
                 {
-                    if (player != p)
-                        spawn.Players.Add(p._playerInfo);
-                }
-                if (spawn.Players.Count > 0)
+                    S2C_Spawn spawn = new S2C_Spawn();
+                    spawn.Players.AddRange(filteredPlayers);
                     player.Send(spawn);
+                }
             }
 
             {
-                S2C_Spawn spawn = new S2C_Spawn();
-                spawn.Players.Add(player._playerInfo);
+                S2C_Spawn spawn = new S2C_Spawn
+                {
+                    Players = { player._playerInfo }
+                };
+
                 foreach (var p in _players.Values)
                 {
                     if (player != p)
@@ -61,7 +64,7 @@ public class Zone
     {
         lock (_lock)
         {
-            if(_players.TryGetValue(playerId, out var player) == false)
+            if (_players.TryGetValue(playerId, out var player) == false)
             {
                 Log.Error("LeaveZone player is null");
                 return;
@@ -75,8 +78,10 @@ public class Zone
             }
 
             {
-                S2C_Despawn despawn = new S2C_Despawn();
-                despawn.PlayerIds.Add(playerId);
+                S2C_Despawn despawn = new S2C_Despawn
+                {
+                    PlayerIds = { playerId }
+                };
                 foreach (var p in _players.Values)
                 {
                     if (player != p)
@@ -87,7 +92,7 @@ public class Zone
     }
     public void HandleMove(Player player, C2S_Move packet)
     {
-        if(player == null)
+        if (player == null)
         {
             Log.Error("HandleMove player is null");
             return;
@@ -104,8 +109,11 @@ public class Zone
                 PosInfo = packet.PosInfo,
             };
 
-            BroadCast(res);
-        }   
+            foreach (var p in _players.Values)
+            {
+                p.Send(res);
+            }
+        }
     }
 
     public void HandleSkill(Player player, C2S_Skill packet)
@@ -119,13 +127,13 @@ public class Zone
         lock (_lock)
         {
             PlayerInfo info = player._playerInfo;
-            if(info.PosInfo.State != CreatureState.Idle)
+            if (info.PosInfo.State != CreatureState.Idle)
             {
                 Log.Error("HandleSkill player is not idle");
                 return;
             }
 
-            info.PosInfo.State = CreatureState.Attack;
+            info.PosInfo.State = CreatureState.Skill;
 
             S2C_Skill res = new S2C_Skill
             {
@@ -136,7 +144,10 @@ public class Zone
                 }
             };
 
-            BroadCast(res);
+            foreach (var p in _players.Values)
+                p.Send(res);
+
+            //BroadCast(res);
 
             // TODO : 데미지 판정
         }

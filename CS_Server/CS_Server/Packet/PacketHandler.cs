@@ -23,42 +23,27 @@ class PacketHandler
             typeof(Action<PacketSession, IMessage>), methodInfo);
     }
 
-    public static void C2S_LeaveGameHandler(PacketSession session, IMessage packet)
-    {
-        ClientSession? clientSession = session as ClientSession;
-        if (clientSession == null)
-        {
-            return;
-        }
-
-        if (clientSession.GamePlayer._zone == null)
-        {
-            return;
-        }
-    }
-
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
     {
         C2S_Move? movePacket = packet as C2S_Move;
         ClientSession? clientSession = session as ClientSession;
-
         if (clientSession == null || movePacket == null)
         {
-            Log.Error("C2S_MoveHandler: Invalid packet");
+            Log.Error("C2S_MoveHandler: Invalid packet.");
             return;
         }
 
         var player = clientSession.GamePlayer;
-        if(player == null)
+        if (player == null)
         {
-            Log.Error("C2S_MoveHandler: GamePlayer is null");
+            Log.Error("C2S_MoveHandler: GamePlayer is null.");
             return;
         }
 
         var zone = player._zone;
         if (zone == null)
         {
-            Log.Error("C2S_MoveHandler: Zone is null");
+            Log.Error("C2S_MoveHandler: Zone is null.");
             return;
         }
 
@@ -69,8 +54,13 @@ class PacketHandler
     {
         C2S_Skill? skillPacket = packet as C2S_Skill;
         ClientSession? clientSession = session as ClientSession;
+        if (clientSession == null || skillPacket == null)
+        {
+            Log.Error("C2S_SkillHandler: Invalid packet.");
+            return;
+        }
 
-        var player  = clientSession.GamePlayer;
+        var player = clientSession.GamePlayer;
         if (player == null)
         {
             Log.Error("C2S_SkillHandler: GamePlayer is null");
