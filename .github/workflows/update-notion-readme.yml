@@ -16,7 +16,8 @@ jobs:
         id: readme
         run: |
           # README.md 파일의 내용을 안전하게 JSON 형식으로 변환
-          README_CONTENT=$(cat README.md)
+          # README.md의 내용에서 특수 문자 문제를 처리하기 위해 jq 대신 cat 사용
+          README_CONTENT=$(cat README.md | sed 's/"/\\"/g' | sed "s/\n/\\n/g")  # 따옴표와 줄바꿈 처리
           echo "content=$README_CONTENT" >> $GITHUB_ENV  # 환경 파일에 변수 저장
 
       - name: Update Notion Page
