@@ -1,0 +1,42 @@
+name: Update Notion README
+
+on:
+  push:
+    paths:
+      - "README.md"
+
+jobs:
+  update-notion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Get README Content
+        id: readme
+        run: |
+          export README_CONTENT=$(cat README.md)
+          echo "::set-output name=content::$README_CONTENT"
+
+      - name: Update Notion Page
+        env:
+          NOTION_API_KEY: ${{ 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 }}
+          NOTION_PAGE_ID: 13b776dbad2a804c8b6cdf5255f3039d
+        run: |
+          curl -X PATCH "https://api.notion.com/v1/pages/$NOTION_PAGE_ID" \
+          -H "Authorization: Bearer $NOTION_API_KEY" \
+          -H "Content-Type: application/json" \
+          -H "Notion-Version: 2021-05-13" \
+          --data '{
+            "properties": {
+              "title": {
+                "title": [
+                  {
+                    "text": {
+                      "content": "'"$README_CONTENT"'"
+                    }
+                  }
+                ]
+              }
+            }
+          }'
