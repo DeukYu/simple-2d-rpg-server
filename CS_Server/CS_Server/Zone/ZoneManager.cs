@@ -11,9 +11,10 @@ public class ZoneManager
     private long _zoneId = 0;
     private object _lock = new object();    
 
-    public Zone? Add()
+    public Zone? Add(int mapId)
     {
         Zone zone = new Zone();
+        zone.Init(mapId);
 
         lock (_lock)
         {

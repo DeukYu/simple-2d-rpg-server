@@ -14,6 +14,14 @@ public class Zone
 
     Dictionary<long, Player> _players = new Dictionary<long, Player>(); // TODO : JobQueue 형식으로 변경시, ConcurrentDictionary 으로 변경하여, 락프리(?)로 변경한다.
 
+    Map _map = new Map();
+
+    public void Init(int mapId)
+    {
+        // TODO : 데이터 Sheet 들어가면 수정
+        _map.LoadMap(mapId, "../../../../Common/MapData");
+    }
+
     public void EnterZone(Player player)
     {
         if (player == null)
@@ -100,8 +108,22 @@ public class Zone
 
         lock (_lock)
         {
+            PositionInfo movePosInfo = packet.PosInfo;
             PlayerInfo playerInfo = player._playerInfo;
-            playerInfo.PosInfo = packet.PosInfo;
+
+            // 다른 좌표로 이동할 경우, 갈 수 있는지 체크
+            if(movePosInfo.PosX != playerInfo.PosInfo.PosX || movePosInfo.PosY != playerInfo.PosInfo.PosY)
+            {
+                if(_map.CanGo(new Vector2Int(movePosInfo.PosX, movePosInfo.PosY)) == false)
+                {
+                    return;
+                }
+            }
+
+            playerInfo.PosInfo.State = movePosInfo.State;
+            playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
+            _map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
+
 
             S2C_Move res = new S2C_Move
             {
@@ -150,6 +172,12 @@ public class Zone
             //BroadCast(res);
 
             // TODO : 데미지 판정
+            var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
+            Player target = _map.Find(skillPos);
+            if (target != null)
+            {
+               Log.Info("Player Hit");
+            }
         }
     }
 

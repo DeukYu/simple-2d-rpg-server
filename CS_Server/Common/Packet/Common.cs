@@ -104,7 +104,7 @@ namespace Google.Protobuf.Common {
 
     /// <summary>Field number for the "move_dir" field.</summary>
     public const int MoveDirFieldNumber = 2;
-    private global::Google.Protobuf.Enum.MoveDir moveDir_ = global::Google.Protobuf.Enum.MoveDir.None;
+    private global::Google.Protobuf.Enum.MoveDir moveDir_ = global::Google.Protobuf.Enum.MoveDir.Up;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Google.Protobuf.Enum.MoveDir MoveDir {
@@ -165,7 +165,7 @@ namespace Google.Protobuf.Common {
     public override int GetHashCode() {
       int hash = 1;
       if (State != global::Google.Protobuf.Enum.CreatureState.Idle) hash ^= State.GetHashCode();
-      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.None) hash ^= MoveDir.GetHashCode();
+      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.Up) hash ^= MoveDir.GetHashCode();
       if (PosX != 0) hash ^= PosX.GetHashCode();
       if (PosY != 0) hash ^= PosY.GetHashCode();
       if (_unknownFields != null) {
@@ -190,7 +190,7 @@ namespace Google.Protobuf.Common {
         output.WriteRawTag(8);
         output.WriteEnum((int) State);
       }
-      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.None) {
+      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.Up) {
         output.WriteRawTag(16);
         output.WriteEnum((int) MoveDir);
       }
@@ -216,7 +216,7 @@ namespace Google.Protobuf.Common {
         output.WriteRawTag(8);
         output.WriteEnum((int) State);
       }
-      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.None) {
+      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.Up) {
         output.WriteRawTag(16);
         output.WriteEnum((int) MoveDir);
       }
@@ -241,7 +241,7 @@ namespace Google.Protobuf.Common {
       if (State != global::Google.Protobuf.Enum.CreatureState.Idle) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) State);
       }
-      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.None) {
+      if (MoveDir != global::Google.Protobuf.Enum.MoveDir.Up) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) MoveDir);
       }
       if (PosX != 0) {
@@ -265,7 +265,7 @@ namespace Google.Protobuf.Common {
       if (other.State != global::Google.Protobuf.Enum.CreatureState.Idle) {
         State = other.State;
       }
-      if (other.MoveDir != global::Google.Protobuf.Enum.MoveDir.None) {
+      if (other.MoveDir != global::Google.Protobuf.Enum.MoveDir.Up) {
         MoveDir = other.MoveDir;
       }
       if (other.PosX != 0) {

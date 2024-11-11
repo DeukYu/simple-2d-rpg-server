@@ -15,7 +15,7 @@ jobs:
       - name: Get README Content
         id: readme
         run: |
-          # README.md 파일의 내용을 읽고 직접 변수에 저장
+          # README.md 파일의 내용을 읽고 변수에 저장
           README_CONTENT=$(cat README.md)
           # 파일의 내용을 2000자 이하로 분할하여 JSON 형식에 맞게 준비
           CONTENT_LENGTH=${#README_CONTENT}

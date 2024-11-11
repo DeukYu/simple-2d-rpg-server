@@ -10,7 +10,7 @@ class Program
     static Listener _listener = new Listener();
     static void Main(string[] args)
     {
-        ZoneManager.Instance.Add();
+        ZoneManager.Instance.Add(1);
 
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();

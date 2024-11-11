@@ -25,10 +25,10 @@ namespace Google.Protobuf.Enum {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CgpFbnVtLnByb3RvEghQcm90b2NvbCo4Cg1DcmVhdHVyZVN0YXRlEggKBElk",
-            "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqOgoHTW92ZURp",
-            "chIICgROb25lEAASBgoCVXAQARIICgREb3duEAISCAoETGVmdBADEgkKBVJp",
-            "Z2h0EAQqIgoJRXJyb3JUeXBlEgsKB1N1Y2Nlc3MQABIICgRGYWlsEAFCF6oC",
-            "FEdvb2dsZS5Qcm90b2J1Zi5FbnVtYgZwcm90bzM="));
+            "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqMAoHTW92ZURp",
+            "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAyoiCglF",
+            "cnJvclR5cGUSCwoHU3VjY2VzcxAAEggKBEZhaWwQAUIXqgIUR29vZ2xlLlBy",
+            "b3RvYnVmLkVudW1iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
@@ -45,11 +45,10 @@ namespace Google.Protobuf.Enum {
   }
 
   public enum MoveDir {
-    [pbr::OriginalName("None")] None = 0,
-    [pbr::OriginalName("Up")] Up = 1,
-    [pbr::OriginalName("Down")] Down = 2,
-    [pbr::OriginalName("Left")] Left = 3,
-    [pbr::OriginalName("Right")] Right = 4,
+    [pbr::OriginalName("Up")] Up = 0,
+    [pbr::OriginalName("Down")] Down = 1,
+    [pbr::OriginalName("Left")] Left = 2,
+    [pbr::OriginalName("Right")] Right = 3,
   }
 
   public enum ErrorType {
