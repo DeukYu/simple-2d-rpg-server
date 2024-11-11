@@ -10,18 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3  # v2에서 v3로 업데이트
+        uses: actions/checkout@v3  # 최신 버전 사용
 
       - name: Get README Content
         id: readme
         run: |
-          export README_CONTENT=$(cat README.md)
-          echo "::set-output name=content::$README_CONTENT"
+          README_CONTENT=$(cat README.md)
+          echo "content=$README_CONTENT" >> $GITHUB_ENV  # 환경 파일에 변수 저장
 
       - name: Update Notion Page
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_PAGE_ID: 13b776dbad2a804c8b6cdf5255f3039d
+          README_CONTENT: ${{ env.content }}  # 환경 파일에서 읽어옴
         run: |
           curl -X PATCH "https://api.notion.com/v1/blocks/$NOTION_PAGE_ID/children" \
           -H "Authorization: Bearer $NOTION_API_KEY" \
