@@ -15,7 +15,8 @@ jobs:
       - name: Get README Content
         id: readme
         run: |
-          README_CONTENT=$(cat README.md)
+          # README.md 파일의 내용을 한 줄로 합치기
+          README_CONTENT=$(cat README.md | sed ':a;N;$!ba;s/\n/ /g')
           echo "content=$README_CONTENT" >> $GITHUB_ENV  # 환경 파일에 변수 저장
 
       - name: Update Notion Page
