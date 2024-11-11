@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # v2에서 v3로 업데이트
 
       - name: Get README Content
         id: readme
@@ -20,7 +20,7 @@ jobs:
 
       - name: Update Notion Page
         env:
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}   # GitHub Secrets에서 API 키를 가져옵니다.
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_PAGE_ID: 13b776dbad2a804c8b6cdf5255f3039d
         run: |
           curl -X PATCH "https://api.notion.com/v1/blocks/$NOTION_PAGE_ID/children" \
