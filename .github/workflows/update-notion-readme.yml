@@ -35,11 +35,11 @@ jobs:
                 "object": "block",
                 "type": "paragraph",
                 "paragraph": {
-                  "text": [
+                  "rich_text": [
                     {
                       "type": "text",
                       "text": {
-                        "content": '"$README_CONTENT"'
+                        "content": "'"$README_CONTENT"'"
                       }
                     }
                   ]
