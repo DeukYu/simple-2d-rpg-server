@@ -15,8 +15,8 @@ jobs:
       - name: Get README Content
         id: readme
         run: |
-          # README.md 파일의 내용을 한 줄로 합치기
-          README_CONTENT=$(cat README.md | sed ':a;N;$!ba;s/\n/ /g')
+          # README.md 파일의 내용을 안전하게 JSON 형식으로 변환
+          README_CONTENT=$(cat README.md | jq -Rs .)  # jq를 사용하여 JSON 형식으로 변환
           echo "content=$README_CONTENT" >> $GITHUB_ENV  # 환경 파일에 변수 저장
 
       - name: Update Notion Page
@@ -39,7 +39,7 @@ jobs:
                     {
                       "type": "text",
                       "text": {
-                        "content": "'"$README_CONTENT"'"
+                        "content": '"$README_CONTENT"'
                       }
                     }
                   ]
