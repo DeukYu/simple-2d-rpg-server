@@ -104,8 +104,7 @@ public class Map
         {
             int x = dest.x - MinX;
             int y = MaxY - dest.y;
-            if (_players[y, x] == player)
-                _players[y, x] = null;
+            _players[y, x] = player;
         }
 
         // 실제 좌표 이동
