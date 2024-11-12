@@ -1,9 +1,7 @@
 ﻿using ServerCore;
 using System.Net;
-using System.Text;
 
 namespace CS_Server;
-
 
 class Program
 {
@@ -21,8 +19,13 @@ class Program
         while (true)
         {
             // TODO : 임시로 1초에 한번씩 업데이트를 호출한다.
-            ZoneManager.Instance.FindZone(1).Update();
-
+            var zone = ZoneManager.Instance.FindZone(1);
+            if (zone == null)
+            {
+                Log.Error("Main: Zone is null");
+                return;
+            }
+            zone.Update();
             Thread.Sleep(1000);
         }
     }

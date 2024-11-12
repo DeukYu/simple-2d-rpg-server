@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.Common;
-using Google.Protobuf.Enum;
+﻿using Google.Protobuf.Enum;
 using ServerCore;
 using System.Collections.Concurrent;
 

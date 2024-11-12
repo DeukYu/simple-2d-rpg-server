@@ -1,102 +1,38 @@
-﻿using System.Diagnostics;
-using System.Numerics;
-using System.Xml.Linq;
-
-namespace CS_Server;
-
-public struct Pos
-{
-    public Pos(int y, int x) { Y = y; X = x; }
-    public int Y;
-    public int X;
-}
-
-public struct PQNode : IComparable<PQNode>
-{
-    public int F;
-    public int G;
-    public int Y;
-    public int X;
-
-    public int CompareTo(PQNode other)
-    {
-        if (F == other.F)
-            return 0;
-        return F < other.F ? 1 : -1;
-    }
-}
-
-public struct Vector2Int
-{
-    public int x;
-    public int y;
-
-    public Vector2Int(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-
-    }
-
-    public static Vector2Int up { get { return new Vector2Int(0, 1); } }
-    public static Vector2Int down { get { return new Vector2Int(0, -1); } }
-    public static Vector2Int left { get { return new Vector2Int(-1, 0); } }
-    public static Vector2Int right { get { return new Vector2Int(1, 0); } }
-
-    public static Vector2Int operator +(Vector2Int a, Vector2Int b)
-    {
-        return new Vector2Int(a.x + b.x, a.y + b.y);
-    }
-}
+﻿namespace CS_Server;
 
 public class Map
 {
-    public int MinX { get; set; }
-    public int MaxX { get; set; }
-    public int MinY { get; set; }
-    public int MaxY { get; set; }
-    public int SizeX { get { return MaxX - MinX + 1; } }
-    public int SizeY { get { return MaxY - MinY + 1; } }
-
-    bool[,] _collision;
-    GameObject[,] _objects;
+    Bounds Bounds { get; set; }
+    private MapCell[,] _mapCells;
 
     public bool CanGo(Vector2Int cellPos, bool checkObject = true)
     {
-        if (cellPos.x < MinX || cellPos.x > MaxX)
-            return false;
-        if (cellPos.y < MinY || cellPos.y > MaxY)
+        if (Bounds.Contains(cellPos) == false)
             return false;
 
-        int x = cellPos.x - MinX;
-        int y = MaxY - cellPos.y;
-        return !_collision[y, x] && (!checkObject || _objects[y, x] == null);
+        var localPos = Bounds.ToLocalCoordinates(cellPos);
+        return _mapCells[localPos.y, localPos.x].CanMoveTo(checkObject);
     }
 
-    public GameObject Find(Vector2Int cellPos)
+    public GameObject? Find(Vector2Int cellPos)
     {
-        if (cellPos.x < MinX || cellPos.x > MaxX)
-            return null;
-        if (cellPos.y < MinY || cellPos.y > MaxY)
+        if (Bounds.Contains(cellPos) == false)
             return null;
 
-        int x = cellPos.x - MinX;
-        int y = MaxY - cellPos.y;
-        return _objects[y, x];
+        var localPos = Bounds.ToLocalCoordinates(cellPos);
+        return _mapCells[localPos.y, localPos.x].GameObject;
     }
 
     public bool ApplyLeave(GameObject gameObject)
     {
         var posInfo = gameObject.Info.PosInfo;
-        if (posInfo.PosX < MinX || posInfo.PosX > MaxX)
+        if (Bounds.Contains(posInfo.PosX, posInfo.PosY) == false)
             return false;
-        if (posInfo.PosY < MinY || posInfo.PosY > MaxY)
-            return false;
+
         {
-            int x = posInfo.PosX - MinX;
-            int y = MaxY - posInfo.PosY;
-            if (_objects[y, x] == gameObject)
-                _objects[y, x] = null;
+            var localPos = Bounds.ToLocalCoordinates(posInfo.PosX, posInfo.PosY);
+            if (_mapCells[localPos.y, localPos.x].GameObject == gameObject)
+                _mapCells[localPos.y, localPos.x].GameObject = null;
         }
 
         return true;
@@ -111,9 +47,8 @@ public class Map
             return false;
 
         {
-            int x = dest.x - MinX;
-            int y = MaxY - dest.y;
-            _objects[y, x] = gameObject;
+            var localPos = Bounds.ToLocalCoordinates(dest);
+            _mapCells[localPos.y, localPos.x].GameObject = gameObject;
         }
 
         // 실제 좌표 이동
@@ -130,22 +65,24 @@ public class Map
         var text = File.ReadAllText($"{pathPrefix}/{mapName}.txt");
         var reader = new StringReader(text);
 
-        MinX = int.Parse(reader.ReadLine());
-        MaxX = int.Parse(reader.ReadLine());
-        MinY = int.Parse(reader.ReadLine());
-        MaxY = int.Parse(reader.ReadLine());
+        Bounds = new Bounds(
+            int.Parse(reader.ReadLine()!),
+            int.Parse(reader.ReadLine()!),
+            int.Parse(reader.ReadLine()!),
+            int.Parse(reader.ReadLine()!)
+        );
 
-        int xCount = MaxX - MinX + 1;
-        int yCount = MaxY - MinY + 1;
-        _collision = new bool[yCount, xCount];
-        _objects = new Player[yCount, xCount];
+        int xCount = Bounds.SizeX;
+        int yCount = Bounds.SizeY;
+
+        _mapCells = new MapCell[yCount, xCount];
 
         for (int y = 0; y < yCount; y++)
         {
-            string line = reader.ReadLine();
+            string line = reader.ReadLine()!;
             for (int x = 0; x < xCount; x++)
             {
-                _collision[y, x] = (line[x] == '1' ? true : false);
+                _mapCells[y, x].Collision = (line[x] == '1' ? true : false);
             }
         }
     }
@@ -161,6 +98,8 @@ public class Map
     {
         List<Pos> path = new List<Pos>();
 
+        var SizeX = Bounds.SizeX;
+        var SizeY = Bounds.SizeY;
         // 점수 매기기
         // F = G + H
         // F = 최종 점수 (작을 수록 좋음, 경로에 따라 달라짐)
@@ -184,13 +123,18 @@ public class Map
         PriorityQueue<PQNode, int> pq = new PriorityQueue<PQNode, int>();
 
         // CellPos -> ArrayPos
-        Pos pos = Cell2Pos(startCellPos);
-        Pos dest = Cell2Pos(destCellPos);
+        Pos pos = Bounds.CellToPos(startCellPos);
+        Pos dest = Bounds.CellToPos(destCellPos);
 
         // 시작점 발견 (예약 진행)
         open[pos.Y, pos.X] = 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X));
-        pq.Enqueue(new PQNode() { 
-            F = 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X)), G = 0, Y = pos.Y, X = pos.X }
+        pq.Enqueue(new PQNode()
+        {
+            F = 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X)),
+            G = 0,
+            Y = pos.Y,
+            X = pos.X
+        }
         , 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X))
         );
         parent[pos.Y, pos.X] = new Pos(pos.Y, pos.X);
@@ -219,7 +163,7 @@ public class Map
                 // 벽으로 막혀서 갈 수 없으면 스킵
                 if (!ignoreDestCollision || next.Y != dest.Y || next.X != dest.X)
                 {
-                    if (CanGo(Pos2Cell(next)) == false) // CellPos
+                    if (CanGo(Bounds.PosToCell(next)) == false) // CellPos
                         continue;
                 }
 
@@ -252,28 +196,15 @@ public class Map
         int x = dest.X;
         while (parent[y, x].Y != y || parent[y, x].X != x)
         {
-            cells.Add(Pos2Cell(new Pos(y, x)));
+            cells.Add(Bounds.PosToCell(new Pos(y, x)));
             Pos pos = parent[y, x];
             y = pos.Y;
             x = pos.X;
         }
-        cells.Add(Pos2Cell(new Pos(y, x)));
+        cells.Add(Bounds.PosToCell(new Pos(y, x)));
         cells.Reverse();
 
         return cells;
     }
-
-    Pos Cell2Pos(Vector2Int cell)
-    {
-        // CellPos -> ArrayPos
-        return new Pos(MaxY - cell.y, cell.x - MinX);
-    }
-
-    Vector2Int Pos2Cell(Pos pos)
-    {
-        // ArrayPos -> CellPos
-        return new Vector2Int(pos.X + MinX, MaxY - pos.Y);
-    }
-
     #endregion
 }

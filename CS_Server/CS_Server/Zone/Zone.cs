@@ -3,8 +3,6 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Collections.Concurrent;
-using System.Numerics;
 
 namespace CS_Server;
 
@@ -13,10 +11,132 @@ public class Zone
     public long ZoneId { get; set; }
     object _lock = new object();
 
+    private readonly Dictionary<GameObjectType, Action<GameObject>> _addToZoneActions;
+    private readonly Dictionary<GameObjectType, Action<GameObject>> _removeToZoneActions;
+
     Dictionary<long, Player> _players = new Dictionary<long, Player>(); // TODO : JobQueue 형식으로 변경시, ConcurrentDictionary 으로 변경하여, 락프리(?)로 변경한다.
     Dictionary<long, Monster> _monsters = new Dictionary<long, Monster>();
-    Dictionary<long, Projectile> _projectile = new Dictionary<long, Projectile>();
+    Dictionary<long, Projectile> _projectiles = new Dictionary<long, Projectile>();
 
+    public Zone()
+    {
+        _addToZoneActions = new Dictionary<GameObjectType, Action<GameObject>>()
+                        {
+                            { GameObjectType.Player, AddPlayerToZone },
+                            { GameObjectType.Monster, AddMonsterToZone },
+                            { GameObjectType.Projectile, AddProjectileToZone }
+                        };
+
+        _removeToZoneActions = new Dictionary<GameObjectType, Action<GameObject>>()
+                        {
+                            { GameObjectType.Player, RemovePlayerFromZone },
+                            { GameObjectType.Monster, RemoveMonsterFromZone },
+                            { GameObjectType.Projectile, RemoveProjectileFromZone }
+                        };
+    }
+
+    public void AddGameObjectToZone(GameObject gameObject)
+    {
+        if (_addToZoneActions.TryGetValue(gameObject.ObjectType, out var addAction))
+        {
+            addAction(gameObject);
+        }
+        else
+        {
+            Log.Error($"Unsupported GameObjectType: {gameObject.ObjectType}");
+        }
+    }
+
+    public void RemoveGameObjectFromZone(GameObject gameObject)
+    {
+        if (_removeToZoneActions.TryGetValue(gameObject.ObjectType, out var removeAction))
+        {
+            removeAction(gameObject);
+        }
+        else
+        {
+            Log.Error($"Unsupported GameObjectType: {gameObject.ObjectType}");
+        }
+    }
+
+    private void AddPlayerToZone(GameObject gameObject)
+    {
+        var player = gameObject as Player;
+
+        _players.Add(gameObject.Info.ObjectId, player);
+        player._zone = this;
+
+        {
+            S2C_EnterGame pkt = new S2C_EnterGame
+            {
+                Result = (int)ErrorType.Success,
+                ObjectInfo = gameObject.Info
+            };
+
+            player.Session.Send(pkt);
+
+            var filteredPlayers = _players.Values.Where(p => gameObject != p).Select(p => p.Info).ToList();
+            if (filteredPlayers.Count > 0)
+            {
+                S2C_Spawn spawn = new S2C_Spawn();
+                spawn.Objects.AddRange(filteredPlayers);
+                player.Session.Send(spawn);
+            }
+        }
+    }
+
+    private void AddMonsterToZone(GameObject gameObject)
+    {
+        var monster = gameObject as Monster;
+        _monsters.Add(gameObject.Info.ObjectId, monster);
+        monster._zone = this;
+    }
+
+    private void AddProjectileToZone(GameObject gameObject)
+    {
+        var projectile = gameObject as Projectile;
+        _projectiles.Add(gameObject.Info.ObjectId, projectile);
+        projectile._zone = this;
+    }
+
+    private void RemovePlayerFromZone(GameObject gameObject)
+    {
+        if (_players.TryGetValue(gameObject.Id, out var player) == false)
+        {
+            Log.Error("LeaveZone player is null");
+            return;
+        }
+
+        _players.Remove(gameObject.Id);
+        player._zone = null;
+        Map.ApplyLeave(player);
+        {
+            S2C_LeaveGame leave = new S2C_LeaveGame();
+            player.Session.Send(leave);
+        }
+    }
+
+    private void RemoveMonsterFromZone(GameObject gameObject)
+    {
+        if (_monsters.TryGetValue(gameObject.Id, out var monster) == false)
+        {
+            Log.Error("LeaveZone monster is null");
+            return;
+        }
+
+        monster._zone = null;
+        Map.ApplyLeave(monster);
+    }
+
+    private void RemoveProjectileFromZone(GameObject gameObject)
+    {
+        if (_projectiles.TryGetValue(gameObject.Id, out var projectile) == false)
+        {
+            Log.Error("LeaveZone projectile is null");
+            return;
+        }
+        projectile._zone = null;
+    }
 
     public Map Map { get; private set; } = new Map();
 
@@ -30,7 +150,7 @@ public class Zone
     {
         lock (_lock)
         {
-            foreach (var projectile in _projectile.Values)
+            foreach (var projectile in _projectiles.Values)
             {
                 projectile.Update();
             }
@@ -45,54 +165,9 @@ public class Zone
             return;
         }
 
-        var type = gameObject switch
-        {
-            Player p => p.ObjectType,
-            Monster m => m.ObjectType,
-            Projectile p => p.ObjectType,
-            _ => GameObjectType.None
-        };
-
         lock (_lock)
         {
-            if(type == GameObjectType.Player)
-            {
-                var player = gameObject as Player;
-
-                _players.Add(gameObject.Info.ObjectId, player);
-                player._zone = this;
-
-                {
-                    S2C_EnterGame pkt = new S2C_EnterGame
-                    {
-                        Result = (int)ErrorType.Success,
-                        ObjectInfo = gameObject.Info
-                    };
-
-                    player.Session.Send(pkt);
-
-                    var filteredPlayers = _players.Values.Where(p => gameObject != p).Select(p => p.Info).ToList();
-                    if (filteredPlayers.Count > 0)
-                    {
-                        S2C_Spawn spawn = new S2C_Spawn();
-                        spawn.Objects.AddRange(filteredPlayers);
-                        player.Session.Send(spawn);
-                    }
-                }
-            }
-            else if(type == GameObjectType.Monster)
-            {
-                var monster = gameObject as Monster;
-                _monsters.Add(gameObject.Info.ObjectId, monster);
-                monster._zone = this;
-            }
-            else if (type == GameObjectType.Projectile)
-            {
-                var projectile = gameObject as Projectile;
-                _projectile.Add(gameObject.Info.ObjectId, projectile);
-                projectile._zone = this;
-            }
-
+            AddGameObjectToZone(gameObject);
 
             {
                 S2C_Spawn spawn = new S2C_Spawn
@@ -127,44 +202,7 @@ public class Zone
 
         lock (_lock)
         {
-            if(type == GameObjectType.Player)
-            {
-                if (_players.TryGetValue(gameObject.Id, out var player) == false)
-                {
-                    Log.Error("LeaveZone player is null");
-                    return;
-                }
-
-                _players.Remove(gameObject.Id);
-                player._zone = null;
-                Map.ApplyLeave(player);
-                {
-                    S2C_LeaveGame leave = new S2C_LeaveGame();
-                    player.Session.Send(leave);
-                }
-            }
-            else if(type == GameObjectType.Monster)
-            {
-                if(_monsters.TryGetValue(gameObject.Id, out var monster) == false)
-                {
-                    Log.Error("LeaveZone monster is null");
-                    return;
-                }
-
-                monster._zone = null;
-                Map.ApplyLeave(monster);
-            }
-            else if(type == GameObjectType.Projectile)
-            {
-                if(_projectile.TryGetValue(gameObject.Id, out var projectile) == false)
-                {
-                    Log.Error("LeaveZone projectile is null");
-                    return;
-                }
-                projectile._zone = null;
-            }
-
-            
+            RemoveGameObjectFromZone(gameObject);
 
             {
                 S2C_Despawn despawn = new S2C_Despawn

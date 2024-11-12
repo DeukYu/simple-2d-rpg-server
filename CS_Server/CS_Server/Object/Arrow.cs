@@ -5,7 +5,7 @@ namespace CS_Server;
 
 public class Arrow : Projectile
 {
-    public GameObject Owner { get; set; }
+    public GameObject? Owner { get; set; }
 
     long _nextMoveTick = 0;
 
