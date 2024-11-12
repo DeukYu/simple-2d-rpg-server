@@ -13,8 +13,8 @@ message PositionInfo{
     int32 pos_y = 4;
 }
 
-message PlayerInfo{
-    int64 playerId = 1;
+message ObjectInfo{
+    int64 object_id = 1;
     string name = 2;
     PositionInfo pos_info = 3;
 }

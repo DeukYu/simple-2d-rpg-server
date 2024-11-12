@@ -26,12 +26,13 @@ namespace Google.Protobuf.Enum {
           string.Concat(
             "CgpFbnVtLnByb3RvEghQcm90b2NvbCo4Cg1DcmVhdHVyZVN0YXRlEggKBElk",
             "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqMAoHTW92ZURp",
-            "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAyoiCglF",
-            "cnJvclR5cGUSCwoHU3VjY2VzcxAAEggKBEZhaWwQAUIXqgIUR29vZ2xlLlBy",
-            "b3RvYnVmLkVudW1iBnByb3RvMw=="));
+            "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAypDCg5H",
+            "YW1lT2JqZWN0VHlwZRIICgROb25lEAASCgoGUGxheWVyEAESCwoHTW9uc3Rl",
+            "chACEg4KClByb2plY3RpbGUQBCoiCglFcnJvclR5cGUSCwoHU3VjY2VzcxAA",
+            "EggKBEZhaWwQAUIXqgIUR29vZ2xlLlByb3RvYnVmLkVudW1iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
@@ -49,6 +50,13 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("Down")] Down = 1,
     [pbr::OriginalName("Left")] Left = 2,
     [pbr::OriginalName("Right")] Right = 3,
+  }
+
+  public enum GameObjectType {
+    [pbr::OriginalName("None")] None = 0,
+    [pbr::OriginalName("Player")] Player = 1,
+    [pbr::OriginalName("Monster")] Monster = 2,
+    [pbr::OriginalName("Projectile")] Projectile = 4,
   }
 
   public enum ErrorType {

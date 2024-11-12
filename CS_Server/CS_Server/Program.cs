@@ -20,7 +20,10 @@ class Program
 
         while (true)
         {
-            JobTimer.Instance.Flush();
+            // TODO : 임시로 1초에 한번씩 업데이트를 호출한다.
+            ZoneManager.Instance.FindZone(1).Update();
+
+            Thread.Sleep(1000);
         }
     }
 }

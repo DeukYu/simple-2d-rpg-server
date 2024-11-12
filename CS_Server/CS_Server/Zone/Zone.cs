@@ -4,6 +4,7 @@ using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
 using System.Collections.Concurrent;
+using System.Numerics;
 
 namespace CS_Server;
 
@@ -13,87 +14,167 @@ public class Zone
     object _lock = new object();
 
     Dictionary<long, Player> _players = new Dictionary<long, Player>(); // TODO : JobQueue 형식으로 변경시, ConcurrentDictionary 으로 변경하여, 락프리(?)로 변경한다.
+    Dictionary<long, Monster> _monsters = new Dictionary<long, Monster>();
+    Dictionary<long, Projectile> _projectile = new Dictionary<long, Projectile>();
 
-    Map _map = new Map();
+
+    public Map Map { get; private set; } = new Map();
 
     public void Init(int mapId)
     {
         // TODO : 데이터 Sheet 들어가면 수정
-        _map.LoadMap(mapId, "../../../../Common/MapData");
+        Map.LoadMap(mapId, "../../../../Common/MapData");
     }
 
-    public void EnterZone(Player player)
+    public void Update()
     {
-        if (player == null)
+        lock (_lock)
+        {
+            foreach (var projectile in _projectile.Values)
+            {
+                projectile.Update();
+            }
+        }
+    }
+
+    public void EnterZone(GameObject gameObject)
+    {
+        if (gameObject == null)
         {
             Log.Error("EnterZone player is null");
             return;
         }
 
+        var type = gameObject switch
+        {
+            Player p => p.ObjectType,
+            Monster m => m.ObjectType,
+            Projectile p => p.ObjectType,
+            _ => GameObjectType.None
+        };
+
         lock (_lock)
         {
-            _players.Add(player._playerInfo.PlayerId, player);
-            player.EnterZone(this);
-
+            if(type == GameObjectType.Player)
             {
-                S2C_EnterGame pkt = new S2C_EnterGame
-                {
-                    Result = (int)ErrorType.Success,
-                    PlayerInfo = player._playerInfo
-                };
+                var player = gameObject as Player;
 
-                player.Send(pkt);
+                _players.Add(gameObject.Info.ObjectId, player);
+                player._zone = this;
 
-                var filteredPlayers = _players.Values.Where(p => player != p).Select(p => p._playerInfo).ToList();
-                if (filteredPlayers.Count > 0)
                 {
-                    S2C_Spawn spawn = new S2C_Spawn();
-                    spawn.Players.AddRange(filteredPlayers);
-                    player.Send(spawn);
+                    S2C_EnterGame pkt = new S2C_EnterGame
+                    {
+                        Result = (int)ErrorType.Success,
+                        ObjectInfo = gameObject.Info
+                    };
+
+                    player.Session.Send(pkt);
+
+                    var filteredPlayers = _players.Values.Where(p => gameObject != p).Select(p => p.Info).ToList();
+                    if (filteredPlayers.Count > 0)
+                    {
+                        S2C_Spawn spawn = new S2C_Spawn();
+                        spawn.Objects.AddRange(filteredPlayers);
+                        player.Session.Send(spawn);
+                    }
                 }
             }
+            else if(type == GameObjectType.Monster)
+            {
+                var monster = gameObject as Monster;
+                _monsters.Add(gameObject.Info.ObjectId, monster);
+                monster._zone = this;
+            }
+            else if (type == GameObjectType.Projectile)
+            {
+                var projectile = gameObject as Projectile;
+                _projectile.Add(gameObject.Info.ObjectId, projectile);
+                projectile._zone = this;
+            }
+
 
             {
                 S2C_Spawn spawn = new S2C_Spawn
                 {
-                    Players = { player._playerInfo }
+                    Objects = { gameObject.Info }
                 };
 
                 foreach (var p in _players.Values)
                 {
-                    if (player != p)
-                        p.Send(spawn);
+                    if (p.Id != gameObject.Id)
+                        p.Session.Send(spawn);
                 }
             }
         }
     }
 
-    public void LeaveZone(long playerId)
+    public void LeaveZone(GameObject gameObject)
     {
+        if (gameObject == null)
+        {
+            Log.Error("EnterZone player is null");
+            return;
+        }
+
+        var type = gameObject switch
+        {
+            Player p => p.ObjectType,
+            Monster m => m.ObjectType,
+            Projectile p => p.ObjectType,
+            _ => GameObjectType.None
+        };
+
         lock (_lock)
         {
-            if (_players.TryGetValue(playerId, out var player) == false)
+            if(type == GameObjectType.Player)
             {
-                Log.Error("LeaveZone player is null");
-                return;
+                if (_players.TryGetValue(gameObject.Id, out var player) == false)
+                {
+                    Log.Error("LeaveZone player is null");
+                    return;
+                }
+
+                _players.Remove(gameObject.Id);
+                player._zone = null;
+                Map.ApplyLeave(player);
+                {
+                    S2C_LeaveGame leave = new S2C_LeaveGame();
+                    player.Session.Send(leave);
+                }
+            }
+            else if(type == GameObjectType.Monster)
+            {
+                if(_monsters.TryGetValue(gameObject.Id, out var monster) == false)
+                {
+                    Log.Error("LeaveZone monster is null");
+                    return;
+                }
+
+                monster._zone = null;
+                Map.ApplyLeave(monster);
+            }
+            else if(type == GameObjectType.Projectile)
+            {
+                if(_projectile.TryGetValue(gameObject.Id, out var projectile) == false)
+                {
+                    Log.Error("LeaveZone projectile is null");
+                    return;
+                }
+                projectile._zone = null;
             }
 
-            _players.Remove(playerId);
-            player.LeaveZone();
-            {
-                S2C_LeaveGame leave = new S2C_LeaveGame();
-                player.Send(leave);
-            }
+            
 
             {
                 S2C_Despawn despawn = new S2C_Despawn
                 {
-                    PlayerIds = { playerId }
+                    ObjectIds = { gameObject.Id }
                 };
                 foreach (var p in _players.Values)
                 {
-                    if (player != p)
-                        p.Send(despawn);
+                    if (p.Id != gameObject.Id)
+                        p.Session.Send(despawn);
                 }
             }
         }
@@ -109,12 +190,12 @@ public class Zone
         lock (_lock)
         {
             PositionInfo movePosInfo = packet.PosInfo;
-            PlayerInfo playerInfo = player._playerInfo;
+            ObjectInfo playerInfo = player.Info;
 
             // 다른 좌표로 이동할 경우, 갈 수 있는지 체크
-            if(movePosInfo.PosX != playerInfo.PosInfo.PosX || movePosInfo.PosY != playerInfo.PosInfo.PosY)
+            if (movePosInfo.PosX != playerInfo.PosInfo.PosX || movePosInfo.PosY != playerInfo.PosInfo.PosY)
             {
-                if(_map.CanGo(new Vector2Int(movePosInfo.PosX, movePosInfo.PosY)) == false)
+                if (Map.CanGo(new Vector2Int(movePosInfo.PosX, movePosInfo.PosY)) == false)
                 {
                     return;
                 }
@@ -122,18 +203,18 @@ public class Zone
 
             playerInfo.PosInfo.State = movePosInfo.State;
             playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
-            _map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
+            Map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
 
 
             S2C_Move res = new S2C_Move
             {
-                PlayerId = player._playerInfo.PlayerId,
+                ObjectId = player.Info.ObjectId,
                 PosInfo = packet.PosInfo,
             };
 
             foreach (var p in _players.Values)
             {
-                p.Send(res);
+                p.Session.Send(res);
             }
         }
     }
@@ -148,18 +229,20 @@ public class Zone
 
         lock (_lock)
         {
-            PlayerInfo info = player._playerInfo;
+            ObjectInfo info = player.Info;
             if (info.PosInfo.State != CreatureState.Idle)
             {
                 Log.Error("HandleSkill player is not idle");
                 return;
             }
 
+
+
             info.PosInfo.State = CreatureState.Skill;
 
             S2C_Skill res = new S2C_Skill
             {
-                PlayerId = player._playerInfo.PlayerId,
+                ObjectId = player.Info.ObjectId,
                 SkillInfo = new SkillInfo
                 {
                     SkillId = 1,
@@ -167,17 +250,37 @@ public class Zone
             };
 
             foreach (var p in _players.Values)
-                p.Send(res);
+                p.Session.Send(res);
 
             //BroadCast(res);
 
-            // TODO : 데미지 판정
-            var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
-            Player target = _map.Find(skillPos);
-            if (target != null)
+            // 스킬 사용 가능 여부 
+            if (packet.SkillInfo.SkillId == 1)
             {
-               Log.Info("Player Hit");
+                var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
+                var target = Map.Find(skillPos);
+                if (target != null)
+                {
+                    Log.Info("GameObject Hit");
+                }
             }
+            else if (packet.SkillInfo.SkillId == 2)
+            {
+                var arrow = ObjectManager.Instance.Add<Arrow>();
+                if (arrow == null)
+                {
+                    Log.Error("HandleSkill arrow is null");
+                    return;
+                }
+
+                arrow.Owner = player;
+                arrow.PosInfo.State = CreatureState.Move;
+                arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
+                arrow.PosInfo.PosX = player.PosInfo.PosX;
+                arrow.PosInfo.PosY = player.PosInfo.PosY;
+                EnterZone(arrow);
+            }
+
         }
     }
 
@@ -187,140 +290,8 @@ public class Zone
         {
             foreach (var player in _players.Values)
             {
-                player.Send(packet);
+                player.Session.Send(packet);
             }
         }
     }
-    //List<ClientSession> _sessions = new List<ClientSession>();
-    //JobQueue _jobQueue = new JobQueue();
-    //List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
-
-    //public void Push(Action job)
-    //{
-    //    _jobQueue.Push(job);
-    //}
-
-    //public void Flush()
-    //{
-    //    foreach (ClientSession session in _sessions)
-    //    {
-    //        session.Send(_pendingList);
-    //    }
-    //}
-
-    //public void Broadcast(ArraySegment<byte> segment)
-    //{
-    //    _pendingList.Add(segment);
-    //}
-
-    //public void Enter(ClientSession session)
-    //{
-    //    _sessions.Add(session);
-
-    //    session.Zone = this;
-
-    //    {
-    //        // 모든 플레이어 목록 전송
-    //        S2C_PlayerList res = new S2C_PlayerList();
-    //        foreach (ClientSession s in _sessions)
-    //        {
-    //            res.Players.Add(new TPlayer
-    //            {
-    //                IsSelf = (s == session),
-    //                PlayerId = s.SessionId,
-    //                PosX = s.PosX,
-    //                PosY = s.PosY,
-    //                PosZ = s.PosZ
-    //            });
-    //        }
-    //        res.Result = (int)ErrorType.Success;
-
-    //        ushort size = (ushort)res.CalculateSize();
-
-    //        byte[] sendBuffer = new byte[size + 4];
-    //        Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
-
-    //        ushort protocolId = PacketManager.Instance.GetMessageId(res.GetType());
-    //        Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
-
-    //        Array.Copy(res.ToByteArray(), 0, sendBuffer, 4, size);
-    //        var buff = new ArraySegment<byte>(sendBuffer);
-    //        session.Send(buff);
-    //    }
-
-
-    //    // 새로운 플레이어 입장을 모두에게 알림
-    //    {
-    //        S2C_BroadcastEnterGame enter = new S2C_BroadcastEnterGame();
-
-    //        enter.PlayerId = session.SessionId;
-    //        enter.PosX = session.PosX;
-    //        enter.PosY = session.PosY;
-    //        enter.PosZ = session.PosZ;
-
-    //        enter.Result = (int)ErrorType.Success;
-
-    //        ushort size = (ushort)enter.CalculateSize();
-
-    //        byte[] sendBuffer = new byte[size + 4];
-    //        Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
-
-    //        ushort protocolId = PacketManager.Instance.GetMessageId(enter.GetType());
-    //        Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
-
-    //        Array.Copy(enter.ToByteArray(), 0, sendBuffer, 4, size);
-    //        var buff = new ArraySegment<byte>(sendBuffer);
-
-    //        Broadcast(buff);
-    //    }
-    //}
-
-    //public void Leave(ClientSession session)
-    //{
-    //    // 플레이어 제거
-    //    _sessions.Remove(session);
-
-    //    // 모두에게 알림
-    //    S2C_BroadcastLeaveGame leave = new S2C_BroadcastLeaveGame();
-    //    leave.PlayerId = session.SessionId;
-
-    //    leave.Result = (int)ErrorType.Success;
-
-    //    ushort size = (ushort)leave.CalculateSize();
-    //    byte[] sendBuffer = new byte[size + 4];
-    //    Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
-    //    ushort protocolId = (ushort)MsgId.S2CBroadcastleavegame;
-    //    Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
-    //    Array.Copy(leave.ToByteArray(), 0, sendBuffer, 4, size);
-    //    var buff = new ArraySegment<byte>(sendBuffer);
-
-
-    //    Broadcast(buff);
-    //}
-
-    //public void Move(ClientSession session, C2S_Move packet)
-    //{
-    //    session.PosX = packet.PosX;
-    //    session.PosY = packet.PosY;
-    //    session.PosZ = packet.PosZ;
-
-    //    S2C_BroadcastMove move = new S2C_BroadcastMove();
-    //    move.PlayerId = session.SessionId;
-    //    move.PosX = session.PosX;
-    //    move.PosY = session.PosY;
-    //    move.PosZ = session.PosZ;
-
-    //    // 모두에게 알림
-    //    move.Result = (int)ErrorType.Success;
-
-    //    ushort size = (ushort)move.CalculateSize();
-    //    byte[] sendBuffer = new byte[size + 4];
-    //    Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
-    //    ushort protocolId = (ushort)MsgId.S2CBroadcastmove;
-    //    Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
-    //    Array.Copy(move.ToByteArray(), 0, sendBuffer, 4, size);
-    //    var buff = new ArraySegment<byte>(sendBuffer);
-
-    //    Broadcast(buff);
-    //}
 }

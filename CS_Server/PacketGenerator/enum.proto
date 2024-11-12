@@ -18,6 +18,13 @@ enum MoveDir{
 	Right = 3;
 }
 
+enum GameObjectType{
+	None = 0;
+	Player = 1;
+	Monster = 2;
+	Projectile = 4;
+}
+
 enum ErrorType{
     Success = 0;
     Fail = 1;

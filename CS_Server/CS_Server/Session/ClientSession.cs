@@ -28,10 +28,10 @@ public class ClientSession : PacketSession
         Log.Info($"OnConnected: {endPoint}");
 
         // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
-        GamePlayer = PlayerManager.Instance.Add(this);
+        GamePlayer = ObjectManager.Instance.Add<Player>();
 
 
-        if(GamePlayer == null)
+        if (GamePlayer == null)
         {
             Log.Error("OnConnected: GamePlayer is null.");
             return;
@@ -48,7 +48,7 @@ public class ClientSession : PacketSession
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
-        ZoneManager.Instance.FindZone(1).LeaveZone(GamePlayer._playerInfo.PlayerId);
+        ZoneManager.Instance.FindZone(1).LeaveZone(GamePlayer);
 
         SessionManager.Instance.Remove(this);
 
