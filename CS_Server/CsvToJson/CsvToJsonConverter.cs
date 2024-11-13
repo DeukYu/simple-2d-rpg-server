@@ -1,68 +1,138 @@
 ﻿using Newtonsoft.Json;
+using ServerCore;
 using Shared;
 using System.Text;
-using static Program.Program;
 
 namespace CsvToJson;
 
 public static class CsvToJsonConverter
 {
-    public static List<T> LoadCsv<T>(string filePath) where T : ICsvConvertible, new()
+    static CsvToJsonConverter()
     {
-        var result = new List<T>();
-
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-        var encoding = Encoding.GetEncoding("euc-kr");
-
-
-        var lines = File.ReadAllLines(filePath, encoding)
-                    .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .ToArray();
-
-        foreach (var line in lines.Skip(1)) // 첫번째 줄은 건너뛴다.
-        {
-            var values = line.Split(','); // 한줄씩 가져온다.
-            T item = new T();
-            item.FromCsv(values);
-            result.Add(item);
-        }
-        return result;
     }
 
+    // CSV 데이터를 List로 로드하는 메서드
+    public static List<T> LoadCsv<T>(string filePath) where T : ICsvConvertible, new()
+    {
+        var encoding = Encoding.GetEncoding("euc-kr");
+        var lines = File.ReadAllLines(filePath, encoding)
+                        .Where(line => !string.IsNullOrWhiteSpace(line))
+                        .ToArray();
+
+        if(lines.Length == 0)
+        {
+            throw new Exception("CSV 파일이 비어있습니다.");
+        }
+
+        var headerLine = lines[0];
+        var headers = headerLine.Split(',');
+        ValidateHeader<T>(headers);
+
+        return lines.Skip(1).Select(line => {
+            var values = line.Split(',');
+            T item = new T();
+            item.FromCsv(values);
+            return item;
+        }).ToList();
+    }
+
+    // 헤더와 클래스 속성 일치 여부를 검사하는 메서드
+    private static void ValidateHeader<T>(string[] headers)
+    {
+        var properties = typeof(T).GetProperties();
+        foreach (var header in headers)
+        {
+            var headerParts = header.Split(':');
+            if (headerParts.Length != 2)
+                throw new Exception($"헤더 형식이 잘못되었습니다: {header}");
+
+            var headerName = headerParts[0].Trim();
+            var headerType = headerParts[1].Trim().ToLower();
+
+            // T 타입의 속성 중 헤더 이름과 일치하는 속성을 찾음
+            var property = properties.FirstOrDefault(p => p.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase));
+            if (property == null)
+                throw new Exception($"'{headerName}'에 해당하는 속성이 클래스 '{typeof(T).Name}'에 존재하지 않습니다.");
+
+            // 속성 타입과 헤더 타입을 비교하여 일치 여부 검사
+            var propertyType = GetTypeString(property.PropertyType);
+            if (propertyType != headerType)
+                throw new Exception($"속성 '{headerName}'의 타입 '{propertyType}'가 CSV 헤더 타입 '{headerType}'와 일치하지 않습니다.");
+        }
+    }
+
+    // C# 타입을 문자열로 반환하는 유틸리티 메서드
+    private static string GetTypeString(Type type)
+    {
+        if (type == typeof(byte)) return "byte";
+        if (type == typeof(short)) return "short";
+        if (type == typeof(int)) return "int";
+        if (type == typeof(long)) return "long";
+        if (type == typeof(bool)) return "bool";
+        if (type == typeof(float)) return "float";
+        if (type == typeof(double)) return "double";
+        if (type == typeof(string)) return "string";
+        // 필요한 다른 타입도 추가 가능
+        return type.Name.ToLower();
+    }
+
+    // 여러 CSV 파일을 JSON으로 변환하는 메인 메서드
     public static void ConvertCsvToJson(string[] csvPaths, string saveFolderPath)
     {
-        // 현재 어셈블리에서 모든 ICsvConvertible 구현 클래스를 찾는다.
-        var convertibleTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(a => a.GetTypes())
-            .Where(t => typeof(ICsvConvertible).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
-            .ToList();
+        var convertibleTypes = FindConvertibleTypes();
 
         foreach (var csvPath in csvPaths)
         {
-            var fileName = Path.GetFileNameWithoutExtension(csvPath).ToLower();
-
-            var targetType = convertibleTypes.FirstOrDefault(t => t.Name.ToLower() == fileName);
-            if (targetType == null)
-            {
-                Console.WriteLine($"Unsupported file type: {fileName}");
-                continue;
-            }
-            var method = typeof(CsvToJsonConverter)
-                            .GetMethod("LoadCsv")
-                            .MakeGenericMethod(targetType); // 해당 타입에 맞는 LoadCsv 호출
-
-            var save = Path.Combine(saveFolderPath, $"{targetType.Name}.json");
-            var data = method.Invoke(null, new object[] { csvPath });
-
-            // Dictionary<string, List<T>>로 래핑
-            var wrappedData = new Dictionary<string, object>
-        {
-            { fileName + "s", data } // fileName을 키로 사용하여 데이터를 감싼다.
-        };
-
-            var jsonData = JsonConvert.SerializeObject(wrappedData, Newtonsoft.Json.Formatting.Indented);
-            File.WriteAllText(save, jsonData);
+            ConvertSingleCsv(csvPath, saveFolderPath, convertibleTypes);
         }
+    }
+
+    // ICsvConvertible을 구현한 타입 찾기
+    private static List<Type> FindConvertibleTypes()
+    {
+        return AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(a => a.GetTypes())
+                    .Where(t => typeof(ICsvConvertible).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+                    .ToList();
+    }
+
+    // 단일 CSV를 JSON으로 변환하는 메서드
+    private static void ConvertSingleCsv(string csvPath, string saveFolderPath, List<Type> convertibleTypes)
+    {
+        var fileName = Path.GetFileNameWithoutExtension(csvPath).ToLower();
+        var targetType = convertibleTypes.FirstOrDefault(t => t.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+
+        if (targetType == null)
+        {
+            Console.WriteLine($"Unsupported file type: {fileName}");
+            return;
+        }
+
+        var data = InvokeLoadCsv(targetType, csvPath);
+        if (data == null)
+        {
+            Log.Error($"Failed to load {csvPath}");
+            return;
+        }
+
+        // JSON 형식으로 감싸서 저장
+        var wrappedData = new Dictionary<string, object> { { $"{fileName}s", data } };
+        SaveToJsonFile(wrappedData, saveFolderPath, targetType.Name);
+    }
+
+    // LoadCsv 메서드를 동적으로 호출
+    private static object? InvokeLoadCsv(Type targetType, string csvPath)
+    {
+        var method = typeof(CsvToJsonConverter).GetMethod("LoadCsv")?.MakeGenericMethod(targetType);
+        return method?.Invoke(null, new object[] { csvPath });
+    }
+
+    // 데이터를 JSON 파일로 저장
+    private static void SaveToJsonFile(Dictionary<string, object> data, string saveFolderPath, string fileName)
+    {
+        var savePath = Path.Combine(saveFolderPath, $"{fileName}.json");
+        var jsonData = JsonConvert.SerializeObject(data, Formatting.Indented);
+        File.WriteAllText(savePath, jsonData);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using CsvToJson;
-using Newtonsoft.Json;
-using System.Xml;
+using ServerCore;
 
 namespace Program;
 
@@ -14,6 +13,6 @@ public class Program
 
         CsvToJsonConverter.ConvertCsvToJson(files, saveForlderPath);
 
-        Console.WriteLine(files);
+        Log.Info("Convert Complate");
     }
 }

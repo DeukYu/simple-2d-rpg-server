@@ -1,2 +1,2 @@
-id:int,name:string,speed:float,range:int,prefab:int
+id:int,name:string,speed:float,range:int,prefab:string
 1,È­»ì,10,10,Creatures/Arrow
