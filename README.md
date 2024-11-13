@@ -1,6 +1,6 @@
 # simple-2d-rpg-server
 - C# 서버를 제작중입니다.
-- 현재는 Unity 로 Object 관련 작업과 동기화 작업 중에 있습니다.
+- 포트폴리오 작업과 함께 README 파일도 업데이트 하고 있습니다.
 - Client : https://github.com/kdh0794/GuardianOfNature2D
 
 ## 환경설정
@@ -31,29 +31,30 @@ dotnet add package Newtonsoft.Json
 - 플레이어 이동 동기화 구현
 - 플레이어 공격(스킬) 동기화 구현
 
+## Tool 관련
+- PacketGenerator : 패킷 관련한 클라이언트, 서버 코드 생성기
+- CsvToJson : Csv파일로 된 게임 데이터를 Json 형식으로 바꿔주는 Json 생성기
+
+## 서버 구성도
+- ServerCore : Network 및 Util 관련하여 구성
+- Shared : Enum, Log, Config, Databae Model 등 서버 공통적으로 사용하는 부분들에 대해 구성
+- CS_Server : 기본 게임 로직 관련 구성
+- WebServer : 로그인 관련 및 인증 로직으로 구성
 
 # Server (CS_Server)
 ## ServerCore
-- 서버 핵심 기능들 구현
-- 현재는 기능이 많지 않아 ServerCore에 모든 Common 부분들을 관리하고 있습니다.
+- 서버 네트워크 및 기타 핵심 기능들 구현
 ### Network
 - 서버 네트워크 통신 관련 기능
     - Connector : Client에서 Connect 하기 위해 사용
     - Listener : Server에서 Client 연결을 확인하기 위한 용도
     - Session
     - RecvBuffer
-    - ~~SendBuffer : protobuf 로 인하여 필요 없어져서 삭제~~
 
 ### Job
 - 서버 패킷 관련 한번에 모아 보내기 위한 부분과 일정 시간마다 패킷을 전송할 수 있도록 하는 기능
     - JobQueue
     - JobTimer
-
-### Logger
-- 로그 관련 처리하기 위하여 NLog 라이브러리를 맵핑하여 사용
-    - LoggerBase
-    - Log
-    - NLogLogger
 
 ### Util
 - 가볍게 쓸 수 있는 Util 파일 관련 
@@ -91,6 +92,20 @@ public sealed class AtomicFlag
 ```
 
 </details>
+
+## Shared
+- 서버에서 공통적으로 사용하는 부분 구현
+### Logger
+- 로그 관련 처리하기 위하여 NLog 라이브러리를 맵핑하여 사용
+    - LoggerBase
+    - Log
+    - NLogLogger
+
+### Config
+- 서버에서 사용되는 Config 관련
+
+### GameData
+- 실제 게임 데이터(기획 데이터) 관련
 
 ## CS_Server
 - 기본 게임 서버를 위한 로직 처리
