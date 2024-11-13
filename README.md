@@ -38,7 +38,8 @@ dotnet add package Newtonsoft.Json
 
 ## 컨텐츠 구현 내용
 - 플레이어 이동 동기화 구현
-- 플레이어 공격(스킬) 동기화 구현
+- 플레이어 공격(스킬) 동기화 구현 (Projectile 포함)
+- 채팅 동기화 구현
 
 ## Tool 관련
 - PacketGenerator : 패킷 관련한 클라이언트, 서버 코드 생성기
