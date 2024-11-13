@@ -31,14 +31,17 @@ dotnet add package Newtonsoft.Json
     - 서버-클라이언트  실시간 데이터 전송을 처리할 수 있도록 TCP 소켓을 사용해 통합
 - Data serialization and deserialization (Protocol Buffers)
     - 서버-클라이언트 간 데이터 전송 효율성과 플랫폼 독립성 향상을 위해 Protobuf를 사용
-- Data Load
+- GameData Load
     - Json 형식의 게임 데이터(기획 데이터)를 로드할 수 있는 기능 구현현
 - Config Load
-    - 서버 내에 필요한 DataBase, Data Path 등 로드할 수 있는 기능 구현 
+    - 서버 내에 필요한 DataBase, Data Path 등 로드할 수 있는 기능 구현
+- MapData Load
+    - MapData를 읽어와서 처리하도록 구현 (현재 txt파일을 읽어오고 있지만, 추후에 json형식으로 변경 예정)
 
 ## 컨텐츠 구현 내용
 - 플레이어 이동 동기화 구현
-- 플레이어 공격(스킬) 동기화 구현 (Projectile 포함)
+- 플레이어 공격(스킬), Hit 판정 동기화 구현 (Projectile 포함)
+- 맵, 오브젝트 충돌 처리 구현
 - 채팅 동기화 구현
 
 ## Tool 관련
