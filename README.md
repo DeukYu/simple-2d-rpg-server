@@ -32,7 +32,7 @@ dotnet add package Newtonsoft.Json
 - Data serialization and deserialization (Protocol Buffers)
     - 서버-클라이언트 간 데이터 전송 효율성과 플랫폼 독립성 향상을 위해 Protobuf를 사용
 - Data Load
-    - Json 형식의 게임 데이터(기획 데이터)를 로드할 수 있는 기능 구
+    - Json 형식의 게임 데이터(기획 데이터)를 로드할 수 있는 기능 구현현
 - Config Load
     - 서버 내에 필요한 DataBase, Data Path 등 로드할 수 있는 기능 구현 
 
