@@ -26,6 +26,15 @@ dotnet add package MySql.EntityFrameworkCore
 ```
 dotnet add package Newtonsoft.Json
 ```
+## 시스템 구현 내용
+- Client-Server Communication
+    - 서버-클라이언트  실시간 데이터 전송을 처리할 수 있도록 TCP 소켓을 사용해 통합
+- Data serialization and deserialization (Protocol Buffers)
+    - 서버-클라이언트 간 데이터 전송 효율성과 플랫폼 독립성 향상을 위해 Protobuf를 사용
+- Data Load
+    - Json 형식의 게임 데이터(기획 데이터)를 로드할 수 있는 기능 구
+- Config Load
+    - 서버 내에 필요한 DataBase, Data Path 등 로드할 수 있는 기능 구현 
 
 ## 컨텐츠 구현 내용
 - 플레이어 이동 동기화 구현
@@ -46,20 +55,12 @@ dotnet add package Newtonsoft.Json
 - 서버 네트워크 및 기타 핵심 기능들 구현
 ### Network
 - 서버 네트워크 통신 관련 기능
-    - Connector : Client에서 Connect 하기 위해 사용
-    - Listener : Server에서 Client 연결을 확인하기 위한 용도
-    - Session
-    - RecvBuffer
 
 ### Job
 - 서버 패킷 관련 한번에 모아 보내기 위한 부분과 일정 시간마다 패킷을 전송할 수 있도록 하는 기능
-    - JobQueue
-    - JobTimer
 
 ### Util
 - 가볍게 쓸 수 있는 Util 파일 관련 
-    - DnsUtil : 로컬 IP 주소 관련
-    - AtomicFlag : Flag가 필요할 경우, thread safe를 위해 사용
 
 <details>
 <summary> AtomicFlag </summary>
@@ -97,9 +98,6 @@ public sealed class AtomicFlag
 - 서버에서 공통적으로 사용하는 부분 구현
 ### Logger
 - 로그 관련 처리하기 위하여 NLog 라이브러리를 맵핑하여 사용
-    - LoggerBase
-    - Log
-    - NLogLogger
 
 ### Config
 - 서버에서 사용되는 Config 관련
@@ -112,14 +110,9 @@ public sealed class AtomicFlag
 
 ### Session
 - Session 관련
-    - SessionManager : Client Session 관리
-    - ClientSession
 
 ### Packet
 - Packet 관련
-    - Common, Enum, Protocol : proto 에서 생성한 파일
-    - ServerPacketManager : Server Packet 관리
-    - PacketHandler : Recv Packet 처리
     
 <details> 
 <summary>PacketManager - Packet Register</summary>
@@ -170,12 +163,9 @@ private ushort ComputeMessageId(string messageName)
 - MySQL 연동하여 계정 관련 기능 작업
 
 ### Config
-- Config 파일 Load 하여 사용할 수 있도록 만들었는데, 현재는 하나의 Config.json 파일에서 DatabaseConfig만 존재하므로 통합하여 config.json 으로 사용
-    - ConfigManager
-    - DatabaseConfig 
+- Config 파일 Load 하여 사용할 수 있도록 만들었는데, 현재는 하나의 Config.json 파일에서 로드하여 사용
 
 ### Controllers
-- AccountController : 계정 관련 담당한 Controllers
 
 ### DB
 - Database 관련 
