@@ -11,7 +11,7 @@ public class Arrow : Projectile
 
     public override void Update()
     {
-        if (Owner == null || _zone == null)
+        if (Owner == null || _zone == null || SkillData == null)
             return;
 
         if (_nextMoveTick >= Environment.TickCount64)
@@ -19,7 +19,14 @@ public class Arrow : Projectile
             return;
         }
 
-        _nextMoveTick = Environment.TickCount64 + 50;
+        if (DataManager.ProjectileInfoDict.TryGetValue(SkillData.ProjectileId, out var projectileInfo) == false)
+        {
+            Log.Error($"ProjectileInfo is not valid. ProjectileId: {SkillData.ProjectileId}");
+            return;
+        }
+
+        var tick = (long)(1000 / projectileInfo.Speed);
+        _nextMoveTick = Environment.TickCount64 + tick;
 
         Vector2Int destPos = GetFrontCellPos();
         if (_zone.Map.CanGo(destPos))

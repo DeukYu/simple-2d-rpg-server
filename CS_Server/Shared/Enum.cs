@@ -28,11 +28,13 @@ namespace Google.Protobuf.Enum {
             "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqMAoHTW92ZURp",
             "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAypDCg5H",
             "YW1lT2JqZWN0VHlwZRIICgROb25lEAASCgoGUGxheWVyEAESCwoHTW9uc3Rl",
-            "chACEg4KClByb2plY3RpbGUQBCoiCglFcnJvclR5cGUSCwoHU3VjY2VzcxAA",
-            "EggKBEZhaWwQAUIXqgIUR29vZ2xlLlByb3RvYnVmLkVudW1iBnByb3RvMw=="));
+            "chACEg4KClByb2plY3RpbGUQBCpBCglTa2lsbFR5cGUSDgoKU2tpbGxfTm9u",
+            "ZRAAEg4KClNraWxsX0F1dG8QARIUChBTa2lsbF9Qcm9qZWN0aWxlEAIqIgoJ",
+            "RXJyb3JUeXBlEgsKB1N1Y2Nlc3MQABIICgRGYWlsEAFCF6oCFEdvb2dsZS5Q",
+            "cm90b2J1Zi5FbnVtYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
@@ -57,6 +59,12 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("Player")] Player = 1,
     [pbr::OriginalName("Monster")] Monster = 2,
     [pbr::OriginalName("Projectile")] Projectile = 4,
+  }
+
+  public enum SkillType {
+    [pbr::OriginalName("Skill_None")] SkillNone = 0,
+    [pbr::OriginalName("Skill_Auto")] SkillAuto = 1,
+    [pbr::OriginalName("Skill_Projectile")] SkillProjectile = 2,
   }
 
   public enum ErrorType {

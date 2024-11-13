@@ -1,0 +1,20 @@
+{
+  "skills": [
+    {
+      "Id": 1,
+      "Name": "일반 공격",
+      "Cooltime": 0.2,
+      "Damage": 10,
+      "SkillType": 1,
+      "ProjectileId": 0
+    },
+    {
+      "Id": 2,
+      "Name": "화살 공격",
+      "Cooltime": 0.2,
+      "Damage": 5,
+      "SkillType": 2,
+      "ProjectileId": 1
+    }
+  ]
+}

@@ -8,6 +8,9 @@ class Program
     static Listener _listener = new Listener();
     static void Main(string[] args)
     {
+        ConfigManager.LoadConfig();
+        DataManager.LoadData();
+
         ZoneManager.Instance.Add(1);
 
         // DNS (Domain Name System)
@@ -26,7 +29,6 @@ class Program
                 return;
             }
             zone.Update();
-            Thread.Sleep(1000);
         }
     }
 }

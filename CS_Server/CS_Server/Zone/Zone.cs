@@ -3,6 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using System.Net.Http.Headers;
 
 namespace CS_Server;
 
@@ -292,33 +293,43 @@ public class Zone
 
             //BroadCast(res);
 
-            // 스킬 사용 가능 여부 
-            if (packet.SkillInfo.SkillId == 1)
+            if(DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
             {
-                var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
-                var target = Map.Find(skillPos);
-                if (target != null)
-                {
-                    Log.Info("GameObject Hit");
-                }
-            }
-            else if (packet.SkillInfo.SkillId == 2)
-            {
-                var arrow = ObjectManager.Instance.Add<Arrow>();
-                if (arrow == null)
-                {
-                    Log.Error("HandleSkill arrow is null");
-                    return;
-                }
-
-                arrow.Owner = player;
-                arrow.PosInfo.State = CreatureState.Move;
-                arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
-                arrow.PosInfo.PosX = player.PosInfo.PosX;
-                arrow.PosInfo.PosY = player.PosInfo.PosY;
-                EnterZone(arrow);
+                Log.Error($"HandleSkill skillData is null. SkillId{packet.SkillInfo.SkillId}");
+                return;
             }
 
+            switch(skillData.SkillType)
+            {
+                case SkillType.SkillAuto:
+                    {
+                        var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
+                        var target = Map.Find(skillPos);
+                        if (target != null)
+                        {
+                            Log.Info("GameObject Hit");
+                        }
+                    }
+                    break;
+                case SkillType.SkillProjectile:
+                    {
+                        var arrow = ObjectManager.Instance.Add<Arrow>();
+                        if (arrow == null)
+                        {
+                            Log.Error("HandleSkill arrow is null");
+                            return;
+                        }
+
+                        arrow.Owner = player;
+                        arrow.SkillData = skillData;
+                        arrow.PosInfo.State = CreatureState.Move;
+                        arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
+                        arrow.PosInfo.PosX = player.PosInfo.PosX;
+                        arrow.PosInfo.PosY = player.PosInfo.PosY;
+                        EnterZone(arrow);
+                    }
+                    break;
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ServerCore;
-using WebServer.Config;
+using Shared;
 
 namespace WebServer;
 

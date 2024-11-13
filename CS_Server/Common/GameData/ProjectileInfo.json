@@ -1,0 +1,11 @@
+{
+  "projectileinfos": [
+    {
+      "Id": 1,
+      "Name": "화살",
+      "Speed": 10.0,
+      "Range": 10,
+      "Prefab": "Creatures/Arrow"
+    }
+  ]
+}

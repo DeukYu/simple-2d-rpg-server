@@ -25,7 +25,6 @@ public class ObjectManager
             {
                 Log.Error($"Add Player : {gameObject.Id}");
                 return gameObject;
-
             }
         }
 

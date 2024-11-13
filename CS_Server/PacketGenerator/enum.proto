@@ -25,6 +25,12 @@ enum GameObjectType{
 	Projectile = 4;
 }
 
+enum SkillType{
+	Skill_None = 0;
+	Skill_Auto = 1;
+	Skill_Projectile = 2;
+}
+
 enum ErrorType{
     Success = 0;
     Fail = 1;

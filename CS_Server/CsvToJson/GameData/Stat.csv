@@ -1,0 +1,4 @@
+level:int,maxHp:int,maxMp:int,attack:int,totalexp:int
+1,100,100,10,100
+2,110,110,11,110
+3,120,120,12,130

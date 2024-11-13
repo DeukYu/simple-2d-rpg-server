@@ -11,8 +11,7 @@ XCOPY /Y Common.cs "../../CS_Server/Packet"
 XCOPY /Y Common.cs "../../WebServer/Packet"
 
 XCOPY /Y Enum.cs "../../../../GuardianOfNature2D/Assets/03_Scripts/Packet"
-XCOPY /Y Enum.cs "../../CS_Server/Packet"
-XCOPY /Y Enum.cs "../../WebServer/Packet"
+XCOPY /Y Enum.cs "../../Shared"
 
 XCOPY /Y WebProtocol.cs "../../../../GuardianOfNature2D/Assets/03_Scripts/Packet"
 XCOPY /Y WebProtocol.cs "../../WebServer/Packet"

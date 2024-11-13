@@ -1,0 +1,3 @@
+Id:int,Name:string,Cooltime:int,damage:int,skilltype:string,projectileId:int
+1,일반 공격,0.2,10,SkillAuto,0
+2,화살 공격,0.2,5,SkillProjectile,1
