@@ -9,7 +9,12 @@ public class GameObject
     public GameObjectType ObjectType { get; protected set; } = GameObjectType.None;
     public ObjectInfo Info { get; set; } = new ObjectInfo();
     public PositionInfo PosInfo { get; private set; } = new PositionInfo();
-
+    public StatInfo StatInfo { get; private set; } = new StatInfo();
+    public float Speed
+    {
+        get { return StatInfo.Speed; }
+        set { StatInfo.Speed = value; }
+    }
     public long Id
     {
         get { return Info.ObjectId; }
@@ -19,6 +24,7 @@ public class GameObject
     public GameObject()
     {
         Info.PosInfo = PosInfo;
+        Info.StatInfo = StatInfo;
     }
 
     public Vector2Int CellPos
@@ -60,5 +66,10 @@ public class GameObject
 
         }
         return cellPos;
+    }
+
+    public virtual void OnDamaged(int damage, GameObject attacker)
+    {
+
     }
 }

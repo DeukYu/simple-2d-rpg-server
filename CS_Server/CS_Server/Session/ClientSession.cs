@@ -30,7 +30,6 @@ public class ClientSession : PacketSession
         // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
         GamePlayer = ObjectManager.Instance.Add<Player>();
 
-
         if (GamePlayer == null)
         {
             Log.Error("OnConnected: GamePlayer is null.");

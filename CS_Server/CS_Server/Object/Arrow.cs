@@ -46,6 +46,7 @@ public class Arrow : Projectile
             if (target != null)
             {
                 // 피격 판정
+                target.OnDamaged(this, SkillData.Damage);
             }
 
             // 소멸

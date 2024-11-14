@@ -3,6 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using Shared;
 using System.Net.Http.Headers;
 
 namespace CS_Server;
@@ -313,7 +314,13 @@ public class Zone
                     break;
                 case SkillType.SkillProjectile:
                     {
-                        var arrow = ObjectManager.Instance.Add<Arrow>();
+                        if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
+                        {
+                            Log.Error($"HandleSkill projectileInfo is null. ProjectileId{skillData.ProjectileId}");
+                            return;
+                        }
+
+                            var arrow = ObjectManager.Instance.Add<Arrow>();
                         if (arrow == null)
                         {
                             Log.Error("HandleSkill arrow is null");
@@ -326,6 +333,7 @@ public class Zone
                         arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
                         arrow.PosInfo.PosX = player.PosInfo.PosX;
                         arrow.PosInfo.PosY = player.PosInfo.PosY;
+                        arrow.Speed = projectileInfo.Speed;
                         EnterZone(arrow);
                     }
                     break;
