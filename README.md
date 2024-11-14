@@ -5,7 +5,8 @@
 
 ## 환경설정
 - Visual Studio 2022
-- C# .Net 8.0
+- C# .NET 8.0
+- C# ASP.NET
 - MySQL
 
 ## Nuget Package
