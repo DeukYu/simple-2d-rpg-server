@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Enum;
+﻿using Google.Protobuf.Common;
+using Google.Protobuf.Enum;
 using ServerCore;
 using System.Collections.Concurrent;
 
@@ -10,21 +11,20 @@ public class ObjectManager
     private ConcurrentDictionary<long, Player> _players = new ConcurrentDictionary<long, Player>();
     object _lock = new object();
 
-
-    private long _playerId = 0; // TODO : 추후 DB 연동시, PlayerId 는 DB에서 불러올 예정
     int _counter = 0;
 
     public T Add<T>() where T : GameObject, new()
     {
         T gameObject = new T();
+
         gameObject.Id = GenerateId(gameObject.ObjectType);
 
         if (gameObject.ObjectType == GameObjectType.Player)
         {
-            if (_players.TryAdd(gameObject.Id, gameObject as Player))
+            if (_players.TryAdd(gameObject.Id, gameObject as Player) == false)
             {
                 Log.Error($"Add Player : {gameObject.Id}");
-                return gameObject;
+                return null;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Enum;
 using ServerCore;
 using System.Net;
 
@@ -29,6 +30,14 @@ public class ClientSession : PacketSession
 
         // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
         GamePlayer = ObjectManager.Instance.Add<Player>();
+        {
+            GamePlayer.Info.Name = $"Player_{GamePlayer.Info.ObjectId}";
+            GamePlayer.Info.PosInfo.State = CreatureState.Idle;
+            GamePlayer.Info.PosInfo.MoveDir = MoveDir.Down;
+            GamePlayer.Info.PosInfo.PosX = 0;
+            GamePlayer.Info.PosInfo.PosY = 0;
+            GamePlayer.Session = this;
+        }
 
         if (GamePlayer == null)
         {

@@ -68,7 +68,7 @@ public class GameObject
         return cellPos;
     }
 
-    public virtual void OnDamaged(int damage, GameObject attacker)
+    public virtual void OnDamaged(GameObject attacker, int damage)
     {
 
     }

@@ -38,7 +38,8 @@ public class DataManager
 
     static Loader? LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
     {
-        var text = File.ReadAllText($"{ConfigManager.PathConfig.GameDataPath}/{path}.json");
+        var readFile = $"{ConfigManager.PathConfig.GameDataPath}/{path}.json";
+        var text = File.ReadAllText(readFile);
         return JsonConvert.DeserializeObject<Loader>(text);
     }
 }

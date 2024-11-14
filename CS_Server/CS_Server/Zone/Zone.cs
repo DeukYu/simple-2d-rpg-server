@@ -3,8 +3,6 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using Shared;
-using System.Net.Http.Headers;
 
 namespace CS_Server;
 
@@ -64,6 +62,11 @@ public class Zone
     private void AddPlayerToZone(GameObject gameObject)
     {
         var player = gameObject as Player;
+        if(player == null)
+        {
+            Log.Error("AddPlayerToZone player is null");
+            return;
+        }
 
         _players.Add(gameObject.Info.ObjectId, player);
         player._zone = this;
