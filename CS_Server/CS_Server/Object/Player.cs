@@ -15,6 +15,6 @@ public class Player : GameObject
 
     public override void OnDamaged(GameObject attacker, int damage)
     {
-        Log.Info(Info.ObjectId + " is damaged by " + attacker.Info.ObjectId + " : " + damage);
+        base.OnDamaged(attacker, damage);
     }
 }

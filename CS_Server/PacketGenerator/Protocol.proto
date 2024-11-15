@@ -47,6 +47,12 @@ message S2C_Skill{
     SkillInfo skill_info = 3;
 }
 
+message S2C_ChangeHp{
+    int32 result = 1;
+    int64 object_id = 2;
+    int32 hp = 3;
+}
+
 message C2S_Chat{
     string chat_message = 1;
 }

@@ -45,8 +45,8 @@ public class Arrow : Projectile
             var target = _zone.Map.Find(destPos);
             if (target != null)
             {
-                // 피격 판정
-                target.OnDamaged(this, SkillData.Damage);
+                var totalDamage = SkillData.Damage + Owner.StatInfo.Attack;
+                target.OnDamaged(this, totalDamage);
             }
 
             // 소멸

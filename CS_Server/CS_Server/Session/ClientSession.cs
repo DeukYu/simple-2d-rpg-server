@@ -29,6 +29,7 @@ public class ClientSession : PacketSession
         Log.Info($"OnConnected: {endPoint}");
 
         // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
+        // TODO : 현재는 정보들을 간단하게 받기 위해 임시로 만들어 놓은 것이므로 추후에 수정해야 한다.
         GamePlayer = ObjectManager.Instance.Add<Player>();
         {
             GamePlayer.Info.Name = $"Player_{GamePlayer.Info.ObjectId}";
@@ -36,6 +37,19 @@ public class ClientSession : PacketSession
             GamePlayer.Info.PosInfo.MoveDir = MoveDir.Down;
             GamePlayer.Info.PosInfo.PosX = 0;
             GamePlayer.Info.PosInfo.PosY = 0;
+
+            if(DataManager.StatDict.TryGetValue(1, out var stat))
+            {
+                GamePlayer.StatInfo.Level = 1;
+                GamePlayer.StatInfo.Hp = stat.MaxHp;
+                GamePlayer.StatInfo.MaxHp = stat.MaxHp;
+                GamePlayer.StatInfo.Mp = stat.MaxMp;
+                GamePlayer.StatInfo.MaxHp = stat.MaxHp;
+                GamePlayer.StatInfo.Attack = stat.Attack;
+                GamePlayer.StatInfo.Exp = 0;
+                GamePlayer.StatInfo.TotalExp = stat.TotalExp;
+            }
+
             GamePlayer.Session = this;
         }
 

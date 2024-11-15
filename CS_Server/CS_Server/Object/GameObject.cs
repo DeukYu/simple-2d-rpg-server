@@ -1,5 +1,7 @@
 ﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
+using Google.Protobuf.Protocol;
+using ServerCore;
 
 namespace CS_Server;
 
@@ -70,6 +72,21 @@ public class GameObject
 
     public virtual void OnDamaged(GameObject attacker, int damage)
     {
+        StatInfo.Hp -= damage;
+        StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
+        S2C_ChangeHp changeHpPacket = new S2C_ChangeHp();
+        changeHpPacket.ObjectId = Id;
+        changeHpPacket.Hp = StatInfo.Hp;
+        _zone.BroadCast(changeHpPacket);
+
+        if (StatInfo.Hp <= 0)
+        {
+            OnDead(attacker);
+        }
+    }
+    public virtual void OnDead(GameObject attacker)
+    {
+        // PosInfo.State = CreatureState.Dead;
     }
 }
