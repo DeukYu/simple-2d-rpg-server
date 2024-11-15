@@ -41,7 +41,8 @@ dotnet add package Newtonsoft.Json
 
 ## 컨텐츠 구현 내용
 - 플레이어 이동 동기화 구현
-- 플레이어 공격(스킬), Hit 판정 동기화 구현 (Projectile 포함)
+- 플레이어 공격(스킬), Hit 판정, 데미지 동기화 구현 (Projectile 포함)
+- 플레이어 스탯 시스템 구현
 - 맵, 오브젝트 충돌 처리 구현
 - 채팅 동기화 구현
 
