@@ -184,6 +184,11 @@ public class Zone
             {
                 projectile.Update();
             }
+
+            foreach (var monster in _monsters.Values)
+            {
+                monster.Update();
+            }
         }
     }
 
@@ -247,7 +252,7 @@ public class Zone
             }
         }
     }
-    
+
     public void HandleMove(Player player, C2S_Move packet)
     {
         if (player == null)
@@ -370,9 +375,17 @@ public class Zone
         }
     }
 
-    public Player FindPlayer()
+    public Player FindPlayer(Func<GameObject, bool> condition)
     {
-
+        lock (_lock)
+        {
+            foreach (var player in _players.Values)
+            {
+                if (condition(player))
+                    return player;
+            }
+        }
+        return null;
     }
 
     public void BroadCast(IMessage packet)
