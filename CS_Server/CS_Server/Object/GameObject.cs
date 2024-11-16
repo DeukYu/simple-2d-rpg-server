@@ -17,6 +17,19 @@ public class GameObject
         get { return StatInfo.Speed; }
         set { StatInfo.Speed = value; }
     }
+
+    public MoveDir Dir
+    {
+        get { return PosInfo.MoveDir; }
+        set { PosInfo.MoveDir = value; }
+    }
+
+    public CreatureState State
+    {
+        get { return PosInfo.State; }
+        set { PosInfo.State = value; }
+    }
+
     public long Id
     {
         get { return Info.ObjectId; }
@@ -27,6 +40,11 @@ public class GameObject
     {
         Info.PosInfo = PosInfo;
         Info.StatInfo = StatInfo;
+    }
+
+    public virtual void Update()
+    {
+
     }
 
     public Vector2Int CellPos
@@ -68,6 +86,14 @@ public class GameObject
 
         }
         return cellPos;
+    }
+    public static MoveDir GetDirFromVec(Vector2Int dir)
+    {
+        if (dir.x != 0)
+            return dir.x > 0 ? MoveDir.Right : MoveDir.Left;
+        else if (dir.y != 0)
+            return dir.y > 0 ? MoveDir.Up : MoveDir.Down;
+        return MoveDir.Down;
     }
 
     public virtual void OnDamaged(GameObject attacker, int damage)

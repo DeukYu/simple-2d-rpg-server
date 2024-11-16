@@ -63,7 +63,7 @@ public class Zone
     private void AddPlayerToZone(GameObject gameObject)
     {
         var player = gameObject as Player;
-        if(player == null)
+        if (player == null)
         {
             Log.Error("AddPlayerToZone player is null");
             return;
@@ -169,6 +169,11 @@ public class Zone
     {
         // TODO : 데이터 Sheet 들어가면 수정
         Map.LoadMap(mapId, "../../../../Common/MapData");
+
+        // Monster
+        var monster = ObjectManager.Instance.Add<Monster>();
+        monster.CellPos = new Vector2Int(10, 10);
+        EnterZone(monster);
     }
 
     public void Update()
@@ -242,6 +247,7 @@ public class Zone
             }
         }
     }
+    
     public void HandleMove(Player player, C2S_Move packet)
     {
         if (player == null)
@@ -317,13 +323,13 @@ public class Zone
 
             //BroadCast(res);
 
-            if(DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
+            if (DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
             {
                 Log.Error($"HandleSkill skillData is null. SkillId{packet.SkillInfo.SkillId}");
                 return;
             }
 
-            switch(skillData.SkillType)
+            switch (skillData.SkillType)
             {
                 case SkillType.SkillAuto:
                     {
@@ -343,7 +349,7 @@ public class Zone
                             return;
                         }
 
-                            var arrow = ObjectManager.Instance.Add<Arrow>();
+                        var arrow = ObjectManager.Instance.Add<Arrow>();
                         if (arrow == null)
                         {
                             Log.Error("HandleSkill arrow is null");
@@ -362,6 +368,11 @@ public class Zone
                     break;
             }
         }
+    }
+
+    public Player FindPlayer()
+    {
+
     }
 
     public void BroadCast(IMessage packet)
