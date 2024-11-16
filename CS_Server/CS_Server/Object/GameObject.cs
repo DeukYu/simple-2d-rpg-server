@@ -87,6 +87,20 @@ public class GameObject
     }
     public virtual void OnDead(GameObject attacker)
     {
-        // PosInfo.State = CreatureState.Dead;
+        S2C_Dead deadPacket = new S2C_Dead();
+        deadPacket.ObjectId = Id;
+        deadPacket.AttackerId = attacker.Id;
+        _zone.BroadCast(deadPacket);
+
+        var zone = _zone;
+        zone.LeaveZone(this);
+
+        StatInfo.Hp = StatInfo.MaxHp;
+        PosInfo.State = CreatureState.Idle;
+        PosInfo.MoveDir = MoveDir.Down;
+        PosInfo.PosX = 0;
+        PosInfo.PosY = 0;
+
+        zone.EnterZone(this);
     }
 }

@@ -3,6 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using System.Numerics;
 
 namespace CS_Server;
 
@@ -71,6 +72,8 @@ public class Zone
         _players.Add(gameObject.Info.ObjectId, player);
         player._zone = this;
 
+        Map.ApplyMove(player, player.CellPos);
+
         {
             S2C_EnterGame pkt = new S2C_EnterGame
             {
@@ -87,6 +90,22 @@ public class Zone
                 spawn.Objects.AddRange(filteredPlayers);
                 player.Session.Send(spawn);
             }
+
+            var filteredMonsters = _monsters.Values.Select(m => m.Info).ToList();
+            if (filteredMonsters.Count > 0)
+            {
+                S2C_Spawn spawn = new S2C_Spawn();
+                spawn.Objects.AddRange(filteredMonsters);
+                player.Session.Send(spawn);
+            }
+
+            var filteredProjectiles = _projectiles.Values.Select(p => p.Info).ToList();
+            if (filteredProjectiles.Count > 0)
+            {
+                S2C_Spawn spawn = new S2C_Spawn();
+                spawn.Objects.AddRange(filteredProjectiles);
+                player.Session.Send(spawn);
+            }
         }
     }
 
@@ -95,6 +114,7 @@ public class Zone
         var monster = gameObject as Monster;
         _monsters.Add(gameObject.Info.ObjectId, monster);
         monster._zone = this;
+        Map.ApplyMove(monster, monster.CellPos);
     }
 
     private void AddProjectileToZone(GameObject gameObject)
