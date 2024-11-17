@@ -3,14 +3,12 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Numerics;
 
 namespace CS_Server;
 
-public class Zone
+public class Zone : JobSerializer
 {
     public long ZoneId { get; set; }
-    object _lock = new object();
 
     private readonly Dictionary<GameObjectType, Action<GameObject>> _addToZoneActions;
     private readonly Dictionary<GameObjectType, Action<GameObject>> _removeToZoneActions;
@@ -133,8 +131,8 @@ public class Zone
         }
 
         _players.Remove(gameObject.Id);
-        player._zone = null;
         Map.ApplyLeave(player);
+        player._zone = null;
         {
             S2C_LeaveGame leave = new S2C_LeaveGame();
             player.Session.Send(leave);
@@ -173,22 +171,19 @@ public class Zone
         // Monster
         var monster = ObjectManager.Instance.Add<Monster>();
         monster.CellPos = new Vector2Int(10, 10);
-        EnterZone(monster);
+        Push(EnterZone, monster);
     }
 
     public void Update()
     {
-        lock (_lock)
+        foreach (var projectile in _projectiles.Values)
         {
-            foreach (var projectile in _projectiles.Values)
-            {
-                projectile.Update();
-            }
+            projectile.Update();
+        }
 
-            foreach (var monster in _monsters.Values)
-            {
-                monster.Update();
-            }
+        foreach (var monster in _monsters.Values)
+        {
+            monster.Update();
         }
     }
 
@@ -200,21 +195,18 @@ public class Zone
             return;
         }
 
-        lock (_lock)
+        AddGameObjectToZone(gameObject);
+
         {
-            AddGameObjectToZone(gameObject);
-
+            S2C_Spawn spawn = new S2C_Spawn
             {
-                S2C_Spawn spawn = new S2C_Spawn
-                {
-                    Objects = { gameObject.Info }
-                };
+                Objects = { gameObject.Info }
+            };
 
-                foreach (var p in _players.Values)
-                {
-                    if (p.Id != gameObject.Id)
-                        p.Session.Send(spawn);
-                }
+            foreach (var p in _players.Values)
+            {
+                if (p.Id != gameObject.Id)
+                    p.Session.Send(spawn);
             }
         }
     }
@@ -235,20 +227,17 @@ public class Zone
             _ => GameObjectType.None
         };
 
-        lock (_lock)
-        {
-            RemoveGameObjectFromZone(gameObject);
+        RemoveGameObjectFromZone(gameObject);
 
+        {
+            S2C_Despawn despawn = new S2C_Despawn
             {
-                S2C_Despawn despawn = new S2C_Despawn
-                {
-                    ObjectIds = { gameObject.Id }
-                };
-                foreach (var p in _players.Values)
-                {
-                    if (p.Id != gameObject.Id)
-                        p.Session.Send(despawn);
-                }
+                ObjectIds = { gameObject.Id }
+            };
+            foreach (var p in _players.Values)
+            {
+                if (p.Id != gameObject.Id)
+                    p.Session.Send(despawn);
             }
         }
     }
@@ -261,35 +250,32 @@ public class Zone
             return;
         }
 
-        lock (_lock)
+        PositionInfo movePosInfo = packet.PosInfo;
+        ObjectInfo playerInfo = player.Info;
+
+        // 다른 좌표로 이동할 경우, 갈 수 있는지 체크
+        if (movePosInfo.PosX != playerInfo.PosInfo.PosX || movePosInfo.PosY != playerInfo.PosInfo.PosY)
         {
-            PositionInfo movePosInfo = packet.PosInfo;
-            ObjectInfo playerInfo = player.Info;
-
-            // 다른 좌표로 이동할 경우, 갈 수 있는지 체크
-            if (movePosInfo.PosX != playerInfo.PosInfo.PosX || movePosInfo.PosY != playerInfo.PosInfo.PosY)
+            if (Map.CanGo(new Vector2Int(movePosInfo.PosX, movePosInfo.PosY)) == false)
             {
-                if (Map.CanGo(new Vector2Int(movePosInfo.PosX, movePosInfo.PosY)) == false)
-                {
-                    return;
-                }
+                return;
             }
+        }
 
-            playerInfo.PosInfo.State = movePosInfo.State;
-            playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
-            Map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
+        playerInfo.PosInfo.State = movePosInfo.State;
+        playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
+        Map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
 
 
-            S2C_Move res = new S2C_Move
-            {
-                ObjectId = player.Info.ObjectId,
-                PosInfo = packet.PosInfo,
-            };
+        S2C_Move res = new S2C_Move
+        {
+            ObjectId = player.Info.ObjectId,
+            PosInfo = packet.PosInfo,
+        };
 
-            foreach (var p in _players.Values)
-            {
-                p.Session.Send(res);
-            }
+        foreach (var p in _players.Values)
+        {
+            p.Session.Send(res);
         }
     }
 
@@ -301,101 +287,93 @@ public class Zone
             return;
         }
 
-        lock (_lock)
+        ObjectInfo info = player.Info;
+        if (info.PosInfo.State != CreatureState.Idle)
         {
-            ObjectInfo info = player.Info;
-            if (info.PosInfo.State != CreatureState.Idle)
+            Log.Error("HandleSkill player is not idle");
+            return;
+        }
+
+
+
+        info.PosInfo.State = CreatureState.Skill;
+
+        S2C_Skill res = new S2C_Skill
+        {
+            ObjectId = player.Info.ObjectId,
+            SkillInfo = new SkillInfo
             {
-                Log.Error("HandleSkill player is not idle");
-                return;
+                SkillId = 1,
             }
+        };
 
+        foreach (var p in _players.Values)
+            p.Session.Send(res);
 
+        //BroadCast(res);
 
-            info.PosInfo.State = CreatureState.Skill;
+        if (DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
+        {
+            Log.Error($"HandleSkill skillData is null. SkillId{packet.SkillInfo.SkillId}");
+            return;
+        }
 
-            S2C_Skill res = new S2C_Skill
-            {
-                ObjectId = player.Info.ObjectId,
-                SkillInfo = new SkillInfo
+        switch (skillData.SkillType)
+        {
+            case SkillType.SkillAuto:
                 {
-                    SkillId = 1,
+                    var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
+                    var target = Map.Find(skillPos);
+                    if (target != null)
+                    {
+                        Log.Info("GameObject Hit");
+                    }
                 }
-            };
-
-            foreach (var p in _players.Values)
-                p.Session.Send(res);
-
-            //BroadCast(res);
-
-            if (DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
-            {
-                Log.Error($"HandleSkill skillData is null. SkillId{packet.SkillInfo.SkillId}");
-                return;
-            }
-
-            switch (skillData.SkillType)
-            {
-                case SkillType.SkillAuto:
+                break;
+            case SkillType.SkillProjectile:
+                {
+                    if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
                     {
-                        var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
-                        var target = Map.Find(skillPos);
-                        if (target != null)
-                        {
-                            Log.Info("GameObject Hit");
-                        }
+                        Log.Error($"HandleSkill projectileInfo is null. ProjectileId{skillData.ProjectileId}");
+                        return;
                     }
-                    break;
-                case SkillType.SkillProjectile:
+
+                    var arrow = ObjectManager.Instance.Add<Arrow>();
+                    if (arrow == null)
                     {
-                        if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
-                        {
-                            Log.Error($"HandleSkill projectileInfo is null. ProjectileId{skillData.ProjectileId}");
-                            return;
-                        }
-
-                        var arrow = ObjectManager.Instance.Add<Arrow>();
-                        if (arrow == null)
-                        {
-                            Log.Error("HandleSkill arrow is null");
-                            return;
-                        }
-
-                        arrow.Owner = player;
-                        arrow.SkillData = skillData;
-                        arrow.PosInfo.State = CreatureState.Move;
-                        arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
-                        arrow.PosInfo.PosX = player.PosInfo.PosX;
-                        arrow.PosInfo.PosY = player.PosInfo.PosY;
-                        arrow.Speed = projectileInfo.Speed;
-                        EnterZone(arrow);
+                        Log.Error("HandleSkill arrow is null");
+                        return;
                     }
-                    break;
-            }
+
+                    arrow.Owner = player;
+                    arrow.SkillData = skillData;
+                    arrow.PosInfo.State = CreatureState.Move;
+                    arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
+                    arrow.PosInfo.PosX = player.PosInfo.PosX;
+                    arrow.PosInfo.PosY = player.PosInfo.PosY;
+                    arrow.Speed = projectileInfo.Speed;
+
+                    Push(EnterZone, arrow);
+                }
+                break;
         }
     }
 
     public Player FindPlayer(Func<GameObject, bool> condition)
     {
-        lock (_lock)
+        foreach (var player in _players.Values)
         {
-            foreach (var player in _players.Values)
-            {
-                if (condition(player))
-                    return player;
-            }
+            if (condition(player))
+                return player;
         }
         return null;
     }
 
     public void BroadCast(IMessage packet)
     {
-        lock (_lock)
+        foreach (var player in _players.Values)
         {
-            foreach (var player in _players.Values)
-            {
-                player.Session.Send(packet);
-            }
+            player.Session.Send(packet);
         }
     }
 }

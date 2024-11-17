@@ -25,6 +25,12 @@ public class Map
 
     public bool ApplyLeave(GameObject gameObject)
     {
+        if (gameObject._zone == null)
+            return false;
+
+        if(gameObject._zone.Map != this)
+            return false;
+
         var posInfo = gameObject.Info.PosInfo;
         if (Bounds.Contains(posInfo.PosX, posInfo.PosY) == false)
             return false;

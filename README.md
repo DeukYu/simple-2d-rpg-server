@@ -59,11 +59,9 @@ dotnet add package Newtonsoft.Json
 # Server (CS_Server)
 ## ServerCore
 - 서버 네트워크 및 기타 핵심 기능들 구현
+
 ### Network
 - 서버 네트워크 통신 관련 기능
-
-### Job
-- 서버 패킷 관련 한번에 모아 보내기 위한 부분과 일정 시간마다 패킷을 전송할 수 있도록 하는 기능
 
 ### Util
 - 가볍게 쓸 수 있는 Util 파일 관련 
@@ -163,6 +161,9 @@ private ushort ComputeMessageId(string messageName)
 }
 ```
 </details>
+
+### Job
+- lock 처리 하는 부분을 없애기 위해 Job 처리 방식 변경으로 인한 추가한 부분
 
 ## Web Server
 - 로그인 기능 및 웹 API 관련을 위한 서버

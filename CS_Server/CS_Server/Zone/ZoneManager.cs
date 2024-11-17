@@ -12,7 +12,7 @@ public class ZoneManager
     public Zone? Add(int mapId)
     {
         Zone zone = new Zone();
-        zone.Init(mapId);
+        zone.Push(zone.Init, mapId);
 
         lock (_lock)
         {

@@ -28,7 +28,8 @@ class Program
                 Log.Error("Main: Zone is null");
                 return;
             }
-            zone.Update();
+            zone.Push(zone.Update);
+            Thread.Sleep(100);
         }
     }
 }

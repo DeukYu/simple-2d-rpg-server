@@ -19,7 +19,7 @@ public class ClientSession : PacketSession
 
         ushort protocolId = PacketManager.Instance.GetMessageId(packet.GetType());
         Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
-        
+
         Array.Copy(packet.ToByteArray(), 0, sendBuffer, 4, size);
         Send(new ArraySegment<byte>(sendBuffer));
     }
@@ -38,7 +38,7 @@ public class ClientSession : PacketSession
             GamePlayer.Info.PosInfo.PosX = 0;
             GamePlayer.Info.PosInfo.PosY = 0;
 
-            if(DataManager.StatDict.TryGetValue(1, out var stat))
+            if (DataManager.StatDict.TryGetValue(1, out var stat))
             {
                 GamePlayer.StatInfo.Level = 1;
                 GamePlayer.StatInfo.Hp = stat.MaxHp;
@@ -60,17 +60,24 @@ public class ClientSession : PacketSession
         }
 
         var zone = ZoneManager.Instance.FindZone(1);
-        if(zone == null)
+        if (zone == null)
         {
             Log.Error("OnConnected: zone is null");
             return;
         }
 
-        zone.EnterZone(GamePlayer);
+        zone.Push(zone.EnterZone, GamePlayer);
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
-        ZoneManager.Instance.FindZone(1).LeaveZone(GamePlayer);
+        var zone = ZoneManager.Instance.FindZone(1);
+        if (zone == null)
+        {
+            Log.Error("OnDisConnected: zone is null");
+            return;
+        }
+
+        zone.Push(zone.LeaveZone, GamePlayer);
 
         SessionManager.Instance.Remove(this);
 

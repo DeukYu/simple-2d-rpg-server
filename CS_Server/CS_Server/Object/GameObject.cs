@@ -103,6 +103,11 @@ public class GameObject
 
     public virtual void OnDamaged(GameObject attacker, int damage)
     {
+        if (_zone == null)
+        {
+            return;
+        }
+
         StatInfo.Hp -= damage;
         StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
@@ -118,6 +123,11 @@ public class GameObject
     }
     public virtual void OnDead(GameObject attacker)
     {
+        if (_zone == null)
+        {
+            return;
+        }
+
         S2C_Dead deadPacket = new S2C_Dead();
         deadPacket.ObjectId = Id;
         deadPacket.AttackerId = attacker.Id;

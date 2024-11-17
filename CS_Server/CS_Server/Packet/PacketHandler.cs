@@ -44,7 +44,7 @@ class PacketHandler
             return;
         }
 
-        zone.HandleMove(player, movePacket);
+        zone.Push(zone.HandleMove, player, movePacket);
     }
 
     public static void C2S_SkillHandler(PacketSession session, IMessage packet)
@@ -70,6 +70,6 @@ class PacketHandler
             return;
         }
 
-        zone.HandleSkill(player, skillPacket);
+        zone.Push(zone.HandleSkill, player, skillPacket);
     }
 }

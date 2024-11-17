@@ -50,7 +50,7 @@ public class Arrow : Projectile
             }
 
             // 소멸
-            _zone.LeaveZone(this);
+            _zone.Push(_zone.LeaveZone, this);
         }
     }
 }
