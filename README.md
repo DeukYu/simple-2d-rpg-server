@@ -44,6 +44,8 @@ dotnet add package Newtonsoft.Json
 - 플레이어 공격(스킬), Hit 판정, 데미지 동기화 구현 (Projectile 포함)
 - 플레이어 스탯 시스템 구현
 - 맵, 오브젝트 충돌 처리 구현
+- 몬스터 동기화 작업
+- 데미지에 따른 Dead 구현
 - 채팅 동기화 구현
 
 ## Tool 관련
