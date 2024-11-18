@@ -174,6 +174,12 @@ public class Zone : JobSerializer
         Push(EnterZone, monster);
     }
 
+    public void TestTimer()
+    {
+        Log.Info("TestTimer");
+        PushAfter(100, TestTimer);
+    }
+
     public void Update()
     {
         foreach (var projectile in _projectiles.Values)
@@ -185,6 +191,8 @@ public class Zone : JobSerializer
         {
             monster.Update();
         }
+
+        Flush();
     }
 
     public void EnterZone(GameObject gameObject)

@@ -5,8 +5,19 @@ namespace CS_Server;
 
 public class JobSerializer
 {
+    private JobTimer _timer = new JobTimer();
     private ConcurrentQueue<IJob> _jobQueue = new ConcurrentQueue<IJob>();
     private AtomicFlag _flush = new AtomicFlag();
+
+    public void PushAfter(int tickAfter, Delegate action, params object[] parameters)
+    {
+        PushAfter(tickAfter, new Job(action, parameters));
+    }
+
+    public void PushAfter(int tickAfter, IJob job)
+    {
+        _timer.Push(job, tickAfter);
+    }
 
     public void Push(Delegate action, params object[] parameters)
     {
@@ -15,21 +26,13 @@ public class JobSerializer
 
     public void Push(IJob job)
     {
-        AtomicFlag flush = new AtomicFlag();
-
         _jobQueue.Enqueue(job);
-        if (_flush == false)
-        {
-            flush.Set();
-            _flush.Set();
-        }
-
-        if (flush)
-            Flush();
     }
 
-    void Flush()
+    public void Flush()
     {
+        _timer.Flush();
+
         while (true)
         {
             var job = Pop();

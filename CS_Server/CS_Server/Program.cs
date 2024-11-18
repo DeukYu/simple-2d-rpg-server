@@ -1,17 +1,32 @@
 ﻿using ServerCore;
 using System.Net;
+using System.Timers;
 
 namespace CS_Server;
 
 class Program
 {
     static Listener _listener = new Listener();
+    static List<System.Timers.Timer> _timers = new List<System.Timers.Timer>();
+
+    static void TickZone(Zone zone, int tick = 1000)
+    {
+        var timer = new System.Timers.Timer();
+        timer.Interval = tick;
+        timer.Elapsed += (s, e) => zone.Update();
+        timer.AutoReset = true;
+        timer.Enabled = true;
+
+        _timers.Add(timer);
+    }
+
     static void Main(string[] args)
     {
         ConfigManager.LoadConfig();
         DataManager.LoadData();
 
-        ZoneManager.Instance.Add(1);
+        var zone = ZoneManager.Instance.Add(1);
+        TickZone(zone, 50);
 
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
@@ -21,14 +36,6 @@ class Program
 
         while (true)
         {
-            // TODO : 임시로 1초에 한번씩 업데이트를 호출한다.
-            var zone = ZoneManager.Instance.FindZone(1);
-            if (zone == null)
-            {
-                Log.Error("Main: Zone is null");
-                return;
-            }
-            zone.Push(zone.Update);
             Thread.Sleep(100);
         }
     }

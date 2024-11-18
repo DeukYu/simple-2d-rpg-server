@@ -1,19 +1,19 @@
-﻿namespace ServerCore;
+﻿using CS_Server;
+
+namespace ServerCore;
 
 public class JobTimer
 {
-    PriorityQueue<Action, int> _pq = new PriorityQueue<Action, int>();
+    PriorityQueue<IJob, int> _pq = new PriorityQueue<IJob, int>();
     object _lock = new object();
 
-    public static JobTimer Instance { get; } = new JobTimer();
-
-    public void Push(Action action, int tickAfter = 0)
+    public void Push(IJob job, int tickAfter = 0)
     {
         int execTick = System.Environment.TickCount + tickAfter;
 
         lock (_lock)
         {
-            _pq.Enqueue(action, execTick);
+            _pq.Enqueue(job, execTick);
         }
     }
 
@@ -23,7 +23,7 @@ public class JobTimer
         {
             int now = System.Environment.TickCount;
 
-            Action? job = null!;
+            IJob? job = null!;
             lock (_lock)
             {
                 if (_pq.Count == 0)
@@ -34,7 +34,7 @@ public class JobTimer
 
                 _pq.TryDequeue(out job, out _);
             }
-            job?.Invoke();
+            job?.Execute();
         }
     }
 }
