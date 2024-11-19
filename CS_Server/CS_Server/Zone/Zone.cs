@@ -147,8 +147,8 @@ public class Zone : JobSerializer
             return;
         }
 
-        monster._zone = null;
         Map.ApplyLeave(monster);
+        monster._zone = null;
     }
 
     private void RemoveProjectileFromZone(GameObject gameObject)
