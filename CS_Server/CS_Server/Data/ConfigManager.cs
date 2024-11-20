@@ -14,21 +14,18 @@ public class ConfigManager
         var text = File.ReadAllText("../../../../config.json");
 
         // DataBase Config
-        var databaseConfig = JsonConvert.DeserializeObject<DatabaseConfig>(text);
-        if(databaseConfig == null)
-        {
-            Log.Error("Failed to load config.json");
-            return;
-        }
-        DatabaseConfig = databaseConfig;
+        DatabaseConfig = LoadConfigSection<DatabaseConfig>(text);
+        PathConfig = LoadConfigSection<PathConfig>(text);
+    }
 
-        // Path Config
-        var pathConfig = JsonConvert.DeserializeObject<PathConfig>(text);
-        if (pathConfig == null)
+    public static T LoadConfigSection<T>(string jsonText) where T : new()
+    {
+        var section = JsonConvert.DeserializeObject<T>(jsonText);
+        if (section == null)
         {
-            Log.Error("Failed to load config.json");
-            return;
+            Log.Error($"Failed to load {typeof(T).Name} config");
+            return new T();
         }
-        PathConfig = pathConfig;
+        return section;
     }
 }
