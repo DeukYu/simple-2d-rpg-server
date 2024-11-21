@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Shared;
 
 namespace WebServer;
 
@@ -6,7 +7,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        ConfigManager.LoadConfig();
+        var configPath = "../config.json";
+        ConfigManager.Instance.LoadConfig(configPath);
 
         var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,7 @@ public class Program
 
         builder.Services.AddDbContext<AccountDB>(options =>
         {
-            options.UseMySQL(ConfigManager.DatabaseConfig.GetConnectionConfig());
+            options.UseMySQL(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig());
         });
 
         builder.Services.AddControllers();

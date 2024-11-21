@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Enum;
+using Google.Protobuf.Protocol;
 using ServerCore;
 using System.Net;
 
@@ -27,6 +28,12 @@ public class ClientSession : PacketSession
     public override void OnConnected(EndPoint endPoint)
     {
         Log.Info($"OnConnected: {endPoint}");
+
+        S2C_Connected connectedPacket = new S2C_Connected
+        {
+            Result = (int)ErrorType.Success,
+        };
+        Send(connectedPacket);
 
         // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
         // TODO : 현재는 정보들을 간단하게 받기 위해 임시로 만들어 놓은 것이므로 추후에 수정해야 한다.

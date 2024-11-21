@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Shared;
 
@@ -12,7 +13,12 @@ public class AccountDB : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySQL("Server=localhost;Port=3306");
+        if (optionsBuilder.IsConfigured == false)
+        {
+            optionsBuilder
+                .UseMySQL(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig())
+                .UseLoggerFactory(_logger);
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,6 +31,12 @@ public class AccountDB : DbContext
             .HasIndex(p => p.PlayerName)
             .IsUnique();
     }
+
+    static readonly ILoggerFactory _logger = LoggerFactory.Create(builder =>
+    {
+        builder.AddConsole();
+    });
+
 
     public DbSet<AccountInfo> AccountInfo { get; set; }
     public DbSet<PlayerInfo> PlayerInfo { get; set; }

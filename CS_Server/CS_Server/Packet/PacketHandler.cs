@@ -1,7 +1,9 @@
 ﻿
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Microsoft.EntityFrameworkCore;
 using ServerCore;
+using Shared;
 using System.Reflection;
 
 namespace CS_Server;
@@ -71,5 +73,18 @@ class PacketHandler
         }
 
         zone.Push(zone.HandleSkill, player, skillPacket);
+    }
+    public static void C2S_LoginHandler(PacketSession session, IMessage packet)
+    {
+        C2S_Login c2S_Login = packet as C2S_Login;
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession == null || c2S_Login == null)
+        {
+            Log.Error("C2S_LoginHandler: Invalid packet.");
+            return;
+        }
+        
+        Log.Info($"C2S_LoginHandler: {c2S_Login.UniqueId}");
     }
 }

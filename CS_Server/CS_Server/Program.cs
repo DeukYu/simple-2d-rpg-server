@@ -1,6 +1,7 @@
-﻿using ServerCore;
+﻿using Microsoft.EntityFrameworkCore;
+using ServerCore;
+using Shared;
 using System.Net;
-using System.Timers;
 
 namespace CS_Server;
 
@@ -22,8 +23,14 @@ class Program
 
     static void Main(string[] args)
     {
-        ConfigManager.LoadConfig();
+        var configPath = "../../../../config.json";
+        ConfigManager.Instance.LoadConfig(configPath);
         DataManager.LoadData();
+
+        using(AccountDB db = new AccountDB())
+        {
+            db.Database.EnsureCreated();
+        }
 
         var zone = ZoneManager.Instance.Add(1);
         TickZone(zone, 50);
