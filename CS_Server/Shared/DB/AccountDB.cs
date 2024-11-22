@@ -5,12 +5,6 @@ namespace Shared;
 
 public class AccountDB : DbContext
 {
-
-    public AccountDB(DbContextOptions<AccountDB> options)
-    : base(options) // DbContext 기본 생성자 호출
-    {
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (optionsBuilder.IsConfigured == false)

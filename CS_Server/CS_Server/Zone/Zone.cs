@@ -110,6 +110,12 @@ public class Zone : JobSerializer
     private void AddMonsterToZone(GameObject gameObject)
     {
         var monster = gameObject as Monster;
+        if (monster == null)
+        {
+            Log.Error("AddMonsterToZone monster is null");
+            return;
+        }
+
         _monsters.Add(gameObject.Info.ObjectId, monster);
         monster._zone = this;
         Map.ApplyMove(monster, monster.CellPos);
@@ -118,6 +124,11 @@ public class Zone : JobSerializer
     private void AddProjectileToZone(GameObject gameObject)
     {
         var projectile = gameObject as Projectile;
+        if (projectile == null)
+        {
+            Log.Error("AddProjectileToZone projectile is null");
+            return;
+        }
         _projectiles.Add(gameObject.Info.ObjectId, projectile);
         projectile._zone = this;
     }
@@ -367,7 +378,7 @@ public class Zone : JobSerializer
         }
     }
 
-    public Player FindPlayer(Func<GameObject, bool> condition)
+    public Player? FindPlayer(Func<GameObject, bool> condition)
     {
         foreach (var player in _players.Values)
         {

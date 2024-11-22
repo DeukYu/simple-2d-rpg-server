@@ -1,7 +1,8 @@
 ﻿
 using Google.Protobuf;
+using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Tls;
 using ServerCore;
 using Shared;
 using System.Reflection;
@@ -22,15 +23,24 @@ class PacketHandler
             typeof(Action<PacketSession, IMessage>), methodInfo);
     }
 
+    private static bool TryParsePacket<T>(PacketSession session, IMessage packet, out ClientSession? clientSession, out T? typedPacket) where T : class, IMessage
+    {
+        clientSession = session as ClientSession;
+        typedPacket = packet as T;
+
+        if (clientSession == null || typedPacket == null)
+        {
+            Log.Error($"Invalid packet. session: {session.GetType()}, packet: {packet.GetType()}");
+            return false;
+        }
+
+        return true;
+    }
+
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
     {
-        C2S_Move? movePacket = packet as C2S_Move;
-        ClientSession? clientSession = session as ClientSession;
-        if (clientSession == null || movePacket == null)
-        {
-            Log.Error("C2S_MoveHandler: Invalid packet.");
+        if(!TryParsePacket<C2S_Move>(session, packet, out var clientSession, out var movePacket))
             return;
-        }
 
         var player = clientSession.GamePlayer;
         if (player == null)
@@ -46,18 +56,13 @@ class PacketHandler
             return;
         }
 
-        zone.Push(zone.HandleMove, player, movePacket);
+        zone.Push(zone.HandleMove, player, movePacket!);
     }
 
     public static void C2S_SkillHandler(PacketSession session, IMessage packet)
     {
-        C2S_Skill? skillPacket = packet as C2S_Skill;
-        ClientSession? clientSession = session as ClientSession;
-        if (clientSession == null || skillPacket == null)
-        {
-            Log.Error("C2S_SkillHandler: Invalid packet.");
+        if (!TryParsePacket<C2S_Skill>(session, packet, out var clientSession, out var skillPacket))
             return;
-        }
 
         var player = clientSession.GamePlayer;
         if (player == null)
@@ -72,19 +77,37 @@ class PacketHandler
             return;
         }
 
-        zone.Push(zone.HandleSkill, player, skillPacket);
+        zone.Push(zone.HandleSkill, player, skillPacket!);
     }
     public static void C2S_LoginHandler(PacketSession session, IMessage packet)
     {
-        C2S_Login c2S_Login = packet as C2S_Login;
-        ClientSession clientSession = session as ClientSession;
-
-        if (clientSession == null || c2S_Login == null)
-        {
-            Log.Error("C2S_LoginHandler: Invalid packet.");
+        if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
             return;
+
+
+        Log.Info($"C2S_LoginHandler: {loginPacket.UniqueId}");
+
+        using (var db = new AccountDB())
+        {
+            var findAccount = db.AccountInfo.Where(account => account.AccountName == loginPacket.UniqueId).FirstOrDefault();
+            if (findAccount != null)
+            {
+                S2C_Login res = new S2C_Login();
+                res.Result = (int)ErrorType.Success;
+                clientSession.Send(res);
+            }
+            else
+            {
+                var newAccount = new AccountInfo
+                {
+                    AccountName = loginPacket.UniqueId
+                };
+                db.AccountInfo.Add(newAccount);
+                db.SaveChanges();
+                S2C_Login res = new S2C_Login();
+                res.Result = (int)ErrorType.Success;
+                clientSession.Send(res);
+            }
         }
-        
-        Log.Info($"C2S_LoginHandler: {c2S_Login.UniqueId}");
     }
 }
