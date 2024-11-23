@@ -2,7 +2,6 @@
 using Google.Protobuf;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using Org.BouncyCastle.Tls;
 using ServerCore;
 using Shared;
 using System.Reflection;
@@ -39,7 +38,7 @@ class PacketHandler
 
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
     {
-        if(!TryParsePacket<C2S_Move>(session, packet, out var clientSession, out var movePacket))
+        if (!TryParsePacket<C2S_Move>(session, packet, out var clientSession, out var movePacket))
             return;
 
         var player = clientSession.GamePlayer;

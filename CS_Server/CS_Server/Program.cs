@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ServerCore;
+﻿using ServerCore;
 using Shared;
 using System.Net;
 
@@ -29,7 +28,6 @@ class Program
 
         using(AccountDB db = new AccountDB())
         {
-            db.Database.EnsureCreated();
         }
 
         var zone = ZoneManager.Instance.Add(1);
