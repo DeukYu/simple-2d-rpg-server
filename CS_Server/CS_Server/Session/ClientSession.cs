@@ -6,10 +6,11 @@ using System.Net;
 
 namespace CS_Server;
 
-public class ClientSession : PacketSession
+public partial class ClientSession : PacketSession
 {
-    public int SessionId { get; set; }
+    public PlayerServerState ServerState { get; private set; } = PlayerServerState.ServerStateLogin;
     public Player? GamePlayer { get; set; }
+    public int SessionId { get; set; }
 
     public void Send(IMessage packet)
     {
@@ -90,12 +91,10 @@ public class ClientSession : PacketSession
 
         Log.Info($"OnDisConnected: {endPoint}");
     }
-
     public override void OnRecvPacket(ArraySegment<byte> buffer)
     {
         PacketManager.Instance.OnRecvPacket(this, buffer);
     }
-
     public override void OnSend(int numOfBytes)
     {
         //Log.Info($"Transferred bytes: {numOfBytes}");

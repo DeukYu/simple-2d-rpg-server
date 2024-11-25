@@ -29,12 +29,14 @@ namespace Google.Protobuf.Enum {
             "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAypDCg5H",
             "YW1lT2JqZWN0VHlwZRIICgROb25lEAASCgoGUGxheWVyEAESCwoHTW9uc3Rl",
             "chACEg4KClByb2plY3RpbGUQBCpBCglTa2lsbFR5cGUSDgoKU2tpbGxfTm9u",
-            "ZRAAEg4KClNraWxsX0F1dG8QARIUChBTa2lsbF9Qcm9qZWN0aWxlEAIqIgoJ",
-            "RXJyb3JUeXBlEgsKB1N1Y2Nlc3MQABIICgRGYWlsEAFCF6oCFEdvb2dsZS5Q",
-            "cm90b2J1Zi5FbnVtYgZwcm90bzM="));
+            "ZRAAEg4KClNraWxsX0F1dG8QARIUChBTa2lsbF9Qcm9qZWN0aWxlEAIqXAoR",
+            "UGxheWVyU2VydmVyU3RhdGUSFgoSU2VydmVyX1N0YXRlX0xvZ2luEAASFgoS",
+            "U2VydmVyX1N0YXRlX0xvYmJ5EAESFwoTU2VydmVyX1N0YXRlX0luR2FtZRAC",
+            "KiIKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABQheqAhRHb29n",
+            "bGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
@@ -65,6 +67,12 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("Skill_None")] SkillNone = 0,
     [pbr::OriginalName("Skill_Auto")] SkillAuto = 1,
     [pbr::OriginalName("Skill_Projectile")] SkillProjectile = 2,
+  }
+
+  public enum PlayerServerState {
+    [pbr::OriginalName("Server_State_Login")] ServerStateLogin = 0,
+    [pbr::OriginalName("Server_State_Lobby")] ServerStateLobby = 1,
+    [pbr::OriginalName("Server_State_InGame")] ServerStateInGame = 2,
   }
 
   public enum ErrorType {

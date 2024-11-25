@@ -32,6 +32,7 @@ public class AccountDB : DbContext
     });
 
 
-    public DbSet<AccountInfo> AccountInfo { get; set; }
-    public DbSet<PlayerInfo> PlayerInfo { get; set; }
+    public DbSet<AccountInfo> AccountInfo { get; set; } = null!;
+    public DbSet<PlayerInfo> PlayerInfo { get; set; } = null!;
+    public DbSet<PlayerStatInfo> PlayerStatInfo { get; set; } = null!;
 }

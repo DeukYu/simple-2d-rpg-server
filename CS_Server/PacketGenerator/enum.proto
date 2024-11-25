@@ -31,6 +31,12 @@ enum SkillType{
 	Skill_Projectile = 2;
 }
 
+enum PlayerServerState{
+	Server_State_Login = 0;
+	Server_State_Lobby = 1;
+	Server_State_InGame = 2;
+}
+
 enum ErrorType{
     Success = 0;
     Fail = 1;

@@ -7,6 +7,7 @@ import "Common.proto";
 option csharp_namespace = "Google.Protobuf.Protocol";
 
 message C2S_EnterGame{
+    string name = 1;
 }
 
 message S2C_EnterGame{
@@ -79,4 +80,13 @@ message C2S_Login{
 
 message S2C_Login{
     int32 result = 1;
+    repeated LobbyPlayerInfo players = 2;
+}
+
+message C2S_CreatePlayer{
+    string name = 1;
+}
+
+message S2C_CreatePlayer{
+    LobbyPlayerInfo player = 1;
 }

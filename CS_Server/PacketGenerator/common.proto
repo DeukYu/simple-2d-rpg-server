@@ -20,6 +20,11 @@ message ObjectInfo{
     StatInfo stat_info = 4;
 }
 
+message LobbyPlayerInfo{
+    string name = 1;
+    StatInfo stat_info = 2;
+}
+
 message SkillInfo{
     int32 skill_id = 1;
 }

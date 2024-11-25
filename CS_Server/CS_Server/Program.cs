@@ -26,10 +26,6 @@ class Program
         ConfigManager.Instance.LoadConfig(configPath);
         DataManager.LoadData();
 
-        using(AccountDB db = new AccountDB())
-        {
-        }
-
         var zone = ZoneManager.Instance.Add(1);
         TickZone(zone, 50);
 
@@ -38,6 +34,7 @@ class Program
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
         _listener.Initialize(endPoint, () => { return SessionManager.Instance.Generate(); });
+        Log.Info("Listening...");
 
         while (true)
         {
