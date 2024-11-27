@@ -83,27 +83,7 @@ class PacketHandler
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
             return;
 
-        clientSession.HandlerLogin(loginPacket);
-    }
-
-    public static void C2S_EnterGameHandler(PacketSession session, IMessage packet)
-    {
-        if (!TryParsePacket<C2S_EnterGame>(session, packet, out var clientSession, out var enterGamePacket))
-            return;
-        Log.Info($"C2S_EnterGameHandler: {enterGamePacket}");
-        var player = clientSession.GamePlayer;
-        if (player == null)
-        {
-            Log.Error("C2S_EnterGameHandler: GamePlayer is null.");
-            return;
-        }
-        var zone = ZoneManager.Instance.FindZone(1);
-        if (zone == null)
-        {
-            Log.Error("C2S_EnterGameHandler: Zone is null.");
-            return;
-        }
-        zone.Push(zone.EnterZone, player);
+        clientSession.HandleLogin(loginPacket);
     }
 
     public static void C2S_CreatePlayerHandler(PacketSession session, IMessage packet)
@@ -111,18 +91,16 @@ class PacketHandler
         if (!TryParsePacket<C2S_CreatePlayer>(session, packet, out var clientSession, out var createPlayerPacket))
             return;
         Log.Info($"C2S_CreatePlayerHandler: {createPlayerPacket}");
-        var player = clientSession.GamePlayer;
-        if (player == null)
-        {
-            Log.Error("C2S_CreatePlayerHandler: GamePlayer is null.");
+
+        clientSession.HandleCreatePlayer(createPlayerPacket);
+    }
+
+    public static void C2S_EnterGameHandler(PacketSession session, IMessage packet)
+    {
+        if (!TryParsePacket<C2S_EnterGame>(session, packet, out var clientSession, out var enterGamePacket))
             return;
-        }
-        var zone = player._zone;
-        if (zone == null)
-        {
-            Log.Error("C2S_CreatePlayerHandler: Zone is null.");
-            return;
-        }
-        //zone.Push(zone.HandleCreatePlayer, player, createPlayerPacket!);
+        Log.Info($"C2S_EnterGameHandler: {enterGamePacket}");
+
+        clientSession.HandleEnterGame(enterGamePacket);
     }
 }

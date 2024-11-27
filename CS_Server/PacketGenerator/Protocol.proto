@@ -6,6 +6,28 @@ import "Common.proto";
 
 option csharp_namespace = "Google.Protobuf.Protocol";
 
+message C2S_Login{
+    string unique_id = 1;
+}
+
+message S2C_Login{
+    int32 result = 1;
+    repeated LobbyPlayerInfo players = 2;
+}
+
+message C2S_CreatePlayer{
+    string name = 1;
+}
+
+message S2C_CreatePlayer{
+    int32 result = 1;
+    LobbyPlayerInfo player = 2;
+}
+
+message S2C_Connected{
+    int32 result = 1;
+}
+
 message C2S_EnterGame{
     string name = 1;
 }
@@ -68,25 +90,4 @@ message S2C_Chat{
     int32 result = 1;
     int64 object_id =2;
     string chat_message = 3;
-}
-
-message S2C_Connected{
-    int32 result = 1;
-}
-
-message C2S_Login{
-    string unique_id = 1;
-}
-
-message S2C_Login{
-    int32 result = 1;
-    repeated LobbyPlayerInfo players = 2;
-}
-
-message C2S_CreatePlayer{
-    string name = 1;
-}
-
-message S2C_CreatePlayer{
-    LobbyPlayerInfo player = 1;
 }

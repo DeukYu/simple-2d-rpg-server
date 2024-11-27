@@ -40,4 +40,10 @@ enum PlayerServerState{
 enum ErrorType{
     Success = 0;
     Fail = 1;
+
+	Invalid_Server_State = 10;
+
+	Already_Exist_Name = 20;
+
+	Invalid_Game_Data = 30;
 }
