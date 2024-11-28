@@ -100,7 +100,7 @@ class PacketHandler
         if (!TryParsePacket<C2S_EnterGame>(session, packet, out var clientSession, out var enterGamePacket))
             return;
         Log.Info($"C2S_EnterGameHandler: {enterGamePacket}");
-
+        
         clientSession.HandleEnterGame(enterGamePacket);
     }
 }
