@@ -16,7 +16,7 @@ public class Program
 
         builder.Services.AddDbContext<AccountDB>(options =>
         {
-            options.UseMySQL(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig());
+            options.UseMySql(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig(), new MySqlServerVersion(new Version(8, 0, 29)));
         });
 
         builder.Services.AddControllers();

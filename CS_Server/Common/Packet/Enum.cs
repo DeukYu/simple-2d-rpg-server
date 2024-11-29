@@ -32,10 +32,10 @@ namespace Google.Protobuf.Enum {
             "ZRAAEg4KClNraWxsX0F1dG8QARIUChBTa2lsbF9Qcm9qZWN0aWxlEAIqXAoR",
             "UGxheWVyU2VydmVyU3RhdGUSFgoSU2VydmVyX1N0YXRlX0xvZ2luEAASFgoS",
             "U2VydmVyX1N0YXRlX0xvYmJ5EAESFwoTU2VydmVyX1N0YXRlX0luR2FtZRAC",
-            "KmsKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABEhgKFEludmFs",
-            "aWRfU2VydmVyX1N0YXRlEAoSFgoSQWxyZWFkeV9FeGlzdF9OYW1lEBQSFQoR",
-            "SW52YWxpZF9HYW1lX0RhdGEQHkIXqgIUR29vZ2xlLlByb3RvYnVmLkVudW1i",
-            "BnByb3RvMw=="));
+            "KnkKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABEgwKCERiX0Vy",
+            "cm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJfU3RhdGUQChIWChJBbHJlYWR5X0V4",
+            "aXN0X05hbWUQFBIVChFJbnZhbGlkX0dhbWVfRGF0YRAeQheqAhRHb29nbGUu",
+            "UHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
@@ -80,6 +80,7 @@ namespace Google.Protobuf.Enum {
   public enum ErrorType {
     [pbr::OriginalName("Success")] Success = 0,
     [pbr::OriginalName("Fail")] Fail = 1,
+    [pbr::OriginalName("Db_Error")] DbError = 2,
     [pbr::OriginalName("Invalid_Server_State")] InvalidServerState = 10,
     [pbr::OriginalName("Already_Exist_Name")] AlreadyExistName = 20,
     [pbr::OriginalName("Invalid_Game_Data")] InvalidGameData = 30,

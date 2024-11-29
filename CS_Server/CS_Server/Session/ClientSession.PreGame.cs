@@ -44,6 +44,7 @@ public partial class ClientSession : PacketSession
 
                     var lobbyPlayerInfo = new LobbyPlayerInfo
                     {
+                        PlayerId = playerDb.Id,
                         Name = playerDb.PlayerName,
                         StatInfo = new StatInfo
                         {
@@ -75,9 +76,17 @@ public partial class ClientSession : PacketSession
                     AccountName = packet.UniqueId
                 };
                 db.AccountInfo.Add(newAccount);
-                db.SaveChanges();
+                if(db.SaveChangesEx() == false)
+                {
+                    Send(
+                        new S2C_Login
+                        {
+                            Result = (int)ErrorType.DbError
+                        });
+                    return;
+                }
 
-                AccountId = findAccounts.Id;
+                AccountId = newAccount.Id;
 
                 S2C_Login res = new S2C_Login();
                 res.Result = (int)ErrorType.Success;
@@ -134,16 +143,23 @@ public partial class ClientSession : PacketSession
                 Mp = stat.MaxMp,
                 MaxMp = stat.MaxMp,
                 Attack = stat.Attack,
-                Speed = 5,
+                Speed = stat.Speed,
                 TotalExp = 0,
                 PlayerId = newPlayer.Id
             };
 
             db.PlayerInfo.Add(newPlayer);
-            db.SaveChanges();
+            if(db.SaveChangesEx() == false)
+            {
+                S2C_CreatePlayer res = new S2C_CreatePlayer();
+                res.Result = (int)ErrorType.DbError;
+                Send(res);
+                return;
+            }
 
             var lobbyPlayerInfo = new LobbyPlayerInfo
             {
+                PlayerId = newPlayer.Id,
                 Name = packet.Name,
                 StatInfo = new StatInfo
                 {
@@ -153,7 +169,7 @@ public partial class ClientSession : PacketSession
                     Mp = stat.MaxMp,
                     MaxMp = stat.MaxMp,
                     Attack = stat.Attack,
-                    Speed = 5,
+                    Speed = stat.Speed,
                     TotalExp = 0
                 }
             };
@@ -180,6 +196,7 @@ public partial class ClientSession : PacketSession
 
         GamePlayer = ObjectManager.Instance.Add<Player>();
         {
+            GamePlayer.PlayerId = playerInfo.PlayerId;
             GamePlayer.Info.Name = playerInfo.Name;
             GamePlayer.Info.PosInfo.State = CreatureState.Idle;
             GamePlayer.Info.PosInfo.MoveDir = MoveDir.Down;

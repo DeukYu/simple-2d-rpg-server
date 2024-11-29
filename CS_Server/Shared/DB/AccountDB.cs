@@ -10,7 +10,7 @@ public class AccountDB : DbContext
         if (optionsBuilder.IsConfigured == false)
         {
             optionsBuilder
-                .UseMySQL(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig())
+                .UseMySql(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig(), new MySqlServerVersion(new Version(8, 0, 29)))
                 .UseLoggerFactory(_logger);
         }
     }

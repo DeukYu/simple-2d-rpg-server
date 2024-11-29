@@ -5,6 +5,7 @@
       "MaxHp": 100,
       "MaxMp": 100,
       "Attack": 10,
+      "Speed": 5.0,
       "TotalExp": 100
     },
     {
@@ -12,6 +13,7 @@
       "MaxHp": 110,
       "MaxMp": 110,
       "Attack": 11,
+      "Speed": 5.0,
       "TotalExp": 110
     },
     {
@@ -19,6 +21,7 @@
       "MaxHp": 120,
       "MaxMp": 120,
       "Attack": 12,
+      "Speed": 5.0,
       "TotalExp": 130
     }
   ]

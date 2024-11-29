@@ -30,19 +30,20 @@ namespace Google.Protobuf.Common {
             "c194GAMgASgFEg0KBXBvc195GAQgASgFIn4KCk9iamVjdEluZm8SEQoJb2Jq",
             "ZWN0X2lkGAEgASgDEgwKBG5hbWUYAiABKAkSKAoIcG9zX2luZm8YAyABKAsy",
             "Fi5Qcm90b2NvbC5Qb3NpdGlvbkluZm8SJQoJc3RhdF9pbmZvGAQgASgLMhIu",
-            "UHJvdG9jb2wuU3RhdEluZm8iRgoPTG9iYnlQbGF5ZXJJbmZvEgwKBG5hbWUY",
-            "ASABKAkSJQoJc3RhdF9pbmZvGAIgASgLMhIuUHJvdG9jb2wuU3RhdEluZm8i",
-            "HQoJU2tpbGxJbmZvEhAKCHNraWxsX2lkGAEgASgFIo0BCghTdGF0SW5mbxIN",
-            "CgVsZXZlbBgBIAEoBRIKCgJocBgCIAEoBRINCgVtYXhIcBgDIAEoBRIKCgJt",
-            "cBgEIAEoBRINCgVtYXhNcBgFIAEoBRIOCgZhdHRhY2sYBiABKAUSDQoFc3Bl",
-            "ZWQYByABKAISCwoDZXhwGAggASgFEhAKCHRvdGFsRXhwGAkgASgFQhmqAhZH",
-            "b29nbGUuUHJvdG9idWYuQ29tbW9uYgZwcm90bzM="));
+            "UHJvdG9jb2wuU3RhdEluZm8iWQoPTG9iYnlQbGF5ZXJJbmZvEhEKCXBsYXll",
+            "cl9pZBgBIAEoAxIMCgRuYW1lGAIgASgJEiUKCXN0YXRfaW5mbxgDIAEoCzIS",
+            "LlByb3RvY29sLlN0YXRJbmZvIh0KCVNraWxsSW5mbxIQCghza2lsbF9pZBgB",
+            "IAEoBSKNAQoIU3RhdEluZm8SDQoFbGV2ZWwYASABKAUSCgoCaHAYAiABKAUS",
+            "DQoFbWF4SHAYAyABKAUSCgoCbXAYBCABKAUSDQoFbWF4TXAYBSABKAUSDgoG",
+            "YXR0YWNrGAYgASgFEg0KBXNwZWVkGAcgASgCEgsKA2V4cBgIIAEoBRIQCgh0",
+            "b3RhbEV4cBgJIAEoBUIZqgIWR29vZ2xlLlByb3RvYnVmLkNvbW1vbmIGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.PositionInfo), global::Google.Protobuf.Common.PositionInfo.Parser, new[]{ "State", "MoveDir", "PosX", "PosY" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.ObjectInfo), global::Google.Protobuf.Common.ObjectInfo.Parser, new[]{ "ObjectId", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.LobbyPlayerInfo), global::Google.Protobuf.Common.LobbyPlayerInfo.Parser, new[]{ "Name", "StatInfo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.LobbyPlayerInfo), global::Google.Protobuf.Common.LobbyPlayerInfo.Parser, new[]{ "PlayerId", "Name", "StatInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.SkillInfo), global::Google.Protobuf.Common.SkillInfo.Parser, new[]{ "SkillId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.StatInfo), global::Google.Protobuf.Common.StatInfo.Parser, new[]{ "Level", "Hp", "MaxHp", "Mp", "MaxMp", "Attack", "Speed", "Exp", "TotalExp" }, null, null, null, null)
           }));
@@ -703,6 +704,7 @@ namespace Google.Protobuf.Common {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LobbyPlayerInfo(LobbyPlayerInfo other) : this() {
+      playerId_ = other.playerId_;
       name_ = other.name_;
       statInfo_ = other.statInfo_ != null ? other.statInfo_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -714,8 +716,20 @@ namespace Google.Protobuf.Common {
       return new LobbyPlayerInfo(this);
     }
 
+    /// <summary>Field number for the "player_id" field.</summary>
+    public const int PlayerIdFieldNumber = 1;
+    private long playerId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public long PlayerId {
+      get { return playerId_; }
+      set {
+        playerId_ = value;
+      }
+    }
+
     /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 1;
+    public const int NameFieldNumber = 2;
     private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -727,7 +741,7 @@ namespace Google.Protobuf.Common {
     }
 
     /// <summary>Field number for the "stat_info" field.</summary>
-    public const int StatInfoFieldNumber = 2;
+    public const int StatInfoFieldNumber = 3;
     private global::Google.Protobuf.Common.StatInfo statInfo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -753,6 +767,7 @@ namespace Google.Protobuf.Common {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (PlayerId != other.PlayerId) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(StatInfo, other.StatInfo)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -762,6 +777,7 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (PlayerId != 0L) hash ^= PlayerId.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (statInfo_ != null) hash ^= StatInfo.GetHashCode();
       if (_unknownFields != null) {
@@ -782,12 +798,16 @@ namespace Google.Protobuf.Common {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (PlayerId != 0L) {
+        output.WriteRawTag(8);
+        output.WriteInt64(PlayerId);
+      }
       if (Name.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(Name);
       }
       if (statInfo_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(StatInfo);
       }
       if (_unknownFields != null) {
@@ -800,12 +820,16 @@ namespace Google.Protobuf.Common {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (PlayerId != 0L) {
+        output.WriteRawTag(8);
+        output.WriteInt64(PlayerId);
+      }
       if (Name.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(Name);
       }
       if (statInfo_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(StatInfo);
       }
       if (_unknownFields != null) {
@@ -818,6 +842,9 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (PlayerId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(PlayerId);
+      }
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
@@ -835,6 +862,9 @@ namespace Google.Protobuf.Common {
     public void MergeFrom(LobbyPlayerInfo other) {
       if (other == null) {
         return;
+      }
+      if (other.PlayerId != 0L) {
+        PlayerId = other.PlayerId;
       }
       if (other.Name.Length != 0) {
         Name = other.Name;
@@ -860,11 +890,15 @@ namespace Google.Protobuf.Common {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            Name = input.ReadString();
+          case 8: {
+            PlayerId = input.ReadInt64();
             break;
           }
           case 18: {
+            Name = input.ReadString();
+            break;
+          }
+          case 26: {
             if (statInfo_ == null) {
               StatInfo = new global::Google.Protobuf.Common.StatInfo();
             }
@@ -886,11 +920,15 @@ namespace Google.Protobuf.Common {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            Name = input.ReadString();
+          case 8: {
+            PlayerId = input.ReadInt64();
             break;
           }
           case 18: {
+            Name = input.ReadString();
+            break;
+          }
+          case 26: {
             if (statInfo_ == null) {
               StatInfo = new global::Google.Protobuf.Common.StatInfo();
             }

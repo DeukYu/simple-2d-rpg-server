@@ -40,6 +40,7 @@ enum PlayerServerState{
 enum ErrorType{
     Success = 0;
     Fail = 1;
+	Db_Error = 2;
 
 	Invalid_Server_State = 10;
 

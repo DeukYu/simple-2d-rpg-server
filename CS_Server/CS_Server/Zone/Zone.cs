@@ -141,6 +141,7 @@ public class Zone : JobSerializer
             return;
         }
 
+        player.OnLeaveGame();
         _players.Remove(gameObject.Id);
         Map.ApplyLeave(player);
         player._zone = null;

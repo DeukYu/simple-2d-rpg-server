@@ -7,6 +7,7 @@ public class Stat : ICsvConvertible
     public int MaxHp { get; set; }
     public int MaxMp { get; set; }
     public int Attack { get; set; }
+    public float Speed { get; set; }
     public int TotalExp { get; set; }
 
     public void FromCsv(string[] values)
@@ -15,7 +16,8 @@ public class Stat : ICsvConvertible
         MaxHp = int.Parse(values[1]);
         MaxMp = int.Parse(values[2]);
         Attack = int.Parse(values[3]);
-        TotalExp = int.Parse(values[4]);
+        Speed = float.Parse(values[4]);
+        TotalExp = int.Parse(values[5]);
     }
 }
 
