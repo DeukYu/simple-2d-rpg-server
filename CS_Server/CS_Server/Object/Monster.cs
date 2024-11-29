@@ -2,7 +2,6 @@
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace CS_Server;
 
@@ -12,7 +11,7 @@ public class Monster : GameObject
     {
         ObjectType = GameObjectType.Monster;
 
-        // 
+        // TODO : 추후 기획 데이터로 변경되어야함.
         StatInfo.Level = 1;
         StatInfo.Hp = 100;
         StatInfo.MaxMp = 100;

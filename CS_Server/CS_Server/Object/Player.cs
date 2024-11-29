@@ -29,22 +29,6 @@ public class Player : GameObject
 
     public void OnLeaveGame()
     {
-        // TODO : 개선 필요
-        using (AccountDB db = new AccountDB())
-        {
-            var playerStatInfo = new PlayerStatInfo();
-            playerStatInfo.PlayerId = PlayerId;
-            playerStatInfo.Hp = StatInfo.Hp;
-            playerStatInfo.Mp = StatInfo.Mp;
-
-            db.Entry(playerStatInfo).State = EntityState.Unchanged;
-            db.Entry(playerStatInfo).Property(nameof(playerStatInfo.Hp)).IsModified = true;
-            db.Entry(playerStatInfo).Property(nameof(playerStatInfo.Mp)).IsModified = true;
-            if (db.SaveChangesEx() == false)
-            {
-                Log.Error("Failed to save player stat info");
-                return;
-            }
-        }
+       DbTransaction.SavePlayerStatus_AllInOne(this, _zone);
     }
 }

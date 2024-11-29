@@ -36,8 +36,7 @@ public class DbTransaction : JobSerializer
 
                 zone.Push(() =>
                 {
-                    player.StatInfo.Hp = playerStatInfo.Hp;
-                    player.StatInfo.Mp = playerStatInfo.Mp;
+                    Log.Info($"SavePlayerStatus_AllInOne: PlayerId: {playerStatInfo.PlayerId}, Hp: {playerStatInfo.Hp}, Mp: {playerStatInfo.Mp}");
                 });
             }
         });
