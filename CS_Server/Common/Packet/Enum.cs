@@ -28,17 +28,26 @@ namespace Google.Protobuf.Enum {
             "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqMAoHTW92ZURp",
             "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAypDCg5H",
             "YW1lT2JqZWN0VHlwZRIICgROb25lEAASCgoGUGxheWVyEAESCwoHTW9uc3Rl",
-            "chACEg4KClByb2plY3RpbGUQBCpBCglTa2lsbFR5cGUSDgoKU2tpbGxfTm9u",
-            "ZRAAEg4KClNraWxsX0F1dG8QARIUChBTa2lsbF9Qcm9qZWN0aWxlEAIqXAoR",
-            "UGxheWVyU2VydmVyU3RhdGUSFgoSU2VydmVyX1N0YXRlX0xvZ2luEAASFgoS",
-            "U2VydmVyX1N0YXRlX0xvYmJ5EAESFwoTU2VydmVyX1N0YXRlX0luR2FtZRAC",
-            "KnkKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABEgwKCERiX0Vy",
-            "cm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJfU3RhdGUQChIWChJBbHJlYWR5X0V4",
-            "aXN0X05hbWUQFBIVChFJbnZhbGlkX0dhbWVfRGF0YRAeQheqAhRHb29nbGUu",
-            "UHJvdG9idWYuRW51bWIGcHJvdG8z"));
+            "chACEg4KClByb2plY3RpbGUQBCpQCglTa2lsbFR5cGUSEwoPU2tpbGxfVHlw",
+            "ZV9Ob25lEAASEwoPU2tpbGxfVHlwZV9BdXRvEAESGQoVU2tpbGxfVHlwZV9Q",
+            "cm9qZWN0aWxlEAIqXAoRUGxheWVyU2VydmVyU3RhdGUSFgoSU2VydmVyX1N0",
+            "YXRlX0xvZ2luEAASFgoSU2VydmVyX1N0YXRlX0xvYmJ5EAESFwoTU2VydmVy",
+            "X1N0YXRlX0luR2FtZRACKmMKCEl0ZW1UeXBlEhIKDkl0ZW1fVHlwZV9Ob25l",
+            "EAASFAoQSXRlbV9UeXBlX1dlYXBvbhABEhMKD0l0ZW1fVHlwZV9Bcm1vchAC",
+            "EhgKFEl0ZW1fVHlwZV9Db25zdW1hYmxlEAMqZQoKV2VhcG9uVHlwZRIUChBX",
+            "ZWFwb25fVHlwZV9Ob25lEAASFQoRV2VhcG9uX1R5cGVfU3dvcmQQARITCg9X",
+            "ZWFwb25fVHlwZV9Cb3cQAhIVChFXZWFwb25fVHlwZV9TdGFmZhADKmMKCUFy",
+            "bW9yVHlwZRITCg9Bcm1vcl9UeXBlX05vbmUQABIVChFBcm1vcl9UeXBlX0hl",
+            "bG1ldBABEhQKEEFybW9yX1R5cGVfQXJtb3IQAhIUChBBcm1vcl9UeXBlX0Jv",
+            "b3RzEAMqXAoLQ29uc3VtZVR5cGUSFQoRQ29uc3VtZV9UeXBlX05vbmUQABIa",
+            "ChZDb25zdW1lX1R5cGVfSHBfUG90aW9uEAESGgoWQ29uc3VtZV9UeXBlX01w",
+            "X1BvdGlvbhACKnkKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBAB",
+            "EgwKCERiX0Vycm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJfU3RhdGUQChIWChJB",
+            "bHJlYWR5X0V4aXN0X05hbWUQFBIVChFJbnZhbGlkX0dhbWVfRGF0YRAeQheq",
+            "AhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ItemType), typeof(global::Google.Protobuf.Enum.WeaponType), typeof(global::Google.Protobuf.Enum.ArmorType), typeof(global::Google.Protobuf.Enum.ConsumeType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
@@ -66,15 +75,42 @@ namespace Google.Protobuf.Enum {
   }
 
   public enum SkillType {
-    [pbr::OriginalName("Skill_None")] SkillNone = 0,
-    [pbr::OriginalName("Skill_Auto")] SkillAuto = 1,
-    [pbr::OriginalName("Skill_Projectile")] SkillProjectile = 2,
+    [pbr::OriginalName("Skill_Type_None")] None = 0,
+    [pbr::OriginalName("Skill_Type_Auto")] Auto = 1,
+    [pbr::OriginalName("Skill_Type_Projectile")] Projectile = 2,
   }
 
   public enum PlayerServerState {
     [pbr::OriginalName("Server_State_Login")] ServerStateLogin = 0,
     [pbr::OriginalName("Server_State_Lobby")] ServerStateLobby = 1,
     [pbr::OriginalName("Server_State_InGame")] ServerStateInGame = 2,
+  }
+
+  public enum ItemType {
+    [pbr::OriginalName("Item_Type_None")] None = 0,
+    [pbr::OriginalName("Item_Type_Weapon")] Weapon = 1,
+    [pbr::OriginalName("Item_Type_Armor")] Armor = 2,
+    [pbr::OriginalName("Item_Type_Consumable")] Consumable = 3,
+  }
+
+  public enum WeaponType {
+    [pbr::OriginalName("Weapon_Type_None")] None = 0,
+    [pbr::OriginalName("Weapon_Type_Sword")] Sword = 1,
+    [pbr::OriginalName("Weapon_Type_Bow")] Bow = 2,
+    [pbr::OriginalName("Weapon_Type_Staff")] Staff = 3,
+  }
+
+  public enum ArmorType {
+    [pbr::OriginalName("Armor_Type_None")] None = 0,
+    [pbr::OriginalName("Armor_Type_Helmet")] Helmet = 1,
+    [pbr::OriginalName("Armor_Type_Armor")] Armor = 2,
+    [pbr::OriginalName("Armor_Type_Boots")] Boots = 3,
+  }
+
+  public enum ConsumeType {
+    [pbr::OriginalName("Consume_Type_None")] None = 0,
+    [pbr::OriginalName("Consume_Type_Hp_Potion")] HpPotion = 1,
+    [pbr::OriginalName("Consume_Type_Mp_Potion")] MpPotion = 2,
   }
 
   public enum ErrorType {

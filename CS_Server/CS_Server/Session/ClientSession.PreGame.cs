@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Common;
+﻿using Google.Protobuf;
+using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ public partial class ClientSession : PacketSession
     public void HandleLogin(C2S_Login packet)
     {
 
-        if(ServerState != PlayerServerState.ServerStateLogin)
+        if (ServerState != PlayerServerState.ServerStateLogin)
         {
             return;
         }
@@ -31,12 +32,12 @@ public partial class ClientSession : PacketSession
                 AccountId = findAccounts.Id;
 
                 S2C_Login res = new S2C_Login();
-                foreach(var playerDb in findAccounts.Players)
+                foreach (var playerDb in findAccounts.Players)
                 {
                     var findStatInfo = db.PlayerStatInfo
                         .Where(x => x.PlayerId == playerDb.Id).FirstOrDefault();
 
-                    if(findStatInfo == null)
+                    if (findStatInfo == null)
                     {
                         Log.Error("There is no stat info");
                         continue;
@@ -76,7 +77,7 @@ public partial class ClientSession : PacketSession
                     AccountName = packet.UniqueId
                 };
                 db.AccountInfo.Add(newAccount);
-                if(db.SaveChangesEx() == false)
+                if (db.SaveChangesEx() == false)
                 {
                     Send(
                         new S2C_Login
@@ -128,7 +129,7 @@ public partial class ClientSession : PacketSession
                 AccountId = AccountId
             };
 
-            if(DataManager.StatDict.TryGetValue(1, out var stat) == false)
+            if (DataManager.StatDict.TryGetValue(1, out var stat) == false)
             {
                 S2C_CreatePlayer res = new S2C_CreatePlayer();
                 res.Result = (int)ErrorType.InvalidGameData;
@@ -149,7 +150,7 @@ public partial class ClientSession : PacketSession
             };
 
             db.PlayerInfo.Add(newPlayer);
-            if(db.SaveChangesEx() == false)
+            if (db.SaveChangesEx() == false)
             {
                 S2C_CreatePlayer res = new S2C_CreatePlayer();
                 res.Result = (int)ErrorType.DbError;
@@ -187,7 +188,7 @@ public partial class ClientSession : PacketSession
     }
     public void HandleEnterGame(C2S_EnterGame packet)
     {
-        if(ServerState != PlayerServerState.ServerStateLobby)
+        if (ServerState != PlayerServerState.ServerStateLobby)
         {
             return;
         }
@@ -211,6 +212,28 @@ public partial class ClientSession : PacketSession
             GamePlayer.StatInfo.Exp = 0;
             GamePlayer.StatInfo.TotalExp = playerInfo.StatInfo.TotalExp;
             GamePlayer.Session = this;
+
+            S2C_ItemList itemListPacket = new S2C_ItemList();
+            using (var db = new AccountDB())
+            {
+                var items = db.ItemInfo
+                            .Where(x => x.PlayerId == playerInfo.PlayerId)
+                            .ToList();
+
+                foreach (var item in items)
+                {
+                    if(Item.MakeItem(item, out var newItem))
+                    {
+                        GamePlayer.Inven.Add(newItem);
+
+                        var info = new ItemInfo();
+                        info.MergeFrom(newItem.Info);
+                        itemListPacket.Items.Add(info);
+                    }
+                }
+            }
+
+            Send(itemListPacket);
         }
 
         ServerState = PlayerServerState.ServerStateInGame;

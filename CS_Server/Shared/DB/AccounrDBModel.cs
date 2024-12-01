@@ -18,7 +18,8 @@ public class PlayerInfo
     [Key]
     public long Id { get; set; } = 0;
     public string PlayerName { get; set; } = string.Empty;
-    
+    public ICollection<PlayerItemInfo> Items { get; set; } = new List<PlayerItemInfo>();
+
     [ForeignKey(nameof(AccountInfo))]
     public long AccountId { get; set; } = 0;
     public AccountInfo AccountInfo { get; set; } = new AccountInfo();
@@ -37,7 +38,21 @@ public class PlayerStatInfo
     public int Attack { get; set; } = 0;
     public float Speed { get; set; } = 0;
     public int TotalExp { get; set; } = 0;
-    
+
+    [ForeignKey(nameof(PlayerInfo))]
+    public long PlayerId { get; set; } = 0;
+    public PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
+}
+
+[Table("player_item_info")]
+public class PlayerItemInfo
+{
+    [Key]
+    public long Id { get; set; } = 0;
+    public int TemplateId { get; set; } = 0;
+    public int Count { get; set; } = 0;
+    public int Slot { get; set; } = 0;
+
     [ForeignKey(nameof(PlayerInfo))]
     public long PlayerId { get; set; } = 0;
     public PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();

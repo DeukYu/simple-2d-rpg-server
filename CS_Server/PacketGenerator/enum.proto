@@ -26,15 +26,42 @@ enum GameObjectType{
 }
 
 enum SkillType{
-	Skill_None = 0;
-	Skill_Auto = 1;
-	Skill_Projectile = 2;
+	Skill_Type_None = 0;
+	Skill_Type_Auto = 1;
+	Skill_Type_Projectile = 2;
 }
 
 enum PlayerServerState{
 	Server_State_Login = 0;
 	Server_State_Lobby = 1;
 	Server_State_InGame = 2;
+}
+
+enum ItemType{
+	Item_Type_None = 0;
+	Item_Type_Weapon = 1;
+	Item_Type_Armor = 2;
+	Item_Type_Consumable = 3;
+}
+
+enum WeaponType{
+	Weapon_Type_None = 0;
+	Weapon_Type_Sword = 1;
+	Weapon_Type_Bow = 2;
+	Weapon_Type_Staff = 3;
+}
+
+enum ArmorType{
+	Armor_Type_None = 0;
+	Armor_Type_Helmet = 1;
+	Armor_Type_Armor = 2;
+	Armor_Type_Boots = 3;
+}
+
+enum ConsumeType{
+	Consume_Type_None = 0;
+	Consume_Type_Hp_Potion = 1;
+	Consume_Type_Mp_Potion = 2;
 }
 
 enum ErrorType{

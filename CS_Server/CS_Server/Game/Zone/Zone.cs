@@ -340,7 +340,7 @@ public class Zone : JobSerializer
 
         switch (skillData.SkillType)
         {
-            case SkillType.SkillAuto:
+            case SkillType.Auto:
                 {
                     var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
                     var target = Map.Find(skillPos);
@@ -350,7 +350,7 @@ public class Zone : JobSerializer
                     }
                 }
                 break;
-            case SkillType.SkillProjectile:
+            case SkillType.Projectile:
                 {
                     if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
                     {

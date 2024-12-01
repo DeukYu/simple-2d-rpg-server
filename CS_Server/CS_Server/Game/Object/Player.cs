@@ -1,8 +1,4 @@
 ﻿using Google.Protobuf.Enum;
-using Microsoft.EntityFrameworkCore;
-using NLog;
-using ServerCore;
-using Shared;
 
 namespace CS_Server;
 
@@ -10,6 +6,7 @@ public class Player : GameObject
 {
     public long PlayerId { get; set; }
     public ClientSession? Session { get; set; }
+    public Inventory Inven { get; private set; } = new Inventory();
 
     public Player()
     {

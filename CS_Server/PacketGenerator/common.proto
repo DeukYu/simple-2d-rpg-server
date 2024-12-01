@@ -41,3 +41,10 @@ message StatInfo{
     int32 exp = 8;
     int32 totalExp = 9;
 }
+
+message ItemInfo{
+    int64 Item_Id = 1;
+    int32 Template_Id = 2;
+    int32 Count = 3;
+    int32 Slot = 4;
+}
