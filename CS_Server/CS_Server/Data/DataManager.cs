@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using ServerCore;
+using Shared;
 
 namespace CS_Server;
 
@@ -10,9 +11,11 @@ public class DataManager
     public static Dictionary<int, ItemData> ItemDataDict { get; private set; } = new Dictionary<int, ItemData>();
     public static void LoadData()
     {
-        StatDict = DataLoader.Load<StatDataLoader, int, StatData>("Stat");
-        SkillDict = DataLoader.Load<SkillDataLoader, int, SkillData>("Skill");
-        ProjectileInfoDict = DataLoader.Load<ProjectileDataLoader, int, ProjectileInfoData>("ProjectileInfo");
-        ItemDataDict = DataLoader.Load<ItemDataLoader, int, ItemData>("Item");
+        StatDict = DataLoader.Load<StatDataLoader, int, StatData>("StatData");
+        SkillDict = DataLoader.Load<SkillDataLoader, int, SkillData>("SkillData");
+        ProjectileInfoDict = DataLoader.Load<ProjectileDataLoader, int, ProjectileInfoData>("ProjectileInfoData");
+        ItemDataDict = DataLoader.Load<ItemDataLoader, int, ItemData>("ItemData");
+
+        Log.Info("Data loaded");
     }
 }

@@ -23,7 +23,21 @@ public static class DataLoader
 
             var text = File.ReadAllText(filePath);
 
-            var loader = JsonConvert.DeserializeObject<Loader>(text);
+            var rootObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(text);
+            object? dataToDeserialize;
+
+            var keysOfInterest = new[] { "item" };
+            dataToDeserialize = keysOfInterest
+                .Select(key => rootObject?.ContainsKey(key) == true ? rootObject[key] : null)
+                .FirstOrDefault(value => value != null);
+
+            // 적합한 데이터가 없으면 전체 JSON을 사용
+            dataToDeserialize ??= rootObject;
+
+            // 데이터 직렬화 후 Loader 생성
+            var specificJson = JsonConvert.SerializeObject(dataToDeserialize);
+
+            var loader = JsonConvert.DeserializeObject<Loader>(specificJson);
             if (loader == null)
                 throw new InvalidOperationException($"Failed to deserialize {fileName}");
 

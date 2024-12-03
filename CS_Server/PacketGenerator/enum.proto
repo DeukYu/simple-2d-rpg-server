@@ -58,10 +58,10 @@ enum ArmorType{
 	Armor_Type_Boots = 3;
 }
 
-enum ConsumeType{
-	Consume_Type_None = 0;
-	Consume_Type_Hp_Potion = 1;
-	Consume_Type_Mp_Potion = 2;
+enum ConsumableType{
+	Consumable_Type_None = 0;
+	Consumable_Type_Hp_Potion = 1;
+	Consumable_Type_Mp_Potion = 2;
 }
 
 enum ErrorType{

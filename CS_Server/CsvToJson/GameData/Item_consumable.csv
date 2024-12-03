@@ -1,0 +1,3 @@
+Id:int,Name:string,ItemType:ItemType,ConsumableType:ConsumableType,MaxCount:int
+200,HP 물약,Consumable,HpPotion,10
+201,MP 물약,Consumable,MpPotion,10

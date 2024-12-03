@@ -82,9 +82,26 @@ public static class CsvToJsonConverter
     {
         var convertibleTypes = FindConvertibleTypes();
 
-        foreach (var csvPath in csvPaths)
+        var groupedFiles = csvPaths.GroupBy(path =>
         {
-            ConvertSingleCsv(csvPath, saveFolderPath, convertibleTypes);
+            var fileName = Path.GetFileNameWithoutExtension(path).ToLower();
+            var underscoreIndex = fileName.IndexOf('_');
+            return underscoreIndex > 0 ? fileName.Substring(0, underscoreIndex).ToLower() : null;
+        });
+
+        foreach(var group in groupedFiles)
+        {
+            if (group.Key == null)
+            {
+                foreach(var csvPath in group)
+                {
+                    ConvertSingleCsv(csvPath, saveFolderPath, convertibleTypes);
+                }
+            }
+            else
+            {
+                ConvertGroupedFilesToJson(group.Key, group.ToList(), saveFolderPath, convertibleTypes);
+            }
         }
     }
 
@@ -101,7 +118,8 @@ public static class CsvToJsonConverter
     private static void ConvertSingleCsv(string csvPath, string saveFolderPath, List<Type> convertibleTypes)
     {
         var fileName = Path.GetFileNameWithoutExtension(csvPath).ToLower();
-        var targetType = convertibleTypes.FirstOrDefault(t => t.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+        var adjustedFileName = $"{fileName}data";
+        var targetType = convertibleTypes.FirstOrDefault(t => t.Name.Equals(adjustedFileName, StringComparison.OrdinalIgnoreCase));
 
         if (targetType == null)
         {
@@ -119,6 +137,38 @@ public static class CsvToJsonConverter
         // JSON 형식으로 감싸서 저장
         var wrappedData = new Dictionary<string, object> { { $"{fileName}s", data } };
         SaveToJsonFile(wrappedData, saveFolderPath, targetType.Name);
+    }
+    private static void ConvertGroupedFilesToJson(string prefix, List<string> files, string saveFolderPath, List<Type> convertibleTypes)
+    {
+        var groupedData = new Dictionary<string, List<object>>();
+
+        foreach (var file in files)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(file);
+            var suffix = fileName.Split('_').Last();
+
+            var adjustedFileName = $"{suffix}data";
+            var targetType = convertibleTypes.FirstOrDefault(t => t.Name.Equals(adjustedFileName, StringComparison.OrdinalIgnoreCase));
+
+            if (targetType == null)
+            {
+                Console.WriteLine($"Unsupported file type: {fileName}");
+                continue;
+            }
+
+            var data = InvokeLoadCsv(targetType, file) as IEnumerable<object>;
+            if (data == null)
+            {
+                Log.Error($"Failed to load {file}");
+                continue;
+            }
+
+            var key = $"{suffix}s";
+            groupedData[key] = data.ToList();
+        }
+
+        // JSON 파일로 저장
+        SaveToJsonFile(new Dictionary<string, object> { { prefix, groupedData } }, saveFolderPath, $"{prefix}data");
     }
 
     // LoadCsv 메서드를 동적으로 호출

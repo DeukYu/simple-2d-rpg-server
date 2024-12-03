@@ -39,15 +39,15 @@ namespace Google.Protobuf.Enum {
             "ZWFwb25fVHlwZV9Cb3cQAhIVChFXZWFwb25fVHlwZV9TdGFmZhADKmMKCUFy",
             "bW9yVHlwZRITCg9Bcm1vcl9UeXBlX05vbmUQABIVChFBcm1vcl9UeXBlX0hl",
             "bG1ldBABEhQKEEFybW9yX1R5cGVfQXJtb3IQAhIUChBBcm1vcl9UeXBlX0Jv",
-            "b3RzEAMqXAoLQ29uc3VtZVR5cGUSFQoRQ29uc3VtZV9UeXBlX05vbmUQABIa",
-            "ChZDb25zdW1lX1R5cGVfSHBfUG90aW9uEAESGgoWQ29uc3VtZV9UeXBlX01w",
-            "X1BvdGlvbhACKnkKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBAB",
-            "EgwKCERiX0Vycm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJfU3RhdGUQChIWChJB",
-            "bHJlYWR5X0V4aXN0X05hbWUQFBIVChFJbnZhbGlkX0dhbWVfRGF0YRAeQheq",
-            "AhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
+            "b3RzEAMqaAoOQ29uc3VtYWJsZVR5cGUSGAoUQ29uc3VtYWJsZV9UeXBlX05v",
+            "bmUQABIdChlDb25zdW1hYmxlX1R5cGVfSHBfUG90aW9uEAESHQoZQ29uc3Vt",
+            "YWJsZV9UeXBlX01wX1BvdGlvbhACKnkKCUVycm9yVHlwZRILCgdTdWNjZXNz",
+            "EAASCAoERmFpbBABEgwKCERiX0Vycm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJf",
+            "U3RhdGUQChIWChJBbHJlYWR5X0V4aXN0X05hbWUQFBIVChFJbnZhbGlkX0dh",
+            "bWVfRGF0YRAeQheqAhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ItemType), typeof(global::Google.Protobuf.Enum.WeaponType), typeof(global::Google.Protobuf.Enum.ArmorType), typeof(global::Google.Protobuf.Enum.ConsumeType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ItemType), typeof(global::Google.Protobuf.Enum.WeaponType), typeof(global::Google.Protobuf.Enum.ArmorType), typeof(global::Google.Protobuf.Enum.ConsumableType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
@@ -107,10 +107,10 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("Armor_Type_Boots")] Boots = 3,
   }
 
-  public enum ConsumeType {
-    [pbr::OriginalName("Consume_Type_None")] None = 0,
-    [pbr::OriginalName("Consume_Type_Hp_Potion")] HpPotion = 1,
-    [pbr::OriginalName("Consume_Type_Mp_Potion")] MpPotion = 2,
+  public enum ConsumableType {
+    [pbr::OriginalName("Consumable_Type_None")] None = 0,
+    [pbr::OriginalName("Consumable_Type_Hp_Potion")] HpPotion = 1,
+    [pbr::OriginalName("Consumable_Type_Mp_Potion")] MpPotion = 2,
   }
 
   public enum ErrorType {

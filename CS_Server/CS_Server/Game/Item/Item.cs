@@ -127,7 +127,7 @@ public class Armor : Item
 
 public class Consumable : Item
 {
-    public ConsumeType ConsumeType { get; private set; }
+    public ConsumableType ConsumableType { get; private set; }
     public int MaxCount { get; private set; }
     public Consumable(int templateId) : base(ItemType.Consumable)
     {
@@ -150,7 +150,7 @@ public class Consumable : Item
             templateId = data.Id;
             Count = 1;
             MaxCount = data.MaxCount;
-            ConsumeType = data.ConsumeType;
+            ConsumableType = data.ConsumableType;
             Stackable = true;
         }
     }

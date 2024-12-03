@@ -1,0 +1,3 @@
+Id:int,Name:string,ItemType:ItemType,ArmorType:ArmorType,Defense:int
+100,초보자의갑옷,Armor,Armor,5
+101,초보자의신발,Armor,Boots,5
