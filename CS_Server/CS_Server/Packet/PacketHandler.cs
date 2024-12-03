@@ -95,9 +95,13 @@ class PacketHandler
     {
         if (!TryParsePacket<C2S_CreatePlayer>(session, packet, out var clientSession, out var createPlayerPacket))
             return;
-        Log.Info($"C2S_CreatePlayerHandler: {createPlayerPacket}");
 
-        clientSession.HandleCreatePlayer(createPlayerPacket);
+        int state = clientSession.HandleCreatePlayer(createPlayerPacket.Name, out var lobbyPlayer);
+        var res = new S2C_CreatePlayer
+        {
+            Player = lobbyPlayer,
+            Result = state
+        };
     }
 
     public static void C2S_EnterGameHandler(PacketSession session, IMessage packet)

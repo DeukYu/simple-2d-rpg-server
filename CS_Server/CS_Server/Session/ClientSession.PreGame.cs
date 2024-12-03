@@ -1,5 +1,4 @@
-﻿using Google.Protobuf;
-using Google.Protobuf.Common;
+﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,7 @@ public partial class ClientSession : PacketSession
 {
     public long AccountId { get; private set; }
     public List<LobbyPlayerInfo> lobbyPlayers { get; set; } = new List<LobbyPlayerInfo>();
-    
+
     // 플레이어 로그인 핸들러
     public int HandleLogin(string accountName, out List<LobbyPlayerInfo> lobbyPlayerInfos)
     {
@@ -71,96 +70,55 @@ public partial class ClientSession : PacketSession
         ServerState = ServerState.Lobby;
         return (int)ErrorType.Success;
     }
- 
+
     // 플레이어 생성
-    public void HandleCreatePlayer(C2S_CreatePlayer packet)
+    public int HandleCreatePlayer(string playerName, out LobbyPlayerInfo lobbyPlayerInfo)
     {
-        // 서버 상태가 로비 상태가 아니면 리턴
+        lobbyPlayerInfo = null;
         if (ServerState != ServerState.Lobby)
         {
-            S2C_CreatePlayer res = new S2C_CreatePlayer();
-            res.Result = (int)ErrorType.InvalidServerState;
-            Send(res);
-            return;
+            return (int)ErrorType.InvalidServerState;
         }
 
-        using (AccountDB db = new AccountDB())
+        using (AccountDB accountDB = new AccountDB())
         {
             // 같은 유저 이름이 있는지 확인
-            var findPlayer = db.PlayerInfo.Where(x => x.PlayerName == packet.Name).FirstOrDefault();
+            var findPlayer = accountDB.PlayerInfo.Where(x => x.PlayerName == playerName).FirstOrDefault();
             if (findPlayer != null)
             {
-                // 이미 이름이 존재합니다.
-                S2C_CreatePlayer res = new S2C_CreatePlayer();
-                res.Result = (int)ErrorType.AlreadyExistName;
-                Send(res);
-                return;
+                return (int)ErrorType.AlreadyExistName;
             }
 
             // 새로운 플레이어 생성
             var newPlayer = new PlayerInfo
             {
-                PlayerName = packet.Name,
+                PlayerName = playerName,
                 AccountId = AccountId
             };
 
-            if (DataManager.StatDict.TryGetValue(1, out var stat) == false)
+            // 플레이어의 스탯 정보 생성
+            var initLevel = 1;
+            if (DataManager.StatDict.TryGetValue(initLevel, out var stat) == false)
             {
-                S2C_CreatePlayer res = new S2C_CreatePlayer();
-                res.Result = (int)ErrorType.InvalidGameData;
-                Send(res);
-                return;
+                Log.Error($"There is no stat info. PlayerName:{playerName} Level:{initLevel}");
+                return (int)ErrorType.InvalidGameData;
             }
-            var newStat = new PlayerStatInfo
-            {
-                Level = 1,
-                Hp = stat.MaxHp,
-                MaxHp = stat.MaxHp,
-                Mp = stat.MaxMp,
-                MaxMp = stat.MaxMp,
-                Attack = stat.Attack,
-                Speed = stat.Speed,
-                TotalExp = 0,
-                PlayerId = newPlayer.Id
-            };
+            var newStat = PlayerStatInfoFactory.CreatePlayerStatInfo(newPlayer.Id, stat);
 
-            db.PlayerInfo.Add(newPlayer);
-            if (db.SaveChangesEx() == false)
+            accountDB.PlayerInfo.Add(newPlayer);
+            if (accountDB.SaveChangesEx() == false)
             {
-                S2C_CreatePlayer res = new S2C_CreatePlayer();
-                res.Result = (int)ErrorType.DbError;
-                Send(res);
-                return;
+                Log.Error("Failed to save changes to the database.");
+                return (int)ErrorType.DbError;
             }
 
-            var lobbyPlayerInfo = new LobbyPlayerInfo
-            {
-                PlayerId = newPlayer.Id,
-                Name = packet.Name,
-                StatInfo = new StatInfo
-                {
-                    Level = stat.Level,
-                    Hp = stat.MaxHp,
-                    MaxHp = stat.MaxHp,
-                    Mp = stat.MaxMp,
-                    MaxMp = stat.MaxMp,
-                    Attack = stat.Attack,
-                    Speed = stat.Speed,
-                    TotalExp = 0
-                }
-            };
-
+            lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(newPlayer, newStat);
             lobbyPlayers.Add(lobbyPlayerInfo);
-
-
-            S2C_CreatePlayer successres = new S2C_CreatePlayer
-            {
-                Result = (int)ErrorType.Success,
-                Player = lobbyPlayerInfo
-            };
-            Send(successres);
         }
+
+        return (int)ErrorType.Success;
     }
+
     public void HandleEnterGame(C2S_EnterGame packet)
     {
         if (ServerState != ServerState.Lobby)
@@ -197,7 +155,7 @@ public partial class ClientSession : PacketSession
 
                 foreach (var item in items)
                 {
-                    if(Item.MakeItem(item, out var newItem))
+                    if (Item.MakeItem(item, out var newItem))
                     {
                         GamePlayer.Inven.Add(newItem);
 
