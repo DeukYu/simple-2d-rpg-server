@@ -5,24 +5,24 @@ package Protocol;
 option csharp_namespace = "Google.Protobuf.Enum";
 
 enum CreatureState{
-	Idle = 0;
-	Move = 1;
-	Skill = 2;
-	Dead = 3;
+	Creature_State_Idle = 0;
+	Creature_State_Move = 1;
+	Creature_State_Skill = 2;
+	Creature_State_Dead = 3;
 }
 
 enum MoveDir{
-	Up = 0;
-	Down = 1;
-	Left = 2;
-	Right = 3;
+	Move_Dir_Up = 0;
+	Move_Dir_Down = 1;
+	Move_Dir_Left = 2;
+	Move_Dir_Right = 3;
 }
 
 enum GameObjectType{
-	None = 0;
-	Player = 1;
-	Monster = 2;
-	Projectile = 4;
+	Game_Object_Type_None = 0;
+	Game_Object_Type_Player = 1;
+	Game_Object_Type_Monster = 2;
+	Game_Object_Type_Projectile = 4;
 }
 
 enum SkillType{
@@ -31,7 +31,7 @@ enum SkillType{
 	Skill_Type_Projectile = 2;
 }
 
-enum PlayerServerState{
+enum ServerState{
 	Server_State_Login = 0;
 	Server_State_Lobby = 1;
 	Server_State_InGame = 2;

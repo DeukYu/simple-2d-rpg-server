@@ -24,54 +24,58 @@ namespace Google.Protobuf.Enum {
     static EnumReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpFbnVtLnByb3RvEghQcm90b2NvbCo4Cg1DcmVhdHVyZVN0YXRlEggKBElk",
-            "bGUQABIICgRNb3ZlEAESCQoFU2tpbGwQAhIICgREZWFkEAMqMAoHTW92ZURp",
-            "chIGCgJVcBAAEggKBERvd24QARIICgRMZWZ0EAISCQoFUmlnaHQQAypDCg5H",
-            "YW1lT2JqZWN0VHlwZRIICgROb25lEAASCgoGUGxheWVyEAESCwoHTW9uc3Rl",
-            "chACEg4KClByb2plY3RpbGUQBCpQCglTa2lsbFR5cGUSEwoPU2tpbGxfVHlw",
-            "ZV9Ob25lEAASEwoPU2tpbGxfVHlwZV9BdXRvEAESGQoVU2tpbGxfVHlwZV9Q",
-            "cm9qZWN0aWxlEAIqXAoRUGxheWVyU2VydmVyU3RhdGUSFgoSU2VydmVyX1N0",
-            "YXRlX0xvZ2luEAASFgoSU2VydmVyX1N0YXRlX0xvYmJ5EAESFwoTU2VydmVy",
-            "X1N0YXRlX0luR2FtZRACKmMKCEl0ZW1UeXBlEhIKDkl0ZW1fVHlwZV9Ob25l",
-            "EAASFAoQSXRlbV9UeXBlX1dlYXBvbhABEhMKD0l0ZW1fVHlwZV9Bcm1vchAC",
-            "EhgKFEl0ZW1fVHlwZV9Db25zdW1hYmxlEAMqZQoKV2VhcG9uVHlwZRIUChBX",
-            "ZWFwb25fVHlwZV9Ob25lEAASFQoRV2VhcG9uX1R5cGVfU3dvcmQQARITCg9X",
-            "ZWFwb25fVHlwZV9Cb3cQAhIVChFXZWFwb25fVHlwZV9TdGFmZhADKmMKCUFy",
-            "bW9yVHlwZRITCg9Bcm1vcl9UeXBlX05vbmUQABIVChFBcm1vcl9UeXBlX0hl",
-            "bG1ldBABEhQKEEFybW9yX1R5cGVfQXJtb3IQAhIUChBBcm1vcl9UeXBlX0Jv",
-            "b3RzEAMqaAoOQ29uc3VtYWJsZVR5cGUSGAoUQ29uc3VtYWJsZV9UeXBlX05v",
-            "bmUQABIdChlDb25zdW1hYmxlX1R5cGVfSHBfUG90aW9uEAESHQoZQ29uc3Vt",
-            "YWJsZV9UeXBlX01wX1BvdGlvbhACKnkKCUVycm9yVHlwZRILCgdTdWNjZXNz",
-            "EAASCAoERmFpbBABEgwKCERiX0Vycm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJf",
-            "U3RhdGUQChIWChJBbHJlYWR5X0V4aXN0X05hbWUQFBIVChFJbnZhbGlkX0dh",
-            "bWVfRGF0YRAeQheqAhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
+            "CgpFbnVtLnByb3RvEghQcm90b2NvbCp0Cg1DcmVhdHVyZVN0YXRlEhcKE0Ny",
+            "ZWF0dXJlX1N0YXRlX0lkbGUQABIXChNDcmVhdHVyZV9TdGF0ZV9Nb3ZlEAES",
+            "GAoUQ3JlYXR1cmVfU3RhdGVfU2tpbGwQAhIXChNDcmVhdHVyZV9TdGF0ZV9E",
+            "ZWFkEAMqVAoHTW92ZURpchIPCgtNb3ZlX0Rpcl9VcBAAEhEKDU1vdmVfRGly",
+            "X0Rvd24QARIRCg1Nb3ZlX0Rpcl9MZWZ0EAISEgoOTW92ZV9EaXJfUmlnaHQQ",
+            "AyqHAQoOR2FtZU9iamVjdFR5cGUSGQoVR2FtZV9PYmplY3RfVHlwZV9Ob25l",
+            "EAASGwoXR2FtZV9PYmplY3RfVHlwZV9QbGF5ZXIQARIcChhHYW1lX09iamVj",
+            "dF9UeXBlX01vbnN0ZXIQAhIfChtHYW1lX09iamVjdF9UeXBlX1Byb2plY3Rp",
+            "bGUQBCpQCglTa2lsbFR5cGUSEwoPU2tpbGxfVHlwZV9Ob25lEAASEwoPU2tp",
+            "bGxfVHlwZV9BdXRvEAESGQoVU2tpbGxfVHlwZV9Qcm9qZWN0aWxlEAIqVgoL",
+            "U2VydmVyU3RhdGUSFgoSU2VydmVyX1N0YXRlX0xvZ2luEAASFgoSU2VydmVy",
+            "X1N0YXRlX0xvYmJ5EAESFwoTU2VydmVyX1N0YXRlX0luR2FtZRACKmMKCEl0",
+            "ZW1UeXBlEhIKDkl0ZW1fVHlwZV9Ob25lEAASFAoQSXRlbV9UeXBlX1dlYXBv",
+            "bhABEhMKD0l0ZW1fVHlwZV9Bcm1vchACEhgKFEl0ZW1fVHlwZV9Db25zdW1h",
+            "YmxlEAMqZQoKV2VhcG9uVHlwZRIUChBXZWFwb25fVHlwZV9Ob25lEAASFQoR",
+            "V2VhcG9uX1R5cGVfU3dvcmQQARITCg9XZWFwb25fVHlwZV9Cb3cQAhIVChFX",
+            "ZWFwb25fVHlwZV9TdGFmZhADKmMKCUFybW9yVHlwZRITCg9Bcm1vcl9UeXBl",
+            "X05vbmUQABIVChFBcm1vcl9UeXBlX0hlbG1ldBABEhQKEEFybW9yX1R5cGVf",
+            "QXJtb3IQAhIUChBBcm1vcl9UeXBlX0Jvb3RzEAMqaAoOQ29uc3VtYWJsZVR5",
+            "cGUSGAoUQ29uc3VtYWJsZV9UeXBlX05vbmUQABIdChlDb25zdW1hYmxlX1R5",
+            "cGVfSHBfUG90aW9uEAESHQoZQ29uc3VtYWJsZV9UeXBlX01wX1BvdGlvbhAC",
+            "KnkKCUVycm9yVHlwZRILCgdTdWNjZXNzEAASCAoERmFpbBABEgwKCERiX0Vy",
+            "cm9yEAISGAoUSW52YWxpZF9TZXJ2ZXJfU3RhdGUQChIWChJBbHJlYWR5X0V4",
+            "aXN0X05hbWUQFBIVChFJbnZhbGlkX0dhbWVfRGF0YRAeQheqAhRHb29nbGUu",
+            "UHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.PlayerServerState), typeof(global::Google.Protobuf.Enum.ItemType), typeof(global::Google.Protobuf.Enum.WeaponType), typeof(global::Google.Protobuf.Enum.ArmorType), typeof(global::Google.Protobuf.Enum.ConsumableType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.ServerState), typeof(global::Google.Protobuf.Enum.ItemType), typeof(global::Google.Protobuf.Enum.WeaponType), typeof(global::Google.Protobuf.Enum.ArmorType), typeof(global::Google.Protobuf.Enum.ConsumableType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
     }
     #endregion
 
   }
   #region Enums
   public enum CreatureState {
-    [pbr::OriginalName("Idle")] Idle = 0,
-    [pbr::OriginalName("Move")] Move = 1,
-    [pbr::OriginalName("Skill")] Skill = 2,
-    [pbr::OriginalName("Dead")] Dead = 3,
+    [pbr::OriginalName("Creature_State_Idle")] Idle = 0,
+    [pbr::OriginalName("Creature_State_Move")] Move = 1,
+    [pbr::OriginalName("Creature_State_Skill")] Skill = 2,
+    [pbr::OriginalName("Creature_State_Dead")] Dead = 3,
   }
 
   public enum MoveDir {
-    [pbr::OriginalName("Up")] Up = 0,
-    [pbr::OriginalName("Down")] Down = 1,
-    [pbr::OriginalName("Left")] Left = 2,
-    [pbr::OriginalName("Right")] Right = 3,
+    [pbr::OriginalName("Move_Dir_Up")] Up = 0,
+    [pbr::OriginalName("Move_Dir_Down")] Down = 1,
+    [pbr::OriginalName("Move_Dir_Left")] Left = 2,
+    [pbr::OriginalName("Move_Dir_Right")] Right = 3,
   }
 
   public enum GameObjectType {
-    [pbr::OriginalName("None")] None = 0,
-    [pbr::OriginalName("Player")] Player = 1,
-    [pbr::OriginalName("Monster")] Monster = 2,
-    [pbr::OriginalName("Projectile")] Projectile = 4,
+    [pbr::OriginalName("Game_Object_Type_None")] None = 0,
+    [pbr::OriginalName("Game_Object_Type_Player")] Player = 1,
+    [pbr::OriginalName("Game_Object_Type_Monster")] Monster = 2,
+    [pbr::OriginalName("Game_Object_Type_Projectile")] Projectile = 4,
   }
 
   public enum SkillType {
@@ -80,10 +84,10 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("Skill_Type_Projectile")] Projectile = 2,
   }
 
-  public enum PlayerServerState {
-    [pbr::OriginalName("Server_State_Login")] ServerStateLogin = 0,
-    [pbr::OriginalName("Server_State_Lobby")] ServerStateLobby = 1,
-    [pbr::OriginalName("Server_State_InGame")] ServerStateInGame = 2,
+  public enum ServerState {
+    [pbr::OriginalName("Server_State_Login")] Login = 0,
+    [pbr::OriginalName("Server_State_Lobby")] Lobby = 1,
+    [pbr::OriginalName("Server_State_InGame")] InGame = 2,
   }
 
   public enum ItemType {

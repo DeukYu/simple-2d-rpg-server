@@ -33,12 +33,12 @@ namespace Google.Protobuf.Common {
             "UHJvdG9jb2wuU3RhdEluZm8iWQoPTG9iYnlQbGF5ZXJJbmZvEhEKCXBsYXll",
             "cl9pZBgBIAEoAxIMCgRuYW1lGAIgASgJEiUKCXN0YXRfaW5mbxgDIAEoCzIS",
             "LlByb3RvY29sLlN0YXRJbmZvIh0KCVNraWxsSW5mbxIQCghza2lsbF9pZBgB",
-            "IAEoBSKNAQoIU3RhdEluZm8SDQoFbGV2ZWwYASABKAUSCgoCaHAYAiABKAUS",
-            "DQoFbWF4SHAYAyABKAUSCgoCbXAYBCABKAUSDQoFbWF4TXAYBSABKAUSDgoG",
-            "YXR0YWNrGAYgASgFEg0KBXNwZWVkGAcgASgCEgsKA2V4cBgIIAEoBRIQCgh0",
-            "b3RhbEV4cBgJIAEoBSJNCghJdGVtSW5mbxIPCgdJdGVtX0lkGAEgASgDEhMK",
-            "C1RlbXBsYXRlX0lkGAIgASgFEg0KBUNvdW50GAMgASgFEgwKBFNsb3QYBCAB",
-            "KAVCGaoCFkdvb2dsZS5Qcm90b2J1Zi5Db21tb25iBnByb3RvMw=="));
+            "IAEoBSKQAQoIU3RhdEluZm8SDQoFbGV2ZWwYASABKAUSCgoCaHAYAiABKAUS",
+            "DgoGbWF4X2hwGAMgASgFEgoKAm1wGAQgASgFEg4KBm1heF9tcBgFIAEoBRIO",
+            "CgZhdHRhY2sYBiABKAUSDQoFc3BlZWQYByABKAISCwoDZXhwGAggASgFEhEK",
+            "CXRvdGFsX2V4cBgJIAEoBSJNCghJdGVtSW5mbxIPCgdpdGVtX2lkGAEgASgD",
+            "EhMKC3RlbXBsYXRlX2lkGAIgASgFEg0KBWNvdW50GAMgASgFEgwKBHNsb3QY",
+            "BCABKAVCGaoCFkdvb2dsZS5Qcm90b2J1Zi5Db21tb25iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -1209,7 +1209,7 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "maxHp" field.</summary>
+    /// <summary>Field number for the "max_hp" field.</summary>
     public const int MaxHpFieldNumber = 3;
     private int maxHp_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1233,7 +1233,7 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "maxMp" field.</summary>
+    /// <summary>Field number for the "max_mp" field.</summary>
     public const int MaxMpFieldNumber = 5;
     private int maxMp_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1281,7 +1281,7 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "totalExp" field.</summary>
+    /// <summary>Field number for the "total_exp" field.</summary>
     public const int TotalExpFieldNumber = 9;
     private int totalExp_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1665,7 +1665,7 @@ namespace Google.Protobuf.Common {
       return new ItemInfo(this);
     }
 
-    /// <summary>Field number for the "Item_Id" field.</summary>
+    /// <summary>Field number for the "item_id" field.</summary>
     public const int ItemIdFieldNumber = 1;
     private long itemId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1677,7 +1677,7 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "Template_Id" field.</summary>
+    /// <summary>Field number for the "template_id" field.</summary>
     public const int TemplateIdFieldNumber = 2;
     private int templateId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1689,7 +1689,7 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "Count" field.</summary>
+    /// <summary>Field number for the "count" field.</summary>
     public const int CountFieldNumber = 3;
     private int count_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1701,7 +1701,7 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "Slot" field.</summary>
+    /// <summary>Field number for the "slot" field.</summary>
     public const int SlotFieldNumber = 4;
     private int slot_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

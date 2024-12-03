@@ -8,7 +8,7 @@ namespace CS_Server;
 
 public partial class ClientSession : PacketSession
 {
-    public PlayerServerState ServerState { get; private set; } = PlayerServerState.ServerStateLogin;
+    public ServerState ServerState { get; private set; } = ServerState.Login;
     public Player? GamePlayer { get; set; }
     public int SessionId { get; set; }
 

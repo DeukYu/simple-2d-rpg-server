@@ -83,7 +83,12 @@ class PacketHandler
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
             return;
 
-        clientSession.HandleLogin(loginPacket);
+        int state = clientSession.HandleLogin(loginPacket.UniqueId, out var lobbyPlayers);
+        var res = new S2C_Login
+        {
+            Players = { lobbyPlayers },
+            Result = state
+        };
     }
 
     public static void C2S_CreatePlayerHandler(PacketSession session, IMessage packet)

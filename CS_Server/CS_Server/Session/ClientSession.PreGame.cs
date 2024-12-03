@@ -12,96 +12,71 @@ public partial class ClientSession : PacketSession
 {
     public long AccountId { get; private set; }
     public List<LobbyPlayerInfo> lobbyPlayers { get; set; } = new List<LobbyPlayerInfo>();
-    public void HandleLogin(C2S_Login packet)
+    
+    // 플레이어 로그인 핸들러
+    public int HandleLogin(string accountName, out List<LobbyPlayerInfo> lobbyPlayerInfos)
     {
+        lobbyPlayerInfos = null;
 
-        if (ServerState != PlayerServerState.ServerStateLogin)
+        // 서버 상태가 로그인 상태가 아니면 리턴
+        if (ServerState != ServerState.Login)
         {
-            return;
+            return (int)ErrorType.InvalidServerState;
         }
 
+        // LobbyPlayerInfo를 초기화
         lobbyPlayers.Clear();
 
-        using (var db = new AccountDB())
+        using (var accountDB = new AccountDB())
         {
-            var findAccounts = db.AccountInfo
+            var findAccounts = accountDB.AccountInfo
                 .Include(x => x.Players)
-                .Where(x => x.AccountName == packet.UniqueId).FirstOrDefault();
+                .Where(x => x.AccountName == accountName).FirstOrDefault();
+
+            // 찾는 계정이 없으면 새로 생성
             if (findAccounts != null)
             {
                 AccountId = findAccounts.Id;
 
-                S2C_Login res = new S2C_Login();
-                foreach (var playerDb in findAccounts.Players)
+                foreach (var playerInfo in findAccounts.Players)
                 {
-                    var findStatInfo = db.PlayerStatInfo
-                        .Where(x => x.PlayerId == playerDb.Id).FirstOrDefault();
-
+                    var findStatInfo = accountDB.PlayerStatInfo
+                        .Where(x => x.PlayerId == playerInfo.Id).FirstOrDefault();
                     if (findStatInfo == null)
                     {
                         Log.Error("There is no stat info");
                         continue;
                     }
-
-                    var lobbyPlayerInfo = new LobbyPlayerInfo
-                    {
-                        PlayerId = playerDb.Id,
-                        Name = playerDb.PlayerName,
-                        StatInfo = new StatInfo
-                        {
-                            Level = findStatInfo.Level,
-                            Hp = findStatInfo.Hp,
-                            MaxHp = findStatInfo.MaxHp,
-                            Mp = findStatInfo.Mp,
-                            MaxMp = findStatInfo.MaxMp,
-                            Attack = findStatInfo.Attack,
-                            Speed = findStatInfo.Speed,
-                            TotalExp = findStatInfo.TotalExp
-                        }
-                    };
-
-                    lobbyPlayers.Add(lobbyPlayerInfo);
-
-                    res.Players.Add(lobbyPlayerInfo);
+                    var lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(playerInfo, findStatInfo);
+                    lobbyPlayerInfos.Add(lobbyPlayerInfo);
                 }
-
-                res.Result = (int)ErrorType.Success;
-                Send(res);
-
-                ServerState = PlayerServerState.ServerStateLobby;
             }
+            // 찾는 계정이 있으면 해당 계정의 플레이어 정보를 가져옴
             else
             {
-                var newAccount = new AccountInfo
+                var newAccount = new AccountInfo { AccountName = accountName };
+                accountDB.AccountInfo.Add(newAccount);
+                if (accountDB.SaveChangesEx() == false)
                 {
-                    AccountName = packet.UniqueId
-                };
-                db.AccountInfo.Add(newAccount);
-                if (db.SaveChangesEx() == false)
-                {
-                    Send(
-                        new S2C_Login
-                        {
-                            Result = (int)ErrorType.DbError
-                        });
-                    return;
+                    Log.Error("Failed to save changes to the database.");
+                    return (int)ErrorType.DbError;
                 }
 
                 AccountId = newAccount.Id;
-
-                S2C_Login res = new S2C_Login();
-                res.Result = (int)ErrorType.Success;
-                Send(res);
-
-                ServerState = PlayerServerState.ServerStateLobby;
             }
         }
+
+
+        lobbyPlayers = lobbyPlayerInfos;
+        ServerState = ServerState.Lobby;
+        return (int)ErrorType.Success;
     }
+ 
     // 플레이어 생성
     public void HandleCreatePlayer(C2S_CreatePlayer packet)
     {
         // 서버 상태가 로비 상태가 아니면 리턴
-        if (ServerState != PlayerServerState.ServerStateLobby)
+        if (ServerState != ServerState.Lobby)
         {
             S2C_CreatePlayer res = new S2C_CreatePlayer();
             res.Result = (int)ErrorType.InvalidServerState;
@@ -188,7 +163,7 @@ public partial class ClientSession : PacketSession
     }
     public void HandleEnterGame(C2S_EnterGame packet)
     {
-        if (ServerState != PlayerServerState.ServerStateLobby)
+        if (ServerState != ServerState.Lobby)
         {
             return;
         }
@@ -236,7 +211,7 @@ public partial class ClientSession : PacketSession
             Send(itemListPacket);
         }
 
-        ServerState = PlayerServerState.ServerStateInGame;
+        ServerState = ServerState.InGame;
 
         Zone zone = ZoneManager.Instance.FindZone(1);
         if (zone == null)
