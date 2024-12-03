@@ -3,7 +3,7 @@
 namespace Shared;
 
 [Serializable]
-public class Skill : ICsvConvertible
+public class SkillData : ICsvConvertible
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -23,13 +23,13 @@ public class Skill : ICsvConvertible
     }
 }
 
-public class SkillData : ILoader<int, Skill>
+public class SkillDataLoader : ILoader<int, SkillData>
 {
-    public List<Skill> skills = new List<Skill>();
+    public List<SkillData> skills = new List<SkillData>();
 
-    public Dictionary<int, Skill> MakeDict()
+    public Dictionary<int, SkillData> MakeDict()
     {
-        Dictionary<int, Skill> dict = new Dictionary<int, Skill>();
+        Dictionary<int, SkillData> dict = new Dictionary<int, SkillData>();
         foreach (var stat in skills)
         {
             dict.Add(stat.Id, stat);

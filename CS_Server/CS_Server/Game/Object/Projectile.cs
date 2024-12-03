@@ -5,7 +5,7 @@ namespace CS_Server;
 
 public class Projectile : GameObject
 {
-    public Skill SkillData { get; set; } = new Skill();
+    public SkillData SkillData { get; set; } = new SkillData();
     public Projectile()
     {
         ObjectType = GameObjectType.Projectile;

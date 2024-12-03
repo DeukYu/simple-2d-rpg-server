@@ -1,7 +1,7 @@
 ﻿namespace Shared;
 
 [Serializable]
-public class Stat : ICsvConvertible
+public class StatData : ICsvConvertible
 {
     public int Level { get; set; }
     public int MaxHp { get; set; }
@@ -21,13 +21,13 @@ public class Stat : ICsvConvertible
     }
 }
 
-public class StatData : ILoader<int, Stat>
+public class StatDataLoader : ILoader<int, StatData>
 {
-    public List<Stat> stats = new List<Stat>();
+    public List<StatData> stats = new List<StatData>();
 
-    public Dictionary<int, Stat> MakeDict()
+    public Dictionary<int, StatData> MakeDict()
     {
-        Dictionary<int, Stat> dict = new Dictionary<int, Stat>();
+        Dictionary<int, StatData> dict = new Dictionary<int, StatData>();
         foreach (var stat in stats)
         {
             dict.Add(stat.Level, stat);

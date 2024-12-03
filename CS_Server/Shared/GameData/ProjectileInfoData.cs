@@ -1,7 +1,7 @@
 ﻿namespace Shared;
 
 [Serializable]
-public class ProjectileInfo : ICsvConvertible
+public class ProjectileInfoData : ICsvConvertible
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -19,13 +19,13 @@ public class ProjectileInfo : ICsvConvertible
     }
 }
 
-public class ProjectileData : ILoader<int, ProjectileInfo>
+public class ProjectileDataLoader : ILoader<int, ProjectileInfoData>
 {
-    public List<ProjectileInfo> projectileInfos = new List<ProjectileInfo>();
+    public List<ProjectileInfoData> projectileInfos = new List<ProjectileInfoData>();
 
-    public Dictionary<int, ProjectileInfo> MakeDict()
+    public Dictionary<int, ProjectileInfoData> MakeDict()
     {
-        Dictionary<int, ProjectileInfo> dict = new Dictionary<int, ProjectileInfo>();
+        Dictionary<int, ProjectileInfoData> dict = new Dictionary<int, ProjectileInfoData>();
         foreach (var projectile in projectileInfos)
         {
             dict.Add(projectile.Id, projectile);

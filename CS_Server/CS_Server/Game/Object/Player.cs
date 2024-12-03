@@ -26,6 +26,6 @@ public class Player : GameObject
 
     public void OnLeaveGame()
     {
-       DbTransaction.SavePlayerStatus_AllInOne(this, _zone);
+       DbTransaction.UpdatePlayerStatus(this, _zone);
     }
 }
