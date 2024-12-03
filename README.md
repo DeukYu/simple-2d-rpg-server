@@ -1,7 +1,7 @@
 # simple-2d-rpg-server
 - C# 서버를 제작중입니다.
 - 포트폴리오 작업과 함께 README 파일도 업데이트 하고 있습니다.
-- Client : https://github.com/kdh0794/GuardianOfNature2D
+- Client : https://github.com/DeukYu/simple-2d-rpg-client
 
 ## 환경설정
 - Visual Studio 2022
