@@ -168,7 +168,7 @@ public static class CsvToJsonConverter
         }
 
         // JSON 파일로 저장
-        SaveToJsonFile(new Dictionary<string, object> { { prefix, groupedData } }, saveFolderPath, $"{prefix}data");
+        SaveToJsonFile(groupedData, saveFolderPath, $"{prefix}data");
     }
 
     // LoadCsv 메서드를 동적으로 호출
@@ -180,6 +180,12 @@ public static class CsvToJsonConverter
 
     // 데이터를 JSON 파일로 저장
     private static void SaveToJsonFile(Dictionary<string, object> data, string saveFolderPath, string fileName)
+    {
+        var savePath = Path.Combine(saveFolderPath, $"{fileName}.json");
+        var jsonData = JsonConvert.SerializeObject(data, Formatting.Indented);
+        File.WriteAllText(savePath, jsonData);
+    }
+    private static void SaveToJsonFile(object data, string saveFolderPath, string fileName)
     {
         var savePath = Path.Combine(saveFolderPath, $"{fileName}.json");
         var jsonData = JsonConvert.SerializeObject(data, Formatting.Indented);

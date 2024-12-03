@@ -1,52 +1,50 @@
 {
-  "item": {
-    "armors": [
-      {
-        "ArmorType": 2,
-        "Defense": 5,
-        "Id": 100,
-        "Name": "초보자의갑옷",
-        "ItemType": 2
-      },
-      {
-        "ArmorType": 3,
-        "Defense": 5,
-        "Id": 101,
-        "Name": "초보자의신발",
-        "ItemType": 2
-      }
-    ],
-    "consumables": [
-      {
-        "ConsumableType": 1,
-        "MaxCount": 10,
-        "Id": 200,
-        "Name": "HP 물약",
-        "ItemType": 3
-      },
-      {
-        "ConsumableType": 2,
-        "MaxCount": 10,
-        "Id": 201,
-        "Name": "MP 물약",
-        "ItemType": 3
-      }
-    ],
-    "weapons": [
-      {
-        "WeaponType": 1,
-        "Damage": 10,
-        "Id": 1,
-        "Name": "초보자의검",
-        "ItemType": 1
-      },
-      {
-        "WeaponType": 2,
-        "Damage": 7,
-        "Id": 2,
-        "Name": "초보자의활",
-        "ItemType": 1
-      }
-    ]
-  }
+  "armors": [
+    {
+      "ArmorType": 2,
+      "Defense": 5,
+      "Id": 100,
+      "Name": "초보자의갑옷",
+      "ItemType": 2
+    },
+    {
+      "ArmorType": 3,
+      "Defense": 5,
+      "Id": 101,
+      "Name": "초보자의신발",
+      "ItemType": 2
+    }
+  ],
+  "consumables": [
+    {
+      "ConsumableType": 1,
+      "MaxCount": 10,
+      "Id": 200,
+      "Name": "HP 물약",
+      "ItemType": 3
+    },
+    {
+      "ConsumableType": 2,
+      "MaxCount": 10,
+      "Id": 201,
+      "Name": "MP 물약",
+      "ItemType": 3
+    }
+  ],
+  "weapons": [
+    {
+      "WeaponType": 1,
+      "Damage": 10,
+      "Id": 1,
+      "Name": "초보자의검",
+      "ItemType": 1
+    },
+    {
+      "WeaponType": 2,
+      "Damage": 7,
+      "Id": 2,
+      "Name": "초보자의활",
+      "ItemType": 1
+    }
+  ]
 }
