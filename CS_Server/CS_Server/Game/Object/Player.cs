@@ -31,8 +31,6 @@ public class Player : GameObject
         // 게임 입장 처리
         SendEnterGamePacket();
         SendSpawnPacket(objects);
-
-
     }
 
     private void SendEnterGamePacket()

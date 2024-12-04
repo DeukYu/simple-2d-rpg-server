@@ -4,7 +4,9 @@ using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ServerCore;
+using Shared;
 using System.Collections.Concurrent;
+using System.Net.Http.Headers;
 
 namespace CS_Server;
 
@@ -268,7 +270,7 @@ public class Zone : JobSerializer
             return;
         }
 
-        if(IsValidMove(player, packet.PosInfo) == false)
+        if (IsValidMove(player, packet.PosInfo) == false)
         {
             return;
         }
@@ -303,14 +305,32 @@ public class Zone : JobSerializer
             return;
         }
 
-        ObjectInfo info = player.Info;
-        if (info.PosInfo.State != CreatureState.Idle)
+        if (CanUseSkill(player) == false)
         {
-            Log.Error("HandleSkill player is not idle");
             return;
         }
 
-        info.PosInfo.State = CreatureState.Skill;
+        var skillData = GetSkillData(packet.SkillInfo.SkillId);
+        if (skillData == null)
+        {
+            Log.Error("HandleSkill skillData is null");
+            return;
+        }
+
+        switch (skillData.SkillType)
+        {
+            case SkillType.Auto:
+                HandleAutoSkill(player, skillData);
+                break;
+
+            case SkillType.Projectile:
+                HandleProjectileSkill(player, skillData);
+                break;
+
+            default:
+                Log.Error("HandleSkill invalid skill type");
+                return;
+        }
 
         S2C_Skill res = new S2C_Skill
         {
@@ -320,54 +340,65 @@ public class Zone : JobSerializer
                 SkillId = 1,
             }
         };
-
         BroadCast(res);
+    }
 
-        if (DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
+    private bool CanUseSkill(Player player)
+    {
+        ObjectInfo info = player.Info;
+        if (info.PosInfo.State != CreatureState.Idle)
         {
-            Log.Error($"HandleSkill skillData is null. SkillId{packet.SkillInfo.SkillId}");
+            Log.Error("HandleSkill player is not idle");
+            return false;
+        }
+
+        info.PosInfo.State = CreatureState.Skill;
+
+        return true;
+    }
+
+    private SkillData? GetSkillData(int skillId)
+    {
+        if (DataManager.SkillDict.TryGetValue(skillId, out var skillData) == false)
+        {
+            Log.Error($"GetSkillData skillData is null. SkillId{skillId}");
+            return null;
+        }
+        return skillData;
+    }
+
+    private void HandleAutoSkill(Player player, SkillData skillData)
+    {
+        var skillPos = player.GetFrontCellPos(player.PosInfo.MoveDir);
+        var target = Map.Find(skillPos);
+        if (target != null)
+        {
+            target.OnDamaged(player, skillData.Damage + player.StatInfo.Attack);
+        }
+    }
+
+    private void HandleProjectileSkill(Player player, SkillData skillData)
+    {
+        if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
+        {
+            Log.Error($"HandleSkill projectileInfo is null. ProjectileId{skillData.ProjectileId}");
+            return;
+        }
+        var arrow = ObjectManager.Instance.Add<Arrow>();
+        if (arrow == null)
+        {
+            Log.Error("HandleSkill arrow is null");
             return;
         }
 
-        switch (skillData.SkillType)
-        {
-            case SkillType.Auto:
-                {
-                    var skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
-                    var target = Map.Find(skillPos);
-                    if (target != null)
-                    {
-                        Log.Info("GameObject Hit");
-                    }
-                }
-                break;
-            case SkillType.Projectile:
-                {
-                    if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
-                    {
-                        Log.Error($"HandleSkill projectileInfo is null. ProjectileId{skillData.ProjectileId}");
-                        return;
-                    }
-
-                    var arrow = ObjectManager.Instance.Add<Arrow>();
-                    if (arrow == null)
-                    {
-                        Log.Error("HandleSkill arrow is null");
-                        return;
-                    }
-
-                    arrow.Owner = player;
-                    arrow.SkillData = skillData;
-                    arrow.PosInfo.State = CreatureState.Move;
-                    arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
-                    arrow.PosInfo.PosX = player.PosInfo.PosX;
-                    arrow.PosInfo.PosY = player.PosInfo.PosY;
-                    arrow.Speed = projectileInfo.Speed;
-
-                    Push(EnterZone, arrow);
-                }
-                break;
-        }
+        arrow.Owner = player;
+        arrow.SkillData = skillData;
+        arrow.PosInfo.State = CreatureState.Move;
+        arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
+        arrow.PosInfo.PosX = player.PosInfo.PosX;
+        arrow.PosInfo.PosY = player.PosInfo.PosY;
+        arrow.Speed = projectileInfo.Speed;
+        Push(EnterZone, arrow);
     }
 
     public Player? FindPlayer(Func<GameObject, bool> condition)
