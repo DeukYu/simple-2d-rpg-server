@@ -28,7 +28,7 @@ namespace Google.Protobuf.Common {
             "aW9uSW5mbxImCgVzdGF0ZRgBIAEoDjIXLlByb3RvY29sLkNyZWF0dXJlU3Rh",
             "dGUSIwoIbW92ZV9kaXIYAiABKA4yES5Qcm90b2NvbC5Nb3ZlRGlyEg0KBXBv",
             "c194GAMgASgFEg0KBXBvc195GAQgASgFIn4KCk9iamVjdEluZm8SEQoJb2Jq",
-            "ZWN0X2lkGAEgASgDEgwKBG5hbWUYAiABKAkSKAoIcG9zX2luZm8YAyABKAsy",
+            "ZWN0X2lkGAEgASgFEgwKBG5hbWUYAiABKAkSKAoIcG9zX2luZm8YAyABKAsy",
             "Fi5Qcm90b2NvbC5Qb3NpdGlvbkluZm8SJQoJc3RhdF9pbmZvGAQgASgLMhIu",
             "UHJvdG9jb2wuU3RhdEluZm8iWQoPTG9iYnlQbGF5ZXJJbmZvEhEKCXBsYXll",
             "cl9pZBgBIAEoAxIMCgRuYW1lGAIgASgJEiUKCXN0YXRfaW5mbxgDIAEoCzIS",
@@ -403,10 +403,10 @@ namespace Google.Protobuf.Common {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 1;
-    private long objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public long ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -475,7 +475,7 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (ObjectId != 0L) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (posInfo_ != null) hash ^= PosInfo.GetHashCode();
       if (statInfo_ != null) hash ^= StatInfo.GetHashCode();
@@ -497,9 +497,9 @@ namespace Google.Protobuf.Common {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(8);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (Name.Length != 0) {
         output.WriteRawTag(18);
@@ -523,9 +523,9 @@ namespace Google.Protobuf.Common {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(8);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (Name.Length != 0) {
         output.WriteRawTag(18);
@@ -549,8 +549,8 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (ObjectId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
@@ -573,7 +573,7 @@ namespace Google.Protobuf.Common {
       if (other == null) {
         return;
       }
-      if (other.ObjectId != 0L) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.Name.Length != 0) {
@@ -607,7 +607,7 @@ namespace Google.Protobuf.Common {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 18: {
@@ -644,7 +644,7 @@ namespace Google.Protobuf.Common {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 18: {

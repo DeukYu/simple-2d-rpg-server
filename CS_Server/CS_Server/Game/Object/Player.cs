@@ -4,7 +4,7 @@ namespace CS_Server;
 
 public class Player : GameObject
 {
-    public long PlayerId { get; set; }
+    public long PlayerId { get; set; }  // DB ID
     public ClientSession? Session { get; set; }
     public Inventory Inven { get; private set; } = new Inventory();
 

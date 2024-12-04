@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.Common;
-using Google.Protobuf.Enum;
+﻿using Google.Protobuf.Enum;
 using ServerCore;
 using System.Collections.Concurrent;
 
@@ -8,10 +7,14 @@ namespace CS_Server;
 public class ObjectManager
 {
     public static ObjectManager Instance { get; } = new ObjectManager();
-    private ConcurrentDictionary<long, Player> _players = new ConcurrentDictionary<long, Player>();
-    object _lock = new object();
+    private ConcurrentDictionary<int, Player> _players = new ConcurrentDictionary<int, Player>();
 
-    int _counter = 0;
+    private int _counter = 0;
+    int GenerateId(GameObjectType type)
+    {
+        int uniqueCounter = Interlocked.Increment(ref _counter);
+        return ((int)type << 24) | uniqueCounter;
+    }
 
     public T Add<T>() where T : GameObject, new()
     {
@@ -31,35 +34,24 @@ public class ObjectManager
         return gameObject;
     }
 
-    long GenerateId(GameObjectType type)
+    public static GameObjectType GetObjectTypeById(int objectId)
     {
-        lock (_lock)
-        {
-            return ((int)type << 24) | (_counter++);
-        }
-    }
-
-    public static GameObjectType GetObjectTypeById(long id)
-    {
-        var type = (id >> 24) & 0x7F;
+        var type = (objectId >> 24) & 0x7F;
         return (GameObjectType)type;
     }
 
-    public bool Remove(long objectId)
+    public bool Remove(int objectId)
     {
         GameObjectType objectType = GetObjectTypeById(objectId);
 
-        lock (_lock)
+        if (objectType == GameObjectType.Player)
         {
-            if (objectType == GameObjectType.Player)
-            {
-                return _players.TryRemove(objectId, out _);
-            }
+            return _players.TryRemove(objectId, out _);
         }
         return false;
     }
 
-    public Player? Find(long objectId)
+    public Player? Find(int objectId)
     {
         GameObjectType objectType = GetObjectTypeById(objectId);
 

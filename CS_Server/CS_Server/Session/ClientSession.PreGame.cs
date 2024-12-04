@@ -119,6 +119,7 @@ public partial class ClientSession : PacketSession
         return (int)ErrorType.Success;
     }
 
+    // 플레이어 입장
     public void HandleEnterGame(C2S_EnterGame packet)
     {
         if (ServerState != ServerState.Lobby)

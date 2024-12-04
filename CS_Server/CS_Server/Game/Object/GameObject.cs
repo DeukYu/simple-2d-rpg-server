@@ -35,7 +35,7 @@ public class GameObject
         set { StatInfo.Hp = Math.Clamp(value, 0, StatInfo.MaxHp); }
     }
 
-    public long Id
+    public int Id
     {
         get { return Info.ObjectId; }
         set { Info.ObjectId = value; }

@@ -1,44 +1,51 @@
 ﻿using ServerCore;
+using System.Collections.Concurrent;
 
 namespace CS_Server;
 
 class SessionManager
 {
-    static SessionManager _session = new SessionManager();
-    public static SessionManager Instance { get { return _session; } }
-    int _sessionId = 0;
-    Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();    // <SessionId, ClientSession>
-    object _lock = new object();
+    private static readonly SessionManager _instance = new SessionManager();
+    public static SessionManager Instance => _instance;
+
+    private int _sessionId = 0;
+    private readonly ConcurrentDictionary<int, ClientSession> _sessions = new ConcurrentDictionary<int, ClientSession>();
 
     public ClientSession Generate()
     {
-        lock (_lock)
+        int sessionId = Interlocked.Increment(ref _sessionId);
+        var session = new ClientSession
         {
-            int sessionId = ++_sessionId;
-            ClientSession session = new ClientSession();
-            session.SessionId = sessionId;
-            _sessions.Add(sessionId, session);
+            SessionId = sessionId
+        };
 
-            Log.Info($"Session generated. SessionId: {sessionId}");
-
-            return session;
+        if (_sessions.TryAdd(sessionId, session) == false)
+        {
+            Log.Error($"Failed to add session. SessionId({sessionId})");
+            return null;
         }
+
+        Log.Info($"Session generated. SessionId: {sessionId}");
+        return session;
     }
 
-    public ClientSession Find(int id)
+    public ClientSession Find(int sessionId)
     {
-        lock (_lock)
-        {
-            ClientSession session = null;
-            _sessions.TryGetValue(id, out session);
-            return session;
-        }
+        _sessions.TryGetValue(sessionId, out var session);
+        return session;
     }
     public void Remove(ClientSession session)
     {
-        lock (_lock)
+        if (session == null)
         {
-            _sessions.Remove(session.SessionId);
+            Log.Error("Session is null");
+            return;
+        }
+
+        if (_sessions.TryRemove(session.SessionId, out var removedSession) == false)
+        {
+            Log.Error($"Failed to remove session. SessionId({session.SessionId})");
+            return;
         }
     }
 }
