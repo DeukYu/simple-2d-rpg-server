@@ -2,7 +2,9 @@
 using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ServerCore;
+using System.Collections.Concurrent;
 
 namespace CS_Server;
 
@@ -13,9 +15,9 @@ public class Zone : JobSerializer
     private readonly Dictionary<GameObjectType, Action<GameObject>> _addToZoneActions;
     private readonly Dictionary<GameObjectType, Action<GameObject>> _removeToZoneActions;
 
-    Dictionary<long, Player> _players = new Dictionary<long, Player>(); // TODO : JobQueue 형식으로 변경시, ConcurrentDictionary 으로 변경하여, 락프리(?)로 변경한다.
-    Dictionary<long, Monster> _monsters = new Dictionary<long, Monster>();
-    Dictionary<long, Projectile> _projectiles = new Dictionary<long, Projectile>();
+    private ConcurrentDictionary<int, Player> _players = new ConcurrentDictionary<int, Player>();
+    private ConcurrentDictionary<int, Monster> _monsters = new ConcurrentDictionary<int, Monster>();
+    private ConcurrentDictionary<int, Projectile> _projectiles = new ConcurrentDictionary<int, Projectile>();
 
     public Zone()
     {
@@ -58,53 +60,34 @@ public class Zone : JobSerializer
         }
     }
 
+    private List<ObjectInfo> CollectSpawnableObjects(GameObject excludeObject)
+    {
+        var allObjects = new List<ObjectInfo>();
+        allObjects.AddRange(_players.Values.Where(p => excludeObject != p).Select(p => p.Info));
+        allObjects.AddRange(_monsters.Values.Select(m => m.Info));
+        allObjects.AddRange(_projectiles.Values.Select(p => p.Info));
+        return allObjects;
+    }
+
     private void AddPlayerToZone(GameObject gameObject)
     {
-        var player = gameObject as Player;
-        if (player == null)
+        if (gameObject is not Player player)
         {
-            Log.Error("AddPlayerToZone player is null");
+            Log.Error("AddPlayerToZone: Invalid GameObject type");
             return;
         }
 
-        _players.Add(gameObject.Info.ObjectId, player);
+        if (_players.TryAdd(gameObject.Info.ObjectId, player) == false)
+        {
+            Log.Error($"AddPlayerToZone player {gameObject.Info.ObjectId} is already exist");
+            return;
+        }
         player._zone = this;
-
         Map.ApplyMove(player, player.CellPos);
 
-        {
-            S2C_EnterGame pkt = new S2C_EnterGame
-            {
-                Result = (int)ErrorType.Success,
-                ObjectInfo = gameObject.Info
-            };
-
-            player.Session.Send(pkt);
-
-            var filteredPlayers = _players.Values.Where(p => gameObject != p).Select(p => p.Info).ToList();
-            if (filteredPlayers.Count > 0)
-            {
-                S2C_Spawn spawn = new S2C_Spawn();
-                spawn.Objects.AddRange(filteredPlayers);
-                player.Session.Send(spawn);
-            }
-
-            var filteredMonsters = _monsters.Values.Select(m => m.Info).ToList();
-            if (filteredMonsters.Count > 0)
-            {
-                S2C_Spawn spawn = new S2C_Spawn();
-                spawn.Objects.AddRange(filteredMonsters);
-                player.Session.Send(spawn);
-            }
-
-            var filteredProjectiles = _projectiles.Values.Select(p => p.Info).ToList();
-            if (filteredProjectiles.Count > 0)
-            {
-                S2C_Spawn spawn = new S2C_Spawn();
-                spawn.Objects.AddRange(filteredProjectiles);
-                player.Session.Send(spawn);
-            }
-        }
+        // 플레이어 입장 처리
+        var allObjects = CollectSpawnableObjects(gameObject);
+        player.OnEnterGame(allObjects);
     }
 
     private void AddMonsterToZone(GameObject gameObject)
@@ -116,7 +99,7 @@ public class Zone : JobSerializer
             return;
         }
 
-        _monsters.Add(gameObject.Info.ObjectId, monster);
+        _monsters.TryAdd(gameObject.Info.ObjectId, monster);
         monster._zone = this;
         Map.ApplyMove(monster, monster.CellPos);
     }
@@ -129,7 +112,7 @@ public class Zone : JobSerializer
             Log.Error("AddProjectileToZone projectile is null");
             return;
         }
-        _projectiles.Add(gameObject.Info.ObjectId, projectile);
+        _projectiles.TryAdd(gameObject.Info.ObjectId, projectile);
         projectile._zone = this;
     }
 
@@ -142,7 +125,7 @@ public class Zone : JobSerializer
         }
 
         player.OnLeaveGame();
-        _players.Remove(gameObject.Id);
+        _players.Remove(gameObject.Id, out _);
         Map.ApplyLeave(player);
         player._zone = null;
         {
@@ -184,12 +167,6 @@ public class Zone : JobSerializer
         var monster = ObjectManager.Instance.Add<Monster>();
         monster.CellPos = new Vector2Int(10, 10);
         Push(EnterZone, monster);
-    }
-
-    public void TestTimer()
-    {
-        Log.Info("TestTimer");
-        PushAfter(100, TestTimer);
     }
 
     public void Update()
@@ -262,11 +239,37 @@ public class Zone : JobSerializer
         }
     }
 
+    private bool IsValidMove(Player player, PositionInfo movePosInfo)
+    {
+        var currentPos = new Vector2Int(player.PosInfo.PosX, player.PosInfo.PosY);
+        var destPos = new Vector2Int(movePosInfo.PosX, movePosInfo.PosY);
+
+        if (currentPos == destPos)
+        {
+            return true;
+        }
+
+        return Map.CanGo(destPos);
+    }
+
+    private void UpdatePlayerPosition(Player player, PositionInfo movePosInfo)
+    {
+        ObjectInfo playerInfo = player.Info;
+        playerInfo.PosInfo.State = movePosInfo.State;
+        playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
+        Map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
+    }
+
     public void HandleMove(Player player, C2S_Move packet)
     {
         if (player == null)
         {
             Log.Error("HandleMove player is null");
+            return;
+        }
+
+        if(IsValidMove(player, packet.PosInfo) == false)
+        {
             return;
         }
 
@@ -282,21 +285,14 @@ public class Zone : JobSerializer
             }
         }
 
-        playerInfo.PosInfo.State = movePosInfo.State;
-        playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
-        Map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
-
+        UpdatePlayerPosition(player, movePosInfo);
 
         S2C_Move res = new S2C_Move
         {
             ObjectId = player.Info.ObjectId,
             PosInfo = packet.PosInfo,
         };
-
-        foreach (var p in _players.Values)
-        {
-            p.Session.Send(res);
-        }
+        BroadCast(res);
     }
 
     public void HandleSkill(Player player, C2S_Skill packet)
@@ -314,8 +310,6 @@ public class Zone : JobSerializer
             return;
         }
 
-
-
         info.PosInfo.State = CreatureState.Skill;
 
         S2C_Skill res = new S2C_Skill
@@ -327,10 +321,7 @@ public class Zone : JobSerializer
             }
         };
 
-        foreach (var p in _players.Values)
-            p.Session.Send(res);
-
-        //BroadCast(res);
+        BroadCast(res);
 
         if (DataManager.SkillDict.TryGetValue(packet.SkillInfo.SkillId, out var skillData) == false)
         {
@@ -389,11 +380,12 @@ public class Zone : JobSerializer
         return null;
     }
 
-    public void BroadCast(IMessage packet)
+    public void BroadCast(IMessage packet, Func<Player, bool>? filter = null)
     {
         foreach (var player in _players.Values)
         {
-            player.Session.Send(packet);
+            if (filter == null || filter(player))
+                player.Session.Send(packet);
         }
     }
 }
