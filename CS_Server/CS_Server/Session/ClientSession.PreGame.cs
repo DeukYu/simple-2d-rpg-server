@@ -15,7 +15,7 @@ public partial class ClientSession : PacketSession
     // 플레이어 로그인 핸들러
     public int HandleLogin(string accountName, out List<LobbyPlayerInfo> lobbyPlayerInfos)
     {
-        lobbyPlayerInfos = null;
+        lobbyPlayerInfos = new List<LobbyPlayerInfo>();
 
         // 서버 상태가 로그인 상태가 아니면 리턴
         if (ServerState != ServerState.Login)
@@ -28,15 +28,14 @@ public partial class ClientSession : PacketSession
 
         using (var accountDB = new AccountDB())
         {
+            // 계정 정보를 찾는다.
             var findAccounts = accountDB.AccountInfo
                 .Include(x => x.Players)
                 .Where(x => x.AccountName == accountName).FirstOrDefault();
 
-            // 찾는 계정이 없으면 새로 생성
             if (findAccounts != null)
             {
                 AccountId = findAccounts.Id;
-
                 foreach (var playerInfo in findAccounts.Players)
                 {
                     var findStatInfo = accountDB.PlayerStatInfo
@@ -50,7 +49,6 @@ public partial class ClientSession : PacketSession
                     lobbyPlayerInfos.Add(lobbyPlayerInfo);
                 }
             }
-            // 찾는 계정이 있으면 해당 계정의 플레이어 정보를 가져옴
             else
             {
                 var newAccount = new AccountInfo { AccountName = accountName };
@@ -127,49 +125,21 @@ public partial class ClientSession : PacketSession
             return;
         }
 
-        LobbyPlayerInfo playerInfo = lobbyPlayers.Find(x => x.Name == packet.Name);
-
-        GamePlayer = ObjectManager.Instance.Add<Player>();
+        var lobbyPlayerInfo = lobbyPlayers.Find(x => x.Name == packet.Name);
+        if (lobbyPlayerInfo == null)
         {
-            GamePlayer.PlayerId = playerInfo.PlayerId;
-            GamePlayer.Info.Name = playerInfo.Name;
-            GamePlayer.Info.PosInfo.State = CreatureState.Idle;
-            GamePlayer.Info.PosInfo.MoveDir = MoveDir.Down;
-            GamePlayer.Info.PosInfo.PosX = 0;
-            GamePlayer.Info.PosInfo.PosY = 0;
-            GamePlayer.StatInfo.Level = playerInfo.StatInfo.Level;
-            GamePlayer.StatInfo.Hp = playerInfo.StatInfo.Hp;
-            GamePlayer.StatInfo.MaxHp = playerInfo.StatInfo.MaxHp;
-            GamePlayer.StatInfo.Mp = playerInfo.StatInfo.Mp;
-            GamePlayer.StatInfo.MaxMp = playerInfo.StatInfo.MaxMp;
-            GamePlayer.StatInfo.Attack = playerInfo.StatInfo.Attack;
-            GamePlayer.StatInfo.Exp = 0;
-            GamePlayer.StatInfo.TotalExp = playerInfo.StatInfo.TotalExp;
-            GamePlayer.Session = this;
-
-            S2C_ItemList itemListPacket = new S2C_ItemList();
-            using (var db = new AccountDB())
-            {
-                var items = db.ItemInfo
-                            .Where(x => x.PlayerId == playerInfo.PlayerId)
-                            .ToList();
-
-                foreach (var item in items)
-                {
-                    if (Item.MakeItem(item, out var newItem))
-                    {
-                        GamePlayer.Inven.Add(newItem);
-
-                        var info = new ItemInfo();
-                        info.MergeFrom(newItem.Info);
-                        itemListPacket.Items.Add(info);
-                    }
-                }
-            }
-
-            Send(itemListPacket);
+            Log.Error("HandleEnterGame: lobbyPlayerInfo is null.");
+            return;
         }
 
+        GamePlayer = ObjectManager.Instance.Add<Player>();
+        if (GamePlayer == null)
+        {
+            Log.Error("OnConnected: GamePlayer is null.");
+            return;
+        }
+
+        GamePlayer.SetPlayer(this, lobbyPlayerInfo);
         ServerState = ServerState.InGame;
 
         Zone zone = ZoneManager.Instance.FindZone(1);

@@ -37,8 +37,6 @@ public class Arrow : Projectile
             movePacket.ObjectId = Id;
             movePacket.PosInfo = PosInfo;
             _zone.BroadCast(movePacket);
-
-            Log.Info("Move Arrow");
         }
         else
         {

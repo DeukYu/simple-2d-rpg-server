@@ -22,7 +22,7 @@ public class PlayerInfo
 
     [ForeignKey(nameof(AccountInfo))]
     public long AccountId { get; set; } = 0;
-    public AccountInfo AccountInfo { get; set; } = new AccountInfo();
+    public virtual AccountInfo AccountInfo { get; set; } = new AccountInfo();
 }
 
 [Table("player_stat_info")]
@@ -41,7 +41,7 @@ public class PlayerStatInfo
 
     [ForeignKey(nameof(PlayerInfo))]
     public long PlayerId { get; set; } = 0;
-    public PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
+    public virtual PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
 }
 
 [Table("player_item_info")]
@@ -55,5 +55,5 @@ public class PlayerItemInfo
 
     [ForeignKey(nameof(PlayerInfo))]
     public long PlayerId { get; set; } = 0;
-    public PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
+    public virtual PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
 }
