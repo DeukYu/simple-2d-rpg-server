@@ -112,5 +112,4 @@ public class Player : GameObject
         };
         Session.Send(itemListRes);
     }
-
 }
