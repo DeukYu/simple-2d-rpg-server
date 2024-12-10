@@ -7,8 +7,9 @@ XCOPY /Y Protocol.cs "../../../../simple-2d-rpg-client/Assets/03_Scripts/Packet"
 XCOPY /Y Protocol.cs "../../CS_Server/Packet"
 
 XCOPY /Y Common.cs "../../../../simple-2d-rpg-client/Assets/03_Scripts/Packet"
-XCOPY /Y Common.cs "../../CS_Server/Packet"
-XCOPY /Y Common.cs "../../WebServer/Packet"
+REM XCOPY /Y Common.cs "../../CS_Server/Packet"
+REM XCOPY /Y Common.cs "../../WebServer/Packet"
+XCOPY /Y Common.cs "../../Shared"
 
 XCOPY /Y Enum.cs "../../../../simple-2d-rpg-client/Assets/03_Scripts/Packet"
 XCOPY /Y Enum.cs "../../Shared"

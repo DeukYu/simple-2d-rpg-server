@@ -193,4 +193,12 @@ public class Monster : GameObject
     {
         // 
     }
+
+    public override void OnDead(GameObject attacker)
+    {
+        base.OnDead(attacker);
+
+        // TODO : 아이템 생성
+
+    }
 }
