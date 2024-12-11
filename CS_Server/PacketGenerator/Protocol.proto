@@ -95,3 +95,7 @@ message S2C_Chat{
 message S2C_ItemList{
     repeated ItemInfo items = 1;
 }
+
+message S2C_AddItem{
+    repeated ItemInfo items = 1;
+}

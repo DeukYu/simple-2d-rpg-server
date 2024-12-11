@@ -10,6 +10,7 @@ public class DataManager
     public static Dictionary<int, ProjectileInfoData> ProjectileInfoDict { get; private set; } = new Dictionary<int, ProjectileInfoData>();
     public static Dictionary<int, ItemData> ItemDataDict { get; private set; } = new Dictionary<int, ItemData>();
     public static Dictionary<int, MonsterData> MonterDataDict { get; private set; } = new Dictionary<int, MonsterData>();
+    public static Dictionary<int, List<RewardData>> RewardDataDict { get; private set; } = new Dictionary<int, List<RewardData>>();
     public static void LoadData()
     {
         StatDict = DataLoader.Load<StatDataLoader, int, StatData>("StatData");
@@ -17,6 +18,7 @@ public class DataManager
         ProjectileInfoDict = DataLoader.Load<ProjectileDataLoader, int, ProjectileInfoData>("ProjectileInfoData");
         ItemDataDict = DataLoader.Load<ItemDataLoader, int, ItemData>("ItemData");
         MonterDataDict = DataLoader.Load<MonsterDataLoader, int, MonsterData>("MonsterData");
+        RewardDataDict = DataLoader.Load<RewardDataLoader, int, List<RewardData>>("RewardData");
 
         Log.Info("Data loaded");
     }

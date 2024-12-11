@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Google.Protobuf.Common;
+using Microsoft.EntityFrameworkCore;
 using ServerCore;
 using Shared;
 
@@ -33,6 +34,50 @@ public class DbTransaction : JobSerializer
                 zone.Push(() =>
                 {
                     Log.Info($"UpdatePlayerStatus: PlayerId: {playerStatInfo.PlayerId}, Hp: {playerStatInfo.Hp}, Mp: {playerStatInfo.Mp}");
+                });
+            }
+        });
+    }
+    public static void RewardPlayer(Player player, RewardData rewardData, Zone zone)
+    {
+        if(player == null || rewardData == null || zone == null)
+        {
+            return;
+        }
+
+        // TODO : 문제 발생
+        int? slot = player.Inven.GetEmptySlot();
+        if (slot == null)
+            return;
+
+        PlayerItemInfo playerItemInfo = new PlayerItemInfo
+        {
+            TemplateId = rewardData.ItemId,
+            Count = rewardData.Count,
+            Slot = slot.Value,
+            PlayerId = player.PlayerId
+
+        };
+
+        Instance.Push(() =>
+        {
+            using (AccountDB db = new AccountDB())
+            {
+                db.ItemInfo.Add(playerItemInfo);
+                if (db.SaveChangesEx() == false)
+                {
+                    Log.Error("Failed to save player item info");
+                    return;
+                }
+                zone.Push(() =>
+                {
+                    if (Item.MakeItem(playerItemInfo, out var newItem) == false)
+                    {
+                        Log.Error("Failed to make item");
+                        return;
+                    }
+                    player.Inven.Add(newItem);
+                    player.SendAddItemPacket(newItem.Info);
                 });
             }
         });

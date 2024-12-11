@@ -1,0 +1,6 @@
+MonsterId:int,ItemId:int,Probability:int,Count:int
+1,1,10,1
+1,2,10,1
+1,100,10,1
+1,101,10,1
+1,200,10,1

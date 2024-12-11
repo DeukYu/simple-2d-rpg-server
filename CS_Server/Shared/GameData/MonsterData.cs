@@ -1,15 +1,6 @@
 ﻿using Google.Protobuf.Common;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Shared;
-
-[Serializable]
-public class RewardData
-{
-    public int Probability { get; set; }
-    public int ItemId { get; set; }
-    public int Count { get; set; }
-}
 
 [Serializable]
 public class MonsterData : ICsvConvertible
@@ -17,14 +8,28 @@ public class MonsterData : ICsvConvertible
     public int Id { get; set; }
     public string Name { get; set; }
     public StatInfo Stat { get; set; }
-    public List<RewardData> Rewards { get; set; }
     //public string prefabPath { get; set; }    // 클라에서는 필요
 
     public void FromCsv(string[] values)
     {
         Id = int.Parse(values[0]);
         Name = values[1];
-        Stat = new StatInfo();
+        Stat = new StatInfo
+        {
+            Level = int.Parse(values[2]),
+
+            Hp = int.Parse(values[3]),
+            MaxHp = int.Parse(values[3]),
+
+            Mp = int.Parse(values[4]),
+            MaxMp = int.Parse(values[4]),
+
+            Attack = int.Parse(values[5]),
+            Speed = float.Parse(values[6]),
+
+            Exp = 0,
+            TotalExp = int.Parse(values[7]),
+        };
     }
 }
 

@@ -112,4 +112,13 @@ public class Player : GameObject
         };
         Session.Send(itemListRes);
     }
+
+    public void SendAddItemPacket(ItemInfo itemInfo)
+    {
+        var addItemRes = new S2C_AddItem
+        {
+            Items = { itemInfo },
+        };
+        Session.Send(addItemRes);
+    }
 }

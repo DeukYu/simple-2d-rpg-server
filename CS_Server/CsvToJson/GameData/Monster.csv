@@ -1,0 +1,2 @@
+Id:int,Name:string,level:int,maxhp:int,maxmp:int,attack:int,speed:float,totalExp:int,prefabPath:string
+1,monster,1,20,0,5,5,10,Prefab/Creatures/Monster

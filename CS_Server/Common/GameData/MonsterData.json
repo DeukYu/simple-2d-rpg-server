@@ -1,0 +1,19 @@
+{
+  "monsters": [
+    {
+      "Id": 1,
+      "Name": "monster",
+      "Stat": {
+        "Level": 1,
+        "Hp": 20,
+        "MaxHp": 20,
+        "Mp": 0,
+        "MaxMp": 0,
+        "Attack": 5,
+        "Speed": 5.0,
+        "Exp": 0,
+        "TotalExp": 10
+      }
+    }
+  ]
+}

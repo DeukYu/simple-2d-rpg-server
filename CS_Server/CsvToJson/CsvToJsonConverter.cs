@@ -53,12 +53,16 @@ public static class CsvToJsonConverter
             // T 타입의 속성 중 헤더 이름과 일치하는 속성을 찾음
             var property = properties.FirstOrDefault(p => p.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase));
             if (property == null)
-                throw new Exception($"'{headerName}'에 해당하는 속성이 클래스 '{typeof(T).Name}'에 존재하지 않습니다.");
-
-            // 속성 타입과 헤더 타입을 비교하여 일치 여부 검사
-            var propertyType = GetTypeString(property.PropertyType);
-            if (propertyType != headerType)
-                throw new Exception($"속성 '{headerName}'의 타입 '{propertyType}'가 CSV 헤더 타입 '{headerType}'와 일치하지 않습니다.");
+            {
+                Log.Error($"'{headerName}'에 해당하는 속성이 클래스 '{typeof(T).Name}'에 존재하지 않습니다.");
+            }
+            else
+            {
+                // 속성 타입과 헤더 타입을 비교하여 일치 여부 검사
+                var propertyType = GetTypeString(property.PropertyType);
+                if (propertyType != headerType)
+                    throw new Exception($"속성 '{headerName}'의 타입 '{propertyType}'가 CSV 헤더 타입 '{headerType}'와 일치하지 않습니다.");
+            }   
         }
     }
 

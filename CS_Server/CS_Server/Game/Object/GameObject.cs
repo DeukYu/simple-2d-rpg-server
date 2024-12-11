@@ -144,4 +144,8 @@ public class GameObject
 
         zone.EnterZone(this);
     }
+    public virtual GameObject GetOwner()
+    {
+        return this;
+    }
 }

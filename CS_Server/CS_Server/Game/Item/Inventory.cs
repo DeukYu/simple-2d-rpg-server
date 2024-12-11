@@ -18,13 +18,25 @@ public class Inventory
 
     public Item Find(Func<Item, bool> condition)
     {
-        foreach(Item item in _items.Values)
+        foreach (Item item in _items.Values)
         {
             if (condition.Invoke(item))
             {
                 return item;
             }
         }
+        return null;
+    }
+
+    public int? GetEmptySlot()
+    {
+        for (int slot = 0; slot < 20; slot++)
+        {
+            var item = _items.Values.FirstOrDefault(item => item.Slot == slot);
+            if (item == null)
+                return slot;
+        }
+
         return null;
     }
 }

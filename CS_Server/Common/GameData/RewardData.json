@@ -1,0 +1,34 @@
+{
+  "rewards": [
+    {
+      "MonsterId": 1,
+      "ItemId": 1,
+      "Probability": 10,
+      "Count": 1
+    },
+    {
+      "MonsterId": 1,
+      "ItemId": 2,
+      "Probability": 10,
+      "Count": 1
+    },
+    {
+      "MonsterId": 1,
+      "ItemId": 100,
+      "Probability": 10,
+      "Count": 1
+    },
+    {
+      "MonsterId": 1,
+      "ItemId": 101,
+      "Probability": 10,
+      "Count": 1
+    },
+    {
+      "MonsterId": 1,
+      "ItemId": 200,
+      "Probability": 10,
+      "Count": 1
+    }
+  ]
+}

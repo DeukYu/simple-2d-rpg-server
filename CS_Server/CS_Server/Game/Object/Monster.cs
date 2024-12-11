@@ -7,19 +7,24 @@ namespace CS_Server;
 
 public class Monster : GameObject
 {
+    public int TemplateId { get; private set; }
     public Monster()
     {
         ObjectType = GameObjectType.Monster;
+    }
+    public void Init(int templateId)
+    {
+        TemplateId = templateId;
 
-        // TODO : 추후 기획 데이터로 변경되어야함.
-        StatInfo.Level = 1;
-        StatInfo.Hp = 100;
-        StatInfo.MaxMp = 100;
-        StatInfo.Speed = 5.0f;
+        if (DataManager.MonterDataDict.TryGetValue(templateId, out var monsterData) == false)
+        {
+            Log.Error($"Failed to find monster data. TemplateId{templateId}");
+            return;
+        }
 
+        StatInfo.MergeFrom(monsterData.Stat);
         State = CreatureState.Idle;
     }
-
     // FSM (Finite State Machine)
     public override void Update()
     {
@@ -198,7 +203,46 @@ public class Monster : GameObject
     {
         base.OnDead(attacker);
 
-        // TODO : 아이템 생성
+        var owner = attacker.GetOwner();
 
+        // TODO : 아이템 생성
+        if(owner.ObjectType == GameObjectType.Player)
+        {
+            var rewardData = GetRewardData(TemplateId);
+            if(rewardData != null)
+            {
+                Player player = (Player)attacker;
+
+                DbTransaction.RewardPlayer(player, rewardData, _zone);
+            }
+        }
+
+    }
+
+    RewardData GetRewardData(int templateId)
+    {
+        if (DataManager.MonterDataDict.TryGetValue(templateId, out var monsterData) == false)
+        {
+            Log.Error("Failed to find monster data");
+            return null;
+        }
+
+        if (DataManager.RewardDataDict.TryGetValue(monsterData.Id, out var rewardDatas) == false)
+        {
+            Log.Error("Failed to find reward data");
+            return null;
+        }
+
+        int sum = 0;
+        int rand = new Random().Next(0, 101);
+        foreach (var rewardData in rewardDatas)
+        {
+            sum += rewardData.Probability;
+            if (rand <= sum)
+            {
+                return rewardData;
+            }
+        }
+        return null;
     }
 }

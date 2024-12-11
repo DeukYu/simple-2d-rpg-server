@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf.Protocol;
 using ServerCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CS_Server;
 
@@ -8,6 +9,11 @@ public class Arrow : Projectile
     public GameObject? Owner { get; set; }
 
     long _nextMoveTick = 0;
+
+    public override GameObject GetOwner()
+    {
+        return Owner;
+    }
 
     public override void Update()
     {
