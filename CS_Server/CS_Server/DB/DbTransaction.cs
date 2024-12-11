@@ -1,11 +1,9 @@
-﻿using Google.Protobuf.Common;
-using Microsoft.EntityFrameworkCore;
-using ServerCore;
+﻿using ServerCore;
 using Shared;
 
 namespace CS_Server;
 
-public class DbTransaction : JobSerializer
+public partial class DbTransaction : JobSerializer
 {
     public static DbTransaction Instance { get; } = new DbTransaction();
 

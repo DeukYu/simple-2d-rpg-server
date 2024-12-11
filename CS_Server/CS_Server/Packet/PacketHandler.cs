@@ -110,4 +110,26 @@ class PacketHandler
         
         clientSession.HandleEnterGame(enterGamePacket);
     }
+
+    public static void C2S_EquipItemHandler(PacketSession session, IMessage packet)
+    {
+        if (!TryParsePacket<C2S_EquipItem>(session, packet, out var clientSession, out var equipItemPacket))
+            return;
+
+        var player = clientSession.GamePlayer;
+        if (player == null)
+        {
+            Log.Error("C2S_SkillHandler: GamePlayer is null");
+            return;
+        }
+        var zone = player._zone;
+        if (zone == null)
+        {
+            Log.Error("C2S_SkillHandler: Zone is null");
+            return;
+        }
+
+        
+        zone.Push(zone.HandleEquipItem, player, equipItemPacket.ItemId, equipItemPacket.Equipped);
+    }
 }

@@ -31,6 +31,12 @@ public class Item
         set { Info.Slot = value; }
     }
 
+    public bool Equipped
+    {
+        get { return Info.Equipped; }
+        set { Info.Equipped = value; }
+    }
+
     public ItemType ItemType { get; private set; }
     public bool Stackable { get; protected set; }
     public Item(ItemType itemType)
@@ -52,18 +58,19 @@ public class Item
                 item = new Weapon(itemInfo.TemplateId);
                 break;
             case ItemType.Armor:
-                item =  new Armor(itemInfo.TemplateId);
+                item = new Armor(itemInfo.TemplateId);
                 break;
             case ItemType.Consumable:
                 item = new Consumable(itemInfo.TemplateId);
                 break;
         }
 
-        if(item != null)
+        if (item != null)
         {
             item.ItemId = itemInfo.Id;
             item.Count = itemInfo.Count;
             item.Slot = itemInfo.Slot;
+            item.Equipped = itemInfo.Equipped;
         }
         return true;
     }
@@ -79,12 +86,12 @@ public class Weapon : Item
     }
     void Init(int templateId)
     {
-        if(!DataManager.ItemDataDict.TryGetValue(templateId, out var itemData))
+        if (!DataManager.ItemDataDict.TryGetValue(templateId, out var itemData))
         {
             Log.Error("Failed to find weapon data");
             return;
         }
-        if(itemData.ItemType != ItemType.Weapon)
+        if (itemData.ItemType != ItemType.Weapon)
         {
             Log.Error("Invalid item type");
             return;

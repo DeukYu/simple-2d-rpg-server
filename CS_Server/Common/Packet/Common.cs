@@ -36,9 +36,10 @@ namespace Google.Protobuf.Common {
             "IAEoBSKQAQoIU3RhdEluZm8SDQoFbGV2ZWwYASABKAUSCgoCaHAYAiABKAUS",
             "DgoGbWF4X2hwGAMgASgFEgoKAm1wGAQgASgFEg4KBm1heF9tcBgFIAEoBRIO",
             "CgZhdHRhY2sYBiABKAUSDQoFc3BlZWQYByABKAISCwoDZXhwGAggASgFEhEK",
-            "CXRvdGFsX2V4cBgJIAEoBSJNCghJdGVtSW5mbxIPCgdpdGVtX2lkGAEgASgD",
+            "CXRvdGFsX2V4cBgJIAEoBSJfCghJdGVtSW5mbxIPCgdpdGVtX2lkGAEgASgD",
             "EhMKC3RlbXBsYXRlX2lkGAIgASgFEg0KBWNvdW50GAMgASgFEgwKBHNsb3QY",
-            "BCABKAVCGaoCFkdvb2dsZS5Qcm90b2J1Zi5Db21tb25iBnByb3RvMw=="));
+            "BCABKAUSEAoIZXF1aXBwZWQYBSABKAhCGaoCFkdvb2dsZS5Qcm90b2J1Zi5D",
+            "b21tb25iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -47,7 +48,7 @@ namespace Google.Protobuf.Common {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.LobbyPlayerInfo), global::Google.Protobuf.Common.LobbyPlayerInfo.Parser, new[]{ "PlayerId", "Name", "StatInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.SkillInfo), global::Google.Protobuf.Common.SkillInfo.Parser, new[]{ "SkillId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.StatInfo), global::Google.Protobuf.Common.StatInfo.Parser, new[]{ "Level", "Hp", "MaxHp", "Mp", "MaxMp", "Attack", "Speed", "Exp", "TotalExp" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.ItemInfo), global::Google.Protobuf.Common.ItemInfo.Parser, new[]{ "ItemId", "TemplateId", "Count", "Slot" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.ItemInfo), global::Google.Protobuf.Common.ItemInfo.Parser, new[]{ "ItemId", "TemplateId", "Count", "Slot", "Equipped" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1656,6 +1657,7 @@ namespace Google.Protobuf.Common {
       templateId_ = other.templateId_;
       count_ = other.count_;
       slot_ = other.slot_;
+      equipped_ = other.equipped_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1713,6 +1715,18 @@ namespace Google.Protobuf.Common {
       }
     }
 
+    /// <summary>Field number for the "equipped" field.</summary>
+    public const int EquippedFieldNumber = 5;
+    private bool equipped_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equipped {
+      get { return equipped_; }
+      set {
+        equipped_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1732,6 +1746,7 @@ namespace Google.Protobuf.Common {
       if (TemplateId != other.TemplateId) return false;
       if (Count != other.Count) return false;
       if (Slot != other.Slot) return false;
+      if (Equipped != other.Equipped) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1743,6 +1758,7 @@ namespace Google.Protobuf.Common {
       if (TemplateId != 0) hash ^= TemplateId.GetHashCode();
       if (Count != 0) hash ^= Count.GetHashCode();
       if (Slot != 0) hash ^= Slot.GetHashCode();
+      if (Equipped != false) hash ^= Equipped.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1777,6 +1793,10 @@ namespace Google.Protobuf.Common {
         output.WriteRawTag(32);
         output.WriteInt32(Slot);
       }
+      if (Equipped != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(Equipped);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1803,6 +1823,10 @@ namespace Google.Protobuf.Common {
         output.WriteRawTag(32);
         output.WriteInt32(Slot);
       }
+      if (Equipped != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(Equipped);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1824,6 +1848,9 @@ namespace Google.Protobuf.Common {
       }
       if (Slot != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Slot);
+      }
+      if (Equipped != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1848,6 +1875,9 @@ namespace Google.Protobuf.Common {
       }
       if (other.Slot != 0) {
         Slot = other.Slot;
+      }
+      if (other.Equipped != false) {
+        Equipped = other.Equipped;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1880,6 +1910,10 @@ namespace Google.Protobuf.Common {
             Slot = input.ReadInt32();
             break;
           }
+          case 40: {
+            Equipped = input.ReadBool();
+            break;
+          }
         }
       }
     #endif
@@ -1909,6 +1943,10 @@ namespace Google.Protobuf.Common {
           }
           case 32: {
             Slot = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            Equipped = input.ReadBool();
             break;
           }
         }

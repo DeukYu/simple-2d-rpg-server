@@ -52,6 +52,7 @@ public class PlayerItemInfo
     public int TemplateId { get; set; } = 0;
     public int Count { get; set; } = 0;
     public int Slot { get; set; } = 0;
+    public bool Equipped { get; set; } = false;
 
     [ForeignKey(nameof(PlayerInfo))]
     public long PlayerId { get; set; } = 0;

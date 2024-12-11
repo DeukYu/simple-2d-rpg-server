@@ -47,4 +47,5 @@ message ItemInfo{
     int32 template_id = 2;
     int32 count = 3;
     int32 slot = 4;
+    bool equipped = 5;
 }
