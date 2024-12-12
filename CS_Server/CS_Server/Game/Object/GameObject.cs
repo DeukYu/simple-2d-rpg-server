@@ -12,6 +12,8 @@ public class GameObject
     public ObjectInfo Info { get; set; } = new ObjectInfo();
     public PositionInfo PosInfo { get; private set; } = new PositionInfo();
     public StatInfo StatInfo { get; private set; } = new StatInfo();
+    public virtual int TotalAttack { get { return StatInfo.Attack; } }
+    public virtual int TotalDefense { get { return 0; } }   // TODO
     public float Speed
     {
         get { return StatInfo.Speed; }
@@ -107,6 +109,8 @@ public class GameObject
         {
             return;
         }
+
+        damage = Math.Max(damage - TotalDefense, 0);
 
         StatInfo.Hp -= damage;
         StatInfo.Hp = Math.Max(StatInfo.Hp, 0);

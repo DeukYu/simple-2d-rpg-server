@@ -170,7 +170,7 @@ public class Monster : GameObject
                 return;
             }
 
-            _target.OnDamaged(this, skillData.Damage + StatInfo.Attack);
+            _target.OnDamaged(this, skillData.Damage + TotalAttack);
 
             S2C_Skill skillPacket = new S2C_Skill
             {

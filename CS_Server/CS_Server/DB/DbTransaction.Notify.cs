@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ServerCore;
 using Shared;
 
@@ -9,7 +8,7 @@ public partial class DbTransaction : JobSerializer
 {
     public static void EquipItemNotify(Player player, Item item)
     {
-        if(player == null || item == null)
+        if (player == null || item == null)
         {
             Log.Error("EquipItemNotify: player or item is null");
             return;
@@ -23,12 +22,12 @@ public partial class DbTransaction : JobSerializer
 
         Instance.Push(() =>
         {
-            using(var accountDB = new AccountDB())
+            using (var accountDB = new AccountDB())
             {
                 accountDB.Entry(itemInfo).State = EntityState.Unchanged;
                 accountDB.Entry(itemInfo).Property(x => x.Equipped).IsModified = true;
 
-                if(accountDB.SaveChangesEx() == false)
+                if (accountDB.SaveChangesEx() == false)
                 {
                     Log.Error("EquipItemNotify: Failed to save changes to the database.");
                     return;

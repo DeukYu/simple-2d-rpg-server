@@ -85,6 +85,9 @@ public partial class Zone : JobSerializer
             return;
         }
         player._zone = this;
+
+        player.RefreshAdditionalStat();
+
         Map.ApplyMove(player, player.CellPos);
 
         // 플레이어 입장 처리
@@ -116,6 +119,8 @@ public partial class Zone : JobSerializer
         }
         _projectiles.TryAdd(gameObject.Info.ObjectId, projectile);
         projectile._zone = this;
+
+        projectile.Update();
     }
 
     private void RemovePlayerFromZone(GameObject gameObject)
@@ -174,11 +179,6 @@ public partial class Zone : JobSerializer
 
     public void Update()
     {
-        foreach (var projectile in _projectiles.Values)
-        {
-            projectile.Update();
-        }
-
         foreach (var monster in _monsters.Values)
         {
             monster.Update();

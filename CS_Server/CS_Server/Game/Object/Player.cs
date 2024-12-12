@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
+using ServerCore;
 using Shared;
 
 namespace CS_Server;
@@ -10,7 +11,10 @@ public class Player : GameObject
     public long PlayerId { get; set; }  // DB ID
     public ClientSession? Session { get; set; }
     public Inventory Inven { get; private set; } = new Inventory();
-
+    public int WeaponDamage { get; private set; } = 0;
+    public int ArmorDefense { get; private set; } = 0;
+    public override int TotalAttack { get { return StatInfo.Attack + WeaponDamage; } }
+    public override int TotalDefense { get { return 0 + ArmorDefense; } }   // TODO
     public Player()
     {
         ObjectType = GameObjectType.Player;
@@ -120,5 +124,90 @@ public class Player : GameObject
             Items = { itemInfo },
         };
         Session.Send(addItemRes);
+    }
+
+    public void HandleEquipItem(int itemId, bool equipped)
+    {
+        var item = Inven.Get(itemId);
+        if (item == null)
+        {
+            Log.Error("HandleEquipItem : item is null");
+            return;
+        }
+
+        if (item.ItemType == ItemType.Consumable)
+        {
+            Log.Error("HandleEquipItem : item is consumable");
+            return;
+        }
+
+        if (equipped)
+        {
+            Item unequippedItem = null;
+            if (item.ItemType == ItemType.Weapon)
+            {
+                unequippedItem = Inven
+                    .Find(i => i.Equipped && i.ItemType == ItemType.Weapon);
+            }
+            else if (item.ItemType == ItemType.Armor)
+            {
+                ArmorType armorType = ((Armor)item).ArmorType;
+                unequippedItem = Inven
+                    .Find(i => i.Equipped && i.ItemType == ItemType.Armor
+                    && ((Armor)i).ArmorType == armorType);
+            }
+
+            if (unequippedItem != null)
+            {
+                // 메모리 선적용
+                unequippedItem.Equipped = false;
+
+                // DB 적용
+                DbTransaction.EquipItemNotify(this, unequippedItem);
+
+                // 클라 전송
+                S2C_EquipItem equipItemPacket = new S2C_EquipItem();
+                equipItemPacket.ItemId = (Int32)unequippedItem.ItemId;  // TODO : int -> long
+                equipItemPacket.Equipped = unequippedItem.Equipped;
+                Session.Send(equipItemPacket);
+            }
+        }
+
+        {
+            // 메모리 선적용
+            item.Equipped = equipped;
+
+            // DB 적용
+            DbTransaction.EquipItemNotify(this, item);
+
+            // 클라 전송
+            S2C_EquipItem equipItemPacket = new S2C_EquipItem();
+            equipItemPacket.ItemId = itemId;
+            equipItemPacket.Equipped = equipped;
+            Session.Send(equipItemPacket);
+        }
+        RefreshAdditionalStat();
+    }
+
+    public void RefreshAdditionalStat()
+    {
+        WeaponDamage = 0;
+        ArmorDefense = 0;
+
+        foreach (var item in Inven.Items.Values)
+        {
+            if (item.Equipped == false)
+                continue;
+
+            switch (item.ItemType)
+            {
+                case ItemType.Weapon:
+                    WeaponDamage += ((Weapon)item).Damage;
+                    break;
+                case ItemType.Armor:
+                    ArmorDefense += ((Armor)item).Defense;
+                    break;
+            }
+        }
     }
 }

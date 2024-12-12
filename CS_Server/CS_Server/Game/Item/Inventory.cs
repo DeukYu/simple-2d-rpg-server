@@ -2,23 +2,21 @@
 
 public class Inventory
 {
-    Dictionary<int, Item> _items = new Dictionary<int, Item>();
+    public Dictionary<int, Item> Items { get; } = new Dictionary<int, Item>(); // Dictionary<TemplateId, Item>
 
     public void Add(Item item)
     {
-        _items.Add(item.TemplateId, item);
+        Items.Add(item.TemplateId, item);
     }
 
-    public Item Get(int itemId)
+    public Item? Get(int itemId)
     {
-        Item item = null;
-        _items.TryGetValue(itemId, out item);
-        return item;
+        return Items.TryGetValue(itemId, out var item) ? item : null;
     }
 
-    public Item Find(Func<Item, bool> condition)
+    public Item? Find(Func<Item, bool> condition)
     {
-        foreach (Item item in _items.Values)
+        foreach (Item item in Items.Values)
         {
             if (condition.Invoke(item))
             {
@@ -32,11 +30,10 @@ public class Inventory
     {
         for (int slot = 0; slot < 20; slot++)
         {
-            var item = _items.Values.FirstOrDefault(item => item.Slot == slot);
+            var item = Items.Values.FirstOrDefault(item => item.Slot == slot);
             if (item == null)
                 return slot;
         }
-
         return null;
     }
 }

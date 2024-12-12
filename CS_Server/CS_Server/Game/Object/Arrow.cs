@@ -1,6 +1,5 @@
 ﻿using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace CS_Server;
 
@@ -31,7 +30,8 @@ public class Arrow : Projectile
             return;
         }
 
-        var tick = (long)(1000 / projectileInfo.Speed);
+        var tick = (int)(1000 / projectileInfo.Speed);
+        _zone.PushAfter(tick, Update);
         _nextMoveTick = Environment.TickCount64 + tick;
 
         Vector2Int destPos = GetFrontCellPos();
@@ -49,7 +49,7 @@ public class Arrow : Projectile
             var target = _zone.Map.Find(destPos);
             if (target != null)
             {
-                var totalDamage = SkillData.Damage + Owner.StatInfo.Attack;
+                var totalDamage = SkillData.Damage + Owner.TotalAttack;
                 target.OnDamaged(this, totalDamage);
             }
 
