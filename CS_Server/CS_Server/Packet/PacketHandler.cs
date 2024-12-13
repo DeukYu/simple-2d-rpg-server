@@ -33,6 +33,19 @@ class PacketHandler
 
         return true;
     }
+    
+    public static void C2S_LoginHandler(PacketSession session, IMessage packet)
+    {
+        if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
+            return;
+
+        int state = clientSession.HandleLogin(loginPacket.AccountName, out var lobbyPlayers);
+        var res = new S2C_Login
+        {
+            Players = { lobbyPlayers },
+            Result = state
+        };
+    }
 
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
     {
@@ -75,18 +88,6 @@ class PacketHandler
         }
 
         zone.ScheduleJob(zone.HandleSkill, player, skillPacket!);
-    }
-    public static void C2S_LoginHandler(PacketSession session, IMessage packet)
-    {
-        if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
-            return;
-
-        int state = clientSession.HandleLogin(loginPacket.AccountId, out var lobbyPlayers);
-        var res = new S2C_Login
-        {
-            Players = { lobbyPlayers },
-            Result = state
-        };
     }
 
     public static void C2S_CreatePlayerHandler(PacketSession session, IMessage packet)

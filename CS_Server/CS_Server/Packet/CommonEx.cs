@@ -5,13 +5,13 @@ namespace CS_Server;
 
 public static class LobbyPlayerInfoFactory
 {
-    public static LobbyPlayerInfo CreateLobbyPlayerInfo(PlayerInfo playerInfo, PlayerStatInfo playerStatInfo)
+    public static LobbyPlayerInfo CreateLobbyPlayerInfo(PlayerInfo playerInfo)
     {
         return new LobbyPlayerInfo
         {
             PlayerUid = playerInfo.Id,
             Name = playerInfo.PlayerName,
-            StatInfo = StatInfoMapper.MapToStatInfo(playerStatInfo)
+            StatInfo = StatInfoMapper.MapToStatInfo(playerInfo.StatInfo)
         };
     }
 
@@ -46,25 +46,6 @@ public static class StatInfoMapper
     {
         return new StatInfo
         {
-            Level = statData.Level,
-            Hp = statData.MaxHp,
-            MaxHp = statData.MaxHp,
-            Mp = statData.MaxMp,
-            MaxMp = statData.MaxMp,
-            Attack = statData.Attack,
-            Speed = statData.Speed,
-            TotalExp = 0    // TODO : 추후에 수정해야 함
-        };
-    }
-}
-
-public static class PlayerStatInfoFactory
-{
-    public static PlayerStatInfo CreatePlayerStatInfo(long playerId, StatData statData)
-    {
-        return new PlayerStatInfo
-        {
-            PlayerId = playerId,
             Level = statData.Level,
             Hp = statData.MaxHp,
             MaxHp = statData.MaxHp,

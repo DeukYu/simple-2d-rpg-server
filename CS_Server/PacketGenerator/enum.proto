@@ -68,6 +68,7 @@ enum ErrorType{
     Success = 0;
     Fail = 1;
 	Db_Error = 2;
+	Invalid_Account = 3;
 
 	Invalid_Server_State = 10;
 
