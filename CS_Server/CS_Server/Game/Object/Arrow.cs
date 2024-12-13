@@ -16,7 +16,7 @@ public class Arrow : Projectile
 
     public override void Update()
     {
-        if (Owner == null || _zone == null || SkillData == null)
+        if (Owner == null || Zone == null || SkillData == null)
             return;
 
         if (_nextMoveTick >= Environment.TickCount64)
@@ -31,22 +31,22 @@ public class Arrow : Projectile
         }
 
         var tick = (int)(1000 / projectileInfo.Speed);
-        _zone.PushAfter(tick, Update);
+        Zone.ScheduleJobAfterDelay(tick, Update);
         _nextMoveTick = Environment.TickCount64 + tick;
 
         Vector2Int destPos = GetFrontCellPos();
-        if (_zone.Map.CanGo(destPos))
+        if (Zone.Map.CanGo(destPos))
         {
             CellPos = destPos;
 
             S2C_Move movePacket = new S2C_Move();
             movePacket.ObjectId = Id;
             movePacket.PosInfo = PosInfo;
-            _zone.BroadCast(movePacket);
+            Zone.BroadCast(movePacket);
         }
         else
         {
-            var target = _zone.Map.Find(destPos);
+            var target = Zone.Map.Find(destPos);
             if (target != null)
             {
                 var totalDamage = SkillData.Damage + Owner.TotalAttack;
@@ -54,7 +54,7 @@ public class Arrow : Projectile
             }
 
             // 소멸
-            _zone.Push(_zone.LeaveZone, this);
+            Zone.ScheduleJob(Zone.LeaveZone, this);
         }
     }
 }

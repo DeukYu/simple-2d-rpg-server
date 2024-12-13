@@ -15,11 +15,11 @@ public partial class DbTransaction : JobSerializer
         }
 
         var playerStatInfo = new PlayerStatInfo();
-        playerStatInfo.PlayerId = player.PlayerId;
+        playerStatInfo.PlayerId = player.PlayerUid;
         playerStatInfo.Hp = player.StatInfo.Hp;
         playerStatInfo.Mp = player.StatInfo.Mp;
 
-        Instance.Push(() =>
+        Instance.ScheduleJob(() =>
         {
             using (AccountDB db = new AccountDB())
             {
@@ -29,7 +29,7 @@ public partial class DbTransaction : JobSerializer
                     Log.Error("Failed to save player stat info");
                     return;
                 }
-                zone.Push(() =>
+                zone.ScheduleJob(() =>
                 {
                     Log.Info($"UpdatePlayerStatus: PlayerId: {playerStatInfo.PlayerId}, Hp: {playerStatInfo.Hp}, Mp: {playerStatInfo.Mp}");
                 });
@@ -53,11 +53,11 @@ public partial class DbTransaction : JobSerializer
             TemplateId = rewardData.ItemId,
             Count = rewardData.Count,
             Slot = slot.Value,
-            PlayerId = player.PlayerId
+            PlayerId = player.PlayerUid
 
         };
 
-        Instance.Push(() =>
+        Instance.ScheduleJob(() =>
         {
             using (AccountDB db = new AccountDB())
             {
@@ -67,7 +67,7 @@ public partial class DbTransaction : JobSerializer
                     Log.Error("Failed to save player item info");
                     return;
                 }
-                zone.Push(() =>
+                zone.ScheduleJob(() =>
                 {
                     if (Item.MakeItem(playerItemInfo, out var newItem) == false)
                     {

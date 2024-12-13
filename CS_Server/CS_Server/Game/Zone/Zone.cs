@@ -81,7 +81,7 @@ public partial class Zone : JobSerializer
             Log.Error($"AddPlayerToZone player {gameObject.Info.ObjectId} is already exist");
             return;
         }
-        player._zone = this;
+        player.Zone = this;
 
         player.RefreshAdditionalStat();
 
@@ -102,7 +102,7 @@ public partial class Zone : JobSerializer
         }
 
         _monsters.TryAdd(gameObject.Info.ObjectId, monster);
-        monster._zone = this;
+        monster.Zone = this;
         Map.ApplyMove(monster, monster.CellPos);
 
         monster.Update();
@@ -117,7 +117,7 @@ public partial class Zone : JobSerializer
             return;
         }
         _projectiles.TryAdd(gameObject.Info.ObjectId, projectile);
-        projectile._zone = this;
+        projectile.Zone = this;
 
         projectile.Update();
     }
@@ -133,7 +133,7 @@ public partial class Zone : JobSerializer
         player.OnLeaveGame();
         _players.Remove(gameObject.Id, out _);
         Map.ApplyLeave(player);
-        player._zone = null;
+        player.Zone = null;
         {
             S2C_LeaveGame leave = new S2C_LeaveGame();
             player.Session.Send(leave);
@@ -149,7 +149,7 @@ public partial class Zone : JobSerializer
         }
 
         Map.ApplyLeave(monster);
-        monster._zone = null;
+        monster.Zone = null;
     }
 
     private void RemoveProjectileFromZone(GameObject gameObject)
@@ -159,7 +159,7 @@ public partial class Zone : JobSerializer
             Log.Error("LeaveZone projectile is null");
             return;
         }
-        projectile._zone = null;
+        projectile.Zone = null;
     }
 
     public Map Map { get; private set; } = new Map();
@@ -173,12 +173,12 @@ public partial class Zone : JobSerializer
         var monster = ObjectManager.Instance.Add<Monster>();
         monster.Init(1);
         monster.CellPos = new Vector2Int(10, 10);
-        Push(EnterZone, monster);
+        ScheduleJob(EnterZone, monster);
     }
 
     public void Update()
     {
-        Flush();
+        ProcessJobs();
     }
 
     public void EnterZone(GameObject gameObject)

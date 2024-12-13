@@ -2,23 +2,24 @@
 using Google.Protobuf.Enum;
 using ServerCore;
 using Shared;
+using System.Runtime.CompilerServices;
 
 namespace CS_Server;
 
 public class Item
 {
     public ItemInfo Info { get; } = new ItemInfo();
-    public long ItemId
+    public long ItemUid
+    {
+        get { return Info.ItemUid; }
+        set { Info.ItemUid = value; }
+    }
+    public int ItemId
     {
         get { return Info.ItemId; }
         set { Info.ItemId = value; }
     }
 
-    public int TemplateId
-    {
-        get { return Info.TemplateId; }
-        set { Info.TemplateId = value; }
-    }
     public int Count
     {
         get { return Info.Count; }
@@ -67,7 +68,7 @@ public class Item
 
         if (item != null)
         {
-            item.ItemId = itemInfo.Id;
+            item.ItemId = itemInfo.TemplateId;
             item.Count = itemInfo.Count;
             item.Slot = itemInfo.Slot;
             item.Equipped = itemInfo.Equipped;

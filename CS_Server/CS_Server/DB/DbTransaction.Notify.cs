@@ -20,7 +20,7 @@ public partial class DbTransaction : JobSerializer
             Equipped = item.Equipped,
         };
 
-        Instance.Push(() =>
+        Instance.ScheduleJob(() =>
         {
             using (var accountDB = new AccountDB())
             {

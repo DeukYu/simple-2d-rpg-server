@@ -10,7 +10,7 @@ public class GameLogic : JobSerializer
 
     public void Update()
     {
-        Flush();
+        ProcessJobs();
 
         foreach (var zone in zones.Values)
         {
@@ -21,7 +21,7 @@ public class GameLogic : JobSerializer
     public Zone? Add(int mapId)
     {
         Zone zone = new Zone();
-        zone.Push(zone.Init, mapId);
+        zone.ScheduleJob(zone.Init, mapId);
 
         long newZoneId = Interlocked.Increment(ref _zoneId);
         zone.ZoneId = newZoneId;

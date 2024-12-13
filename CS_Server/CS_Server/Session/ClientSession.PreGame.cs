@@ -142,7 +142,7 @@ public partial class ClientSession : PacketSession
         GamePlayer.SetPlayer(this, lobbyPlayerInfo);
         ServerState = ServerState.InGame;
 
-        GameLogic.Instance.Push(() =>
+        GameLogic.Instance.ScheduleJob(() =>
         {
             Zone zone = GameLogic.Instance.FindZone(1);
             if (zone == null)
@@ -151,7 +151,7 @@ public partial class ClientSession : PacketSession
                 return;
             }
 
-            zone.Push(zone.EnterZone, GamePlayer);
+            zone.ScheduleJob(zone.EnterZone, GamePlayer);
         });
     }
 }

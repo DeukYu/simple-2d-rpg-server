@@ -9,7 +9,7 @@ public static class LobbyPlayerInfoFactory
     {
         return new LobbyPlayerInfo
         {
-            PlayerId = playerInfo.Id,
+            PlayerUid = playerInfo.Id,
             Name = playerInfo.PlayerName,
             StatInfo = StatInfoMapper.MapToStatInfo(playerStatInfo)
         };
@@ -19,7 +19,7 @@ public static class LobbyPlayerInfoFactory
     {
         return new LobbyPlayerInfo
         {
-            PlayerId = playerInfo.Id,
+            PlayerUid = playerInfo.Id,
             Name = playerInfo.PlayerName,
             StatInfo = StatInfoMapper.MapToStatData(statData)
         };

@@ -7,7 +7,7 @@ namespace CS_Server;
 
 public class GameObject
 {
-    public Zone? _zone;
+    public Zone Zone { get; set; } = null;
     public GameObjectType ObjectType { get; protected set; } = GameObjectType.None;
     public ObjectInfo Info { get; set; } = new ObjectInfo();
     public PositionInfo PosInfo { get; private set; } = new PositionInfo();
@@ -105,7 +105,7 @@ public class GameObject
 
     public virtual void OnDamaged(GameObject attacker, int damage)
     {
-        if (_zone == null)
+        if (Zone == null)
         {
             return;
         }
@@ -118,7 +118,7 @@ public class GameObject
         S2C_ChangeHp changeHpPacket = new S2C_ChangeHp();
         changeHpPacket.ObjectId = Id;
         changeHpPacket.Hp = StatInfo.Hp;
-        _zone.BroadCast(changeHpPacket);
+        Zone.BroadCast(changeHpPacket);
 
         if (StatInfo.Hp <= 0)
         {
@@ -127,7 +127,7 @@ public class GameObject
     }
     public virtual void OnDead(GameObject attacker)
     {
-        if (_zone == null)
+        if (Zone == null)
         {
             return;
         }
@@ -135,9 +135,9 @@ public class GameObject
         S2C_Dead deadPacket = new S2C_Dead();
         deadPacket.ObjectId = Id;
         deadPacket.AttackerId = attacker.Id;
-        _zone.BroadCast(deadPacket);
+        Zone.BroadCast(deadPacket);
 
-        var zone = _zone;
+        var zone = Zone;
         zone.LeaveZone(this);
 
         StatInfo.Hp = StatInfo.MaxHp;

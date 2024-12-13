@@ -53,58 +53,13 @@ public partial class ClientSession : PacketSession
     {
         Log.Info($"OnConnected: {endPoint}");
 
-        S2C_Connected connectedPacket = new S2C_Connected
-        {
-            Result = (int)ErrorType.Success,
-        };
+        // 연결 성공 패킷 전송
+        S2C_Connected connectedPacket = new S2C_Connected { Result = (int)ErrorType.Success };
         Send(connectedPacket);
-
-        // TODO : 연결 되었을 때, 임시적으로 바로 zone에 입장시킨다.
-        // TODO : 현재는 정보들을 간단하게 받기 위해 임시로 만들어 놓은 것이므로 추후에 수정해야 한다.
-        GamePlayer = ObjectManager.Instance.Add<Player>();
-        {
-            GamePlayer.Info.Name = $"Player_{GamePlayer.Info.ObjectId}";
-            GamePlayer.Info.PosInfo.State = CreatureState.Idle;
-            GamePlayer.Info.PosInfo.MoveDir = MoveDir.Down;
-            GamePlayer.Info.PosInfo.PosX = 0;
-            GamePlayer.Info.PosInfo.PosY = 0;
-
-            if (DataManager.StatDict.TryGetValue(1, out var stat))
-            {
-                GamePlayer.StatInfo.Level = 1;
-                GamePlayer.StatInfo.Hp = stat.MaxHp;
-                GamePlayer.StatInfo.MaxHp = stat.MaxHp;
-                GamePlayer.StatInfo.Mp = stat.MaxMp;
-                GamePlayer.StatInfo.MaxHp = stat.MaxHp;
-                GamePlayer.StatInfo.Attack = stat.Attack;
-                GamePlayer.StatInfo.Exp = 0;
-                GamePlayer.StatInfo.TotalExp = stat.TotalExp;
-            }
-
-            GamePlayer.Session = this;
-        }
-
-        if (GamePlayer == null)
-        {
-            Log.Error("OnConnected: GamePlayer is null.");
-            return;
-        }
-
-        GameLogic.Instance.Push(() =>
-        {
-            Zone zone = GameLogic.Instance.FindZone(1);
-            if (zone == null)
-            {
-                Log.Error("OnConnected: zone is null");
-                return;
-            }
-
-            zone.Push(zone.EnterZone, GamePlayer);
-        });
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
-        GameLogic.Instance.Push(() =>
+        GameLogic.Instance.ScheduleJob(() =>
         {
             Zone zone = GameLogic.Instance.FindZone(1);
             if (zone == null)
@@ -113,7 +68,7 @@ public partial class ClientSession : PacketSession
                 return;
             }
 
-            zone.Push(zone.LeaveZone, GamePlayer);
+            zone.ScheduleJob(zone.LeaveZone, GamePlayer);
         });
 
         SessionManager.Instance.Remove(this);

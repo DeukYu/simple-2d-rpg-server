@@ -46,14 +46,14 @@ class PacketHandler
             return;
         }
 
-        var zone = player._zone;
+        var zone = player.Zone;
         if (zone == null)
         {
             Log.Error("C2S_MoveHandler: Zone is null.");
             return;
         }
 
-        zone.Push(zone.HandleMove, player, movePacket!);
+        zone.ScheduleJob(zone.HandleMove, player, movePacket!);
     }
 
     public static void C2S_SkillHandler(PacketSession session, IMessage packet)
@@ -67,21 +67,21 @@ class PacketHandler
             Log.Error("C2S_SkillHandler: GamePlayer is null");
             return;
         }
-        var zone = player._zone;
+        var zone = player.Zone;
         if (zone == null)
         {
             Log.Error("C2S_SkillHandler: Zone is null");
             return;
         }
 
-        zone.Push(zone.HandleSkill, player, skillPacket!);
+        zone.ScheduleJob(zone.HandleSkill, player, skillPacket!);
     }
     public static void C2S_LoginHandler(PacketSession session, IMessage packet)
     {
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
             return;
 
-        int state = clientSession.HandleLogin(loginPacket.UniqueId, out var lobbyPlayers);
+        int state = clientSession.HandleLogin(loginPacket.AccountId, out var lobbyPlayers);
         var res = new S2C_Login
         {
             Players = { lobbyPlayers },
@@ -107,7 +107,7 @@ class PacketHandler
         if (!TryParsePacket<C2S_EnterGame>(session, packet, out var clientSession, out var enterGamePacket))
             return;
         Log.Info($"C2S_EnterGameHandler: {enterGamePacket}");
-        
+
         clientSession.HandleEnterGame(enterGamePacket);
     }
 
@@ -122,14 +122,14 @@ class PacketHandler
             Log.Error("C2S_SkillHandler: GamePlayer is null");
             return;
         }
-        var zone = player._zone;
+        var zone = player.Zone;
         if (zone == null)
         {
             Log.Error("C2S_SkillHandler: Zone is null");
             return;
         }
 
-        
-        zone.Push(zone.HandleEquipItem, player, equipItemPacket.ItemId, equipItemPacket.Equipped);
+
+        zone.ScheduleJob(zone.HandleEquipItem, player, equipItemPacket.ItemUid, equipItemPacket.Equipped);
     }
 }

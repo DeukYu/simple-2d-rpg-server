@@ -1,17 +1,19 @@
-﻿namespace CS_Server;
+﻿using Google.Protobuf.Enum;
+
+namespace CS_Server;
 
 public class Inventory
 {
-    public Dictionary<int, Item> Items { get; } = new Dictionary<int, Item>(); // Dictionary<TemplateId, Item>
+    public Dictionary<long, Item> Items { get; } = new Dictionary<long, Item>(); // Dictionary<ItemUid, Item>
 
     public void Add(Item item)
     {
-        Items.Add(item.TemplateId, item);
+        Items.Add(item.ItemUid, item);
     }
 
-    public Item? Get(int itemId)
+    public bool TryGet(long itemUid, out Item item)
     {
-        return Items.TryGetValue(itemId, out var item) ? item : null;
+        return Items.TryGetValue(itemUid, out item);
     }
 
     public Item? Find(Func<Item, bool> condition)
@@ -35,5 +37,24 @@ public class Inventory
                 return slot;
         }
         return null;
+    }
+
+    public bool TryGetEquipItem(ItemType itemType, out Item item)
+    {
+        item = null;
+
+        if (itemType == ItemType.Weapon)
+        {
+            item = Find(i => i.Equipped && i.ItemType == ItemType.Weapon);
+            return item != null;
+        }
+        else if (itemType == ItemType.Armor)
+        {
+            var armorType = ((Armor)item).ArmorType;
+            item = Find(i => i.Equipped && i.ItemType == ItemType.Armor && ((Armor)i).ArmorType == armorType);
+            return item != null;
+        }
+
+        return false;
     }
 }

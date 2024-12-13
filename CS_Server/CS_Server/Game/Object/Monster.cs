@@ -26,7 +26,7 @@ public class Monster : GameObject
         State = CreatureState.Idle;
     }
 
-    IJob _job;
+    JobBase _job;
     // FSM (Finite State Machine)
     public override void Update()
     {
@@ -47,8 +47,8 @@ public class Monster : GameObject
         }
 
         // 5 프레임 (0.2초) 마다 체크
-        if(_zone != null)
-            _job = _zone.PushAfter(200, Update);
+        if(Zone != null)
+            _job = Zone.ScheduleJobAfterDelay(200, Update);
     }
 
     Player _target;
@@ -62,7 +62,7 @@ public class Monster : GameObject
 
         _nextSearchTick = Environment.TickCount64 + 1000;
 
-        var target = _zone.FindPlayer(p =>
+        var target = Zone.FindPlayer(p =>
         {
             var dir = p.CellPos - CellPos;
             return dir.cellDistance <= _searchCellDist;
@@ -89,7 +89,7 @@ public class Monster : GameObject
         int moveTick = (int)(1000 / Speed);
         _nextMoveToTick = Environment.TickCount64 + 1000;
 
-        if (_target == null || _target._zone != _zone)
+        if (_target == null || _target.Zone != Zone)
         {
             _target = null;
             State = CreatureState.Idle;
@@ -107,7 +107,7 @@ public class Monster : GameObject
             return;
         }
 
-        var paths = _zone.Map.FindPath(CellPos, _target.CellPos, false);
+        var paths = Zone.Map.FindPath(CellPos, _target.CellPos, false);
         if (paths.Count < 2 || paths.Count > _chaseCellDist)
         {
             _target = null;
@@ -126,7 +126,7 @@ public class Monster : GameObject
 
         // 이동
         Dir = GetDirFromVec(paths[1] - CellPos);
-        _zone.Map.ApplyMove(this, paths[1]);
+        Zone.Map.ApplyMove(this, paths[1]);
 
         // 다른 플레이어한테 알림
         BroadCastMove();
@@ -135,7 +135,7 @@ public class Monster : GameObject
     void BroadCastMove()
     {
         S2C_Move movePacket = new S2C_Move() { ObjectId = Id, PosInfo = PosInfo };
-        _zone.BroadCast(movePacket);
+        Zone.BroadCast(movePacket);
     }
 
     long _coolTick = 0;
@@ -143,7 +143,7 @@ public class Monster : GameObject
     {
         if (_coolTick == 0)
         {
-            if (_target == null || _target._zone != _zone || _target.Hp == 0)
+            if (_target == null || _target.Zone != Zone || _target.Hp == 0)
             {
                 _target = null;
                 State = CreatureState.Move;
@@ -186,7 +186,7 @@ public class Monster : GameObject
                     SkillId = 1,
                 }
             };
-            _zone.BroadCast(skillPacket);
+            Zone.BroadCast(skillPacket);
 
             int coolTick = (int)(skillData.Cooltime * 1000);
             _coolTick = Environment.TickCount64 + coolTick;
@@ -209,7 +209,7 @@ public class Monster : GameObject
     {
         if (_job != null)
         {
-            _job.Cancel = true;
+            _job.IsCanceled = true;
             _job = null;
         }
 
@@ -224,7 +224,7 @@ public class Monster : GameObject
             {
                 Player player = (Player)attacker;
 
-                DbTransaction.RewardPlayer(player, rewardData, _zone);
+                DbTransaction.RewardPlayer(player, rewardData, Zone);
             }
         }
     }

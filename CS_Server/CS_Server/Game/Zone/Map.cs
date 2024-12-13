@@ -25,10 +25,10 @@ public class Map
 
     public bool ApplyLeave(GameObject gameObject)
     {
-        if (gameObject._zone == null)
+        if (gameObject.Zone == null)
             return false;
 
-        if(gameObject._zone.Map != this)
+        if(gameObject.Zone.Map != this)
             return false;
 
         var posInfo = gameObject.Info.PosInfo;

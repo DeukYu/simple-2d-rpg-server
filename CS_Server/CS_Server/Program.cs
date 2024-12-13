@@ -5,7 +5,7 @@ using System.Net;
 namespace CS_Server;
 
 // 1. Recv (N)
-// 2. ZoneManager (1) -> GameLogic 으로 수정 TODO
+// 2. GameLogic (1)
 // 3. Send (1)
 // 4. DB (1)
 
@@ -15,52 +15,72 @@ class Program
 
     static void GameLogicTask()
     {
-        while(true)
+        try
         {
-            GameLogic.Instance.Update();
-            Thread.Sleep(0);
+            while (true)
+            {
+                GameLogic.Instance.ProcessJobs();
+                Thread.Sleep(0);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error(e.ToString());
+        }
+    }
+    static void NetworkTask()
+    {
+        try
+        {
+            while (true)
+            {
+                var sessions = SessionManager.Instance.GetSessions();
+                foreach (ClientSession session in sessions)
+                {
+                    session.FlushSend();
+                }
+                Thread.Sleep(0);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error(e.ToString());
         }
     }
 
     static void DbTask()
     {
-        while (true)
+        try
         {
-            DbTransaction.Instance.Flush();
-            Thread.Sleep(0);
-        }
-    }
-
-    static void NetworkTask()
-    {
-        while (true)
-        {
-            var sessions = SessionManager.Instance.GetSessions();
-            foreach (ClientSession session in sessions)
+            while (true)
             {
-                session.FlushSend();
+                DbTransaction.Instance.ProcessJobs();
+                Thread.Sleep(0);
             }
-            Thread.Sleep(0);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e.ToString());
         }
     }
 
-        static void Main(string[] args)
+    static void Main(string[] args)
     {
         var configPath = "../../../../config.json";
         ConfigManager.Instance.LoadConfig(configPath);
         DataManager.LoadData();
 
-        GameLogic.Instance.Push(() => {
+        // TODO : Zone 생성하는데, 여러 Zone을 만들어서 테스트해보기
+        GameLogic.Instance.ScheduleJob(() =>
+        {
             GameLogic.Instance.Add(1);
-        } );
-
-        
+        });
 
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-        _listener.Initialize(endPoint, () => { return SessionManager.Instance.Generate(); });
+        _listener.Initialize(endPoint, () => SessionManager.Instance.Generate());
         Log.Info("Listening...");
 
         // GameLogicTask
@@ -71,6 +91,7 @@ class Program
         var networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
         networkTask.Start();
 
+        // DbTask : Main Thread
         DbTask();
     }
 }

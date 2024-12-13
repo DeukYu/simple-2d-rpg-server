@@ -5,38 +5,35 @@ namespace CS_Server;
 
 public class JobSerializer
 {
-    private JobTimer _timer = new JobTimer();
-    private ConcurrentQueue<IJob> _jobQueue = new ConcurrentQueue<IJob>();
-    private AtomicFlag _flush = new AtomicFlag();
+    private readonly JobTimer _timer = new JobTimer();
+    private readonly ConcurrentQueue<JobBase> _jobQueue = new ConcurrentQueue<JobBase>();
+    private readonly AtomicFlag _flushInProgress = new AtomicFlag();
 
-    public IJob PushAfter(int tickAfter, Delegate action, params object[] parameters)
+    // 일정 시간 후에 작업을 스케줄링
+    public JobBase ScheduleJobAfterDelay(int delayTicks, Delegate action, params object[] parameters)
     {
-        return PushAfter(tickAfter, new Job(action, parameters));
-    }
+        if(action == null)
+            throw new ArgumentNullException(nameof(action));
 
-    public IJob PushAfter(int tickAfter, IJob job)
-    {
-        _timer.Push(job, tickAfter);
+        var job = new Job(action, parameters);
+        _timer.Push(job, delayTicks);
         return job;
     }
 
-    public void Push(Delegate action, params object[] parameters)
+    // 
+    public void ScheduleJob(Delegate action, params object[] parameters)
     {
-        Push(new Job(action, parameters));
-    }
-
-    public void Push(IJob job)
-    {
+        var job = new Job(action, parameters);
         _jobQueue.Enqueue(job);
     }
 
-    public void Flush()
+    public void ProcessJobs()
     {
         _timer.Flush();
 
         while (true)
         {
-            var job = Pop();
+            var job = DequeueJob();
             if (job == null)
                 return;
 
@@ -44,14 +41,15 @@ public class JobSerializer
         }
     }
 
-    public IJob? Pop()
+    // 작업을 큐에서 제거하고 반환
+    public JobBase? DequeueJob()
     {
-        if (_jobQueue.Count == 0)
+        if (_jobQueue.IsEmpty)
         {
-            _flush.Release();
+            _flushInProgress.Release();
             return null;
         }
 
-        return _jobQueue.TryDequeue(out IJob? action) ? action : null;
+        return _jobQueue.TryDequeue(out JobBase? job) ? job : null;
     }
 }

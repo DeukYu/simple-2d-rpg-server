@@ -7,7 +7,7 @@ import "Common.proto";
 option csharp_namespace = "Google.Protobuf.Protocol";
 
 message C2S_Login{
-    string unique_id = 1;
+    string account_id = 1;
 }
 
 message S2C_Login{
@@ -101,13 +101,13 @@ message S2C_AddItem{
 }
 
 message C2S_EquipItem{
-    int32 item_id = 1;
+    int64 item_uid = 1;
     bool equipped = 2;
 }
 
 message S2C_EquipItem{
     int32 result = 1;
-    int32 item_id = 2;
+    int64 item_uid = 2;
     bool equipped = 3;
 }
 

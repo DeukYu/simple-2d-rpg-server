@@ -4,12 +4,12 @@ namespace ServerCore;
 
 public class JobTimer
 {
-    PriorityQueue<IJob, int> _pq = new PriorityQueue<IJob, int>();
-    object _lock = new object();
+    private PriorityQueue<JobBase, long> _pq = new PriorityQueue<JobBase, long>();
+    private readonly object _lock = new object();
 
-    public void Push(IJob job, int tickAfter = 0)
+    public void Push(JobBase job, int delayTicks = 0)
     {
-        int execTick = System.Environment.TickCount + tickAfter;
+        var execTick = DateTime.UtcNow.Ticks + TimeSpan.FromMilliseconds(delayTicks).Ticks;
 
         lock (_lock)
         {
@@ -21,15 +21,16 @@ public class JobTimer
     {
         while (true)
         {
-            int now = System.Environment.TickCount;
+            var now = DateTime.UtcNow.Ticks;
 
-            IJob? job = null!;
+            JobBase? job = null!;
+
             lock (_lock)
             {
                 if (_pq.Count == 0)
                     break;
 
-                if (!_pq.TryPeek(out job, out int execTic) || execTic > now)
+                if (!_pq.TryPeek(out job, out var execTic) || execTic > now)
                     break;
 
                 _pq.TryDequeue(out job, out _);

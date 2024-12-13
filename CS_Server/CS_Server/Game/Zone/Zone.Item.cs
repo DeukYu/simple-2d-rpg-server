@@ -6,7 +6,7 @@ namespace CS_Server;
 
 public partial class Zone : JobSerializer
 {
-    public void HandleEquipItem(Player player, int itemId, bool equipped)
+    public void HandleEquipItem(Player player, long itemUid, bool equipped)
     {
         if (player == null)
         {
@@ -14,6 +14,6 @@ public partial class Zone : JobSerializer
             return;
         }
 
-        player.HandleEquipItem(itemId, equipped);
+        player.HandleEquipItem(itemUid, equipped);
     }
 }

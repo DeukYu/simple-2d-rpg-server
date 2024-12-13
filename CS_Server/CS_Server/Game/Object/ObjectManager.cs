@@ -10,17 +10,23 @@ public class ObjectManager
     private ConcurrentDictionary<int, Player> _players = new ConcurrentDictionary<int, Player>();
 
     private int _counter = 0;
-    int GenerateId(GameObjectType type)
+
+    int GenerateIdForType(GameObjectType type)
     {
         int uniqueCounter = Interlocked.Increment(ref _counter);
         return ((int)type << 24) | uniqueCounter;
     }
 
+    public static GameObjectType GetObjectTypeById(int objectId)
+    {
+        var type = (objectId >> 24) & 0x7F;
+        return (GameObjectType)type;
+    }
     public T Add<T>() where T : GameObject, new()
     {
         T gameObject = new T();
 
-        gameObject.Id = GenerateId(gameObject.ObjectType);
+        gameObject.Id = GenerateIdForType(gameObject.ObjectType);
 
         if (gameObject.ObjectType == GameObjectType.Player)
         {
@@ -31,34 +37,30 @@ public class ObjectManager
             }
         }
 
-        return gameObject;
-    }
+        // TODO : 추후 다른 타입 처리가 필요한 경우 추가
 
-    public static GameObjectType GetObjectTypeById(int objectId)
-    {
-        var type = (objectId >> 24) & 0x7F;
-        return (GameObjectType)type;
+        return gameObject;
     }
 
     public bool Remove(int objectId)
     {
         GameObjectType objectType = GetObjectTypeById(objectId);
 
-        if (objectType == GameObjectType.Player)
+        return objectType switch
         {
-            return _players.TryRemove(objectId, out _);
-        }
-        return false;
+            GameObjectType.Player => _players.TryRemove(objectId, out _),
+            _ => false
+        };
     }
 
     public Player? Find(int objectId)
     {
         GameObjectType objectType = GetObjectTypeById(objectId);
 
-        if (objectType == GameObjectType.Player)
+        return objectType switch
         {
-            return _players.TryGetValue(objectId, out var player) ? player : null;
-        }
-        return null;
+            GameObjectType.Player => _players.TryGetValue(objectId, out var player) ? player : null,
+            _ => null
+        };
     }
 }

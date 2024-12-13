@@ -169,6 +169,6 @@ public partial class Zone : JobSerializer
         arrow.PosInfo.PosX = player.PosInfo.PosX;
         arrow.PosInfo.PosY = player.PosInfo.PosY;
         arrow.Speed = projectileInfo.Speed;
-        Push(EnterZone, arrow);
+        ScheduleJob(EnterZone, arrow);
     }
 }
