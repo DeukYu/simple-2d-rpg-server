@@ -50,7 +50,7 @@ public partial class DbTransaction : JobSerializer
 
         PlayerItemInfo playerItemInfo = new PlayerItemInfo
         {
-            TemplateId = rewardData.ItemId,
+            ItemId = rewardData.ItemId,
             Count = rewardData.Count,
             Slot = slot.Value,
             PlayerId = player.PlayerUid

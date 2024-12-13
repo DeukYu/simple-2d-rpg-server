@@ -48,7 +48,7 @@ public class Item
     {
         item = null;
 
-        if (!DataManager.ItemDataDict.TryGetValue(itemInfo.TemplateId, out var itemData))
+        if (!DataManager.ItemDataDict.TryGetValue(itemInfo.ItemId, out var itemData))
         {
             Log.Error("Failed to find item data");
             return false;
@@ -56,19 +56,19 @@ public class Item
         switch (itemData.ItemType)
         {
             case ItemType.Weapon:
-                item = new Weapon(itemInfo.TemplateId);
+                item = new Weapon(itemInfo.ItemId);
                 break;
             case ItemType.Armor:
-                item = new Armor(itemInfo.TemplateId);
+                item = new Armor(itemInfo.ItemId);
                 break;
             case ItemType.Consumable:
-                item = new Consumable(itemInfo.TemplateId);
+                item = new Consumable(itemInfo.ItemId);
                 break;
         }
 
         if (item != null)
         {
-            item.ItemId = itemInfo.TemplateId;
+            item.ItemId = itemInfo.ItemId;
             item.Count = itemInfo.Count;
             item.Slot = itemInfo.Slot;
             item.Equipped = itemInfo.Equipped;
