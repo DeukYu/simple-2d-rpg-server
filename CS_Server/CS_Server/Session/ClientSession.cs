@@ -12,6 +12,10 @@ public partial class ClientSession : PacketSession
     public Player? GamePlayer { get; set; }
     public int SessionId { get; set; }
 
+    object _lock = new object();
+    List<ArraySegment<byte>> _reserveQueue = new List<ArraySegment<byte>>();
+
+    // 패킷 예약
     public void Send(IMessage packet)
     {
         ushort size = (ushort)packet.CalculateSize();
@@ -23,7 +27,26 @@ public partial class ClientSession : PacketSession
         Array.Copy(BitConverter.GetBytes(protocolId), 0, sendBuffer, 2, sizeof(ushort));
 
         Array.Copy(packet.ToByteArray(), 0, sendBuffer, 4, size);
-        Send(new ArraySegment<byte>(sendBuffer));
+
+        lock (_lock)
+        {
+            _reserveQueue.Add(new ArraySegment<byte>(sendBuffer, 0, sendBuffer.Length));
+        }
+    }
+
+    public void FlushSend()
+    {
+        List<ArraySegment<byte>> sendList = null;
+        lock (_lock)
+        {
+            if (_reserveQueue.Count == 0)
+                return;
+
+            sendList = _reserveQueue;
+            _reserveQueue = new List<ArraySegment<byte>>();
+        }
+
+        Send(sendList);
     }
 
     public override void OnConnected(EndPoint endPoint)
@@ -67,25 +90,31 @@ public partial class ClientSession : PacketSession
             return;
         }
 
-        var zone = ZoneManager.Instance.FindZone(1);
-        if (zone == null)
+        GameLogic.Instance.Push(() =>
         {
-            Log.Error("OnConnected: zone is null");
-            return;
-        }
+            Zone zone = GameLogic.Instance.FindZone(1);
+            if (zone == null)
+            {
+                Log.Error("OnConnected: zone is null");
+                return;
+            }
 
-        zone.Push(zone.EnterZone, GamePlayer);
+            zone.Push(zone.EnterZone, GamePlayer);
+        });
     }
     public override void OnDisConnected(EndPoint endPoint)
     {
-        var zone = ZoneManager.Instance.FindZone(1);
-        if (zone == null)
+        GameLogic.Instance.Push(() =>
         {
-            Log.Error("OnDisConnected: zone is null");
-            return;
-        }
+            Zone zone = GameLogic.Instance.FindZone(1);
+            if (zone == null)
+            {
+                Log.Error("OnConnected: zone is null");
+                return;
+            }
 
-        zone.Push(zone.LeaveZone, GamePlayer);
+            zone.Push(zone.LeaveZone, GamePlayer);
+        });
 
         SessionManager.Instance.Remove(this);
 

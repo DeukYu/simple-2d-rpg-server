@@ -2,11 +2,21 @@
 
 namespace CS_Server;
 
-public class ZoneManager
+public class GameLogic : JobSerializer
 {
-    public static ZoneManager Instance { get; } = new ZoneManager();
+    public static GameLogic Instance { get; } = new GameLogic();
     private readonly ConcurrentDictionary<long, Zone> zones = new ConcurrentDictionary<long, Zone>();
     private long _zoneId = 0;
+
+    public void Update()
+    {
+        Flush();
+
+        foreach (var zone in zones.Values)
+        {
+            zone.Update();
+        }
+    }
 
     public Zone? Add(int mapId)
     {

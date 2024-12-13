@@ -11,6 +11,18 @@ class SessionManager
     private int _sessionId = 0;
     private readonly ConcurrentDictionary<int, ClientSession> _sessions = new ConcurrentDictionary<int, ClientSession>();
 
+    object _lock = new object();
+
+    public List<ClientSession> GetSessions()
+    {
+        var sessions = new List<ClientSession>();
+
+        lock (_lock)
+        {
+            sessions = _sessions.Values.ToList();
+        }
+        return sessions;
+    }
     public ClientSession Generate()
     {
         int sessionId = Interlocked.Increment(ref _sessionId);

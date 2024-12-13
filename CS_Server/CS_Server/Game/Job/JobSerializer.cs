@@ -9,14 +9,15 @@ public class JobSerializer
     private ConcurrentQueue<IJob> _jobQueue = new ConcurrentQueue<IJob>();
     private AtomicFlag _flush = new AtomicFlag();
 
-    public void PushAfter(int tickAfter, Delegate action, params object[] parameters)
+    public IJob PushAfter(int tickAfter, Delegate action, params object[] parameters)
     {
-        PushAfter(tickAfter, new Job(action, parameters));
+        return PushAfter(tickAfter, new Job(action, parameters));
     }
 
-    public void PushAfter(int tickAfter, IJob job)
+    public IJob PushAfter(int tickAfter, IJob job)
     {
         _timer.Push(job, tickAfter);
+        return job;
     }
 
     public void Push(Delegate action, params object[] parameters)

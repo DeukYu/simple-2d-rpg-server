@@ -1,8 +1,9 @@
 ﻿namespace CS_Server;
 
-public interface IJob
+public abstract class IJob
 {
-    void Execute();
+    public abstract void Execute();
+    public bool Cancel { get; set; } = false;
 }
 
 public class Job : IJob
@@ -16,8 +17,9 @@ public class Job : IJob
         _args = args;
     }
 
-    public void Execute()
+    public override void Execute()
     {
-        _action.DynamicInvoke(_args);
+        if (Cancel == false)
+            _action.DynamicInvoke(_args);
     }
 }

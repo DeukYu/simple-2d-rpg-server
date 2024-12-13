@@ -25,6 +25,8 @@ public class Monster : GameObject
         StatInfo.MergeFrom(monsterData.Stat);
         State = CreatureState.Idle;
     }
+
+    IJob _job;
     // FSM (Finite State Machine)
     public override void Update()
     {
@@ -43,6 +45,10 @@ public class Monster : GameObject
                 UpdateDead();
                 break;
         }
+
+        // 5 프레임 (0.2초) 마다 체크
+        if(_zone != null)
+            _job = _zone.PushAfter(200, Update);
     }
 
     Player _target;
@@ -201,11 +207,16 @@ public class Monster : GameObject
 
     public override void OnDead(GameObject attacker)
     {
+        if (_job != null)
+        {
+            _job.Cancel = true;
+            _job = null;
+        }
+
         base.OnDead(attacker);
 
         var owner = attacker.GetOwner();
 
-        // TODO : 아이템 생성
         if(owner.ObjectType == GameObjectType.Player)
         {
             var rewardData = GetRewardData(TemplateId);
@@ -216,7 +227,6 @@ public class Monster : GameObject
                 DbTransaction.RewardPlayer(player, rewardData, _zone);
             }
         }
-
     }
 
     RewardData GetRewardData(int templateId)

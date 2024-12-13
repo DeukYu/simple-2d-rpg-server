@@ -142,13 +142,16 @@ public partial class ClientSession : PacketSession
         GamePlayer.SetPlayer(this, lobbyPlayerInfo);
         ServerState = ServerState.InGame;
 
-        Zone zone = ZoneManager.Instance.FindZone(1);
-        if (zone == null)
+        GameLogic.Instance.Push(() =>
         {
-            Log.Error("OnConnected: zone is null");
-            return;
-        }
+            Zone zone = GameLogic.Instance.FindZone(1);
+            if (zone == null)
+            {
+                Log.Error("OnConnected: zone is null");
+                return;
+            }
 
-        zone.Push(zone.EnterZone, GamePlayer);
+            zone.Push(zone.EnterZone, GamePlayer);
+        });
     }
 }

@@ -4,30 +4,57 @@ using System.Net;
 
 namespace CS_Server;
 
+// 1. Recv (N)
+// 2. ZoneManager (1) -> GameLogic 으로 수정 TODO
+// 3. Send (1)
+// 4. DB (1)
+
 class Program
 {
     static Listener _listener = new Listener();
-    static List<System.Timers.Timer> _timers = new List<System.Timers.Timer>();
 
-    static void TickZone(Zone zone, int tick = 1000)
+    static void GameLogicTask()
     {
-        var timer = new System.Timers.Timer();
-        timer.Interval = tick;
-        timer.Elapsed += (s, e) => zone.Update();
-        timer.AutoReset = true;
-        timer.Enabled = true;
-
-        _timers.Add(timer);
+        while(true)
+        {
+            GameLogic.Instance.Update();
+            Thread.Sleep(0);
+        }
     }
 
-    static void Main(string[] args)
+    static void DbTask()
+    {
+        while (true)
+        {
+            DbTransaction.Instance.Flush();
+            Thread.Sleep(0);
+        }
+    }
+
+    static void NetworkTask()
+    {
+        while (true)
+        {
+            var sessions = SessionManager.Instance.GetSessions();
+            foreach (ClientSession session in sessions)
+            {
+                session.FlushSend();
+            }
+            Thread.Sleep(0);
+        }
+    }
+
+        static void Main(string[] args)
     {
         var configPath = "../../../../config.json";
         ConfigManager.Instance.LoadConfig(configPath);
         DataManager.LoadData();
 
-        var zone = ZoneManager.Instance.Add(1);
-        TickZone(zone, 50);
+        GameLogic.Instance.Push(() => {
+            GameLogic.Instance.Add(1);
+        } );
+
+        
 
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
@@ -36,9 +63,14 @@ class Program
         _listener.Initialize(endPoint, () => { return SessionManager.Instance.Generate(); });
         Log.Info("Listening...");
 
-        while (true)
-        {
-            DbTransaction.Instance.Flush();
-        }
+        // GameLogicTask
+        var gameLogicTask = new Task(GameLogicTask, TaskCreationOptions.LongRunning);
+        gameLogicTask.Start();
+
+        // NetworkTask
+        var networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
+        networkTask.Start();
+
+        DbTask();
     }
 }

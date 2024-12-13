@@ -2,11 +2,8 @@
 using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ServerCore;
-using Shared;
 using System.Collections.Concurrent;
-using System.Net.Http.Headers;
 
 namespace CS_Server;
 
@@ -107,6 +104,8 @@ public partial class Zone : JobSerializer
         _monsters.TryAdd(gameObject.Info.ObjectId, monster);
         monster._zone = this;
         Map.ApplyMove(monster, monster.CellPos);
+
+        monster.Update();
     }
 
     private void AddProjectileToZone(GameObject gameObject)
@@ -179,11 +178,6 @@ public partial class Zone : JobSerializer
 
     public void Update()
     {
-        foreach (var monster in _monsters.Values)
-        {
-            monster.Update();
-        }
-
         Flush();
     }
 
