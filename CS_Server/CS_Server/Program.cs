@@ -83,15 +83,15 @@ class Program
         _listener.Initialize(endPoint, () => SessionManager.Instance.Generate());
         Log.Info("Listening...");
 
-        // GameLogicTask
-        var gameLogicTask = new Task(GameLogicTask, TaskCreationOptions.LongRunning);
-        gameLogicTask.Start();
+        // DbTask : Main Trhead
+        var dbTask = new Task(DbTask, TaskCreationOptions.LongRunning);
+        dbTask.Start();
 
         // NetworkTask
         var networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
         networkTask.Start();
 
-        // DbTask : Main Thread
-        DbTask();
+        // GameLogicTask
+        GameLogicTask();
     }
 }

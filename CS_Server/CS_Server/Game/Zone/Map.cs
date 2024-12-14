@@ -28,7 +28,7 @@ public class Map
         if (gameObject.Zone == null)
             return false;
 
-        if(gameObject.Zone.Map != this)
+        if (gameObject.Zone.Map != this)
             return false;
 
         var posInfo = gameObject.Info.PosInfo;
@@ -113,17 +113,13 @@ public class Map
         // H = 목적지에서 얼마나 가까운지 (작을 수록 좋음, 고정)
 
         // (y, x) 이미 방문했는지 여부 (방문 = closed 상태)
-        bool[,] closed = new bool[SizeY, SizeX]; // CloseList
+        HashSet<Pos> closedSet = new HashSet<Pos>();
 
         // (y, x) 가는 길을 한 번이라도 발견했는지
         // 발견X => MaxValue
         // 발견O => F = G + H
-        int[,] open = new int[SizeY, SizeX]; // OpenList
-        for (int y = 0; y < SizeY; y++)
-            for (int x = 0; x < SizeX; x++)
-                open[y, x] = Int32.MaxValue;
-
-        Pos[,] parent = new Pos[SizeY, SizeX];
+        Dictionary<Pos, int> openDict = new Dictionary<Pos, int>();
+        Dictionary<Pos, Pos> parentDict = new Dictionary<Pos, Pos>();
 
         // 오픈리스트에 있는 정보들 중에서, 가장 좋은 후보를 빠르게 뽑아오기 위한 도구
         PriorityQueue<PQNode, int> pq = new PriorityQueue<PQNode, int>();
@@ -133,7 +129,7 @@ public class Map
         Pos dest = Bounds.CellToPos(destCellPos);
 
         // 시작점 발견 (예약 진행)
-        open[pos.Y, pos.X] = 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X));
+        openDict.Add(pos, 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X)));
         pq.Enqueue(new PQNode()
         {
             F = 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X)),
@@ -143,27 +139,28 @@ public class Map
         }
         , 10 * (Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X))
         );
-        parent[pos.Y, pos.X] = new Pos(pos.Y, pos.X);
+        parentDict.Add(pos, pos);
 
         while (pq.Count > 0)
         {
             // 제일 좋은 후보를 찾는다
-            PQNode node = pq.Dequeue();
+            PQNode pqNode = pq.Dequeue();
+            var node = new Pos(pqNode.Y, pqNode.X);
             // 동일한 좌표를 여러 경로로 찾아서, 더 빠른 경로로 인해서 이미 방문(closed)된 경우 스킵
-            if (closed[node.Y, node.X])
+            if (closedSet.Contains(node))
                 continue;
 
             // 방문한다
-            closed[node.Y, node.X] = true;
+            closedSet.Add(node);
             // 목적지 도착했으면 바로 종료
-            if (node.Y == dest.Y && node.X == dest.X)
+            if (pqNode.Y == dest.Y && pqNode.X == dest.X)
                 break;
 
             // 상하좌우 등 이동할 수 있는 좌표인지 확인해서 예약(open)한다
             for (int i = 0; i < _deltaY.Length; i++)
 
             {
-                Pos next = new Pos(node.Y + _deltaY[i], node.X + _deltaX[i]);
+                Pos next = new Pos(pqNode.Y + _deltaY[i], pqNode.X + _deltaX[i]);
 
                 // 유효 범위를 벗어났으면 스킵
                 // 벽으로 막혀서 갈 수 없으면 스킵
@@ -174,40 +171,49 @@ public class Map
                 }
 
                 // 이미 방문한 곳이면 스킵
-                if (closed[next.Y, next.X])
+                if (closedSet.Contains(next))
                     continue;
 
                 // 비용 계산
                 int g = 0;// node.G + _cost[i];
                 int h = 10 * ((dest.Y - next.Y) * (dest.Y - next.Y) + (dest.X - next.X) * (dest.X - next.X));
                 // 다른 경로에서 더 빠른 길 이미 찾았으면 스킵
-                if (open[next.Y, next.X] < g + h)
+                if (openDict.TryGetValue(next, out int value) == false)
+                {
+                    value = int.MaxValue;
+                }
+                if (value < g + h)
                     continue;
 
                 // 예약 진행
-                open[dest.Y, dest.X] = g + h;
+                if (openDict.TryAdd(next, g + h) == false)
+                {
+                    openDict[next] = g + h;
+                }
+
                 pq.Enqueue(new PQNode() { F = g + h, G = g, Y = next.Y, X = next.X }, g + h);
-                parent[next.Y, next.X] = new Pos(node.Y, node.X);
+
+                if (parentDict.TryAdd(next, node) == false)
+                {
+                    parentDict[next] = node;
+                }
             }
         }
 
-        return CalcCellPathFromParent(parent, dest);
+        return CalcCellPathFromParent(parentDict, dest);
     }
 
-    List<Vector2Int> CalcCellPathFromParent(Pos[,] parent, Pos dest)
+    List<Vector2Int> CalcCellPathFromParent(Dictionary<Pos, Pos> parentDict, Pos dest)
     {
         List<Vector2Int> cells = new List<Vector2Int>();
 
-        int y = dest.Y;
-        int x = dest.X;
-        while (parent[y, x].Y != y || parent[y, x].X != x)
+        Pos pos = dest;
+        while (parentDict[pos] != pos)
         {
-            cells.Add(Bounds.PosToCell(new Pos(y, x)));
-            Pos pos = parent[y, x];
-            y = pos.Y;
-            x = pos.X;
+            cells.Add(Bounds.PosToCell(pos));
+            pos = parentDict[pos];
         }
-        cells.Add(Bounds.PosToCell(new Pos(y, x)));
+        cells.Add(Bounds.PosToCell(pos));
         cells.Reverse();
 
         return cells;

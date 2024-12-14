@@ -44,6 +44,28 @@ public struct Pos
     public Pos(int y, int x) { Y = y; X = x; }
     public int Y;
     public int X;
+
+    public static bool operator==(Pos lts, Pos rhs)
+    {
+        return lts.X == rhs.X && lts.Y == rhs.Y;
+    }
+    public static bool operator !=(Pos lhs, Pos rhs)
+    {
+        return lhs.X != rhs.X || lhs.Y != rhs.Y;
+    }
+    public override bool Equals(object obj)
+    {
+        return obj is Pos pos && this == pos;
+    }
+    public override int GetHashCode()
+    {
+        long value = (Y << 32) | X;
+        return value.GetHashCode();
+    }
+    public override string ToString()
+    {
+        return $"({Y}, {X})";
+    }
 }
 
 public readonly struct Bounds
