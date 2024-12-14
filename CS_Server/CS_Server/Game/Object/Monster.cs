@@ -135,7 +135,7 @@ public class Monster : GameObject
     void BroadCastMove()
     {
         S2C_Move movePacket = new S2C_Move() { ObjectId = Id, PosInfo = PosInfo };
-        Zone.BroadCast(movePacket);
+        Zone.BroadCast(CellPos, movePacket);
     }
 
     long _coolTick = 0;
@@ -186,7 +186,7 @@ public class Monster : GameObject
                     SkillId = 1,
                 }
             };
-            Zone.BroadCast(skillPacket);
+            Zone.BroadCast(CellPos, skillPacket);
 
             int coolTick = (int)(skillData.Cooltime * 1000);
             _coolTick = Environment.TickCount64 + coolTick;

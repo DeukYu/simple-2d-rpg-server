@@ -118,7 +118,7 @@ public class GameObject
         S2C_ChangeHp changeHpPacket = new S2C_ChangeHp();
         changeHpPacket.ObjectId = Id;
         changeHpPacket.Hp = StatInfo.Hp;
-        Zone.BroadCast(changeHpPacket);
+        Zone.BroadCast(CellPos,changeHpPacket);
 
         if (StatInfo.Hp <= 0)
         {
@@ -135,7 +135,7 @@ public class GameObject
         S2C_Dead deadPacket = new S2C_Dead();
         deadPacket.ObjectId = Id;
         deadPacket.AttackerId = attacker.Id;
-        Zone.BroadCast(deadPacket);
+        Zone.BroadCast(CellPos, deadPacket);
 
         var zone = Zone;
         zone.LeaveZone(this);

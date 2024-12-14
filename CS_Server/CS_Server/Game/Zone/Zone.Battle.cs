@@ -1,12 +1,8 @@
-﻿using Google.Protobuf;
-using Google.Protobuf.Common;
+﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ServerCore;
 using Shared;
-using System.Collections.Concurrent;
-using System.Net.Http.Headers;
 
 namespace CS_Server;
 
@@ -65,7 +61,7 @@ public partial class Zone : JobSerializer
             ObjectId = player.Info.ObjectId,
             PosInfo = packet.PosInfo,
         };
-        BroadCast(res);
+        BroadCast(player.CellPos,res);
     }
 
     public void HandleSkill(Player player, C2S_Skill packet)
@@ -111,7 +107,7 @@ public partial class Zone : JobSerializer
                 SkillId = 1,
             }
         };
-        BroadCast(res);
+        BroadCast(player.CellPos, res);
     }
 
     private bool CanUseSkill(Player player)

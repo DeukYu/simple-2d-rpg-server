@@ -21,7 +21,7 @@ public class GameLogic : JobSerializer
     public Zone? Add(int mapId)
     {
         Zone zone = new Zone();
-        zone.ScheduleJob(zone.Init, mapId);
+        zone.ScheduleJob(zone.Init, mapId, 10);
 
         long newZoneId = Interlocked.Increment(ref _zoneId);
         zone.ZoneId = newZoneId;

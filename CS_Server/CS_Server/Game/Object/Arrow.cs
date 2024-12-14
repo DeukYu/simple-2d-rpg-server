@@ -42,7 +42,7 @@ public class Arrow : Projectile
             S2C_Move movePacket = new S2C_Move();
             movePacket.ObjectId = Id;
             movePacket.PosInfo = PosInfo;
-            Zone.BroadCast(movePacket);
+            Zone.BroadCast(CellPos, movePacket);
         }
         else
         {

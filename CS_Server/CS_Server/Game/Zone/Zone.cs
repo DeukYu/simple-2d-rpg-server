@@ -9,6 +9,7 @@ namespace CS_Server;
 
 public partial class Zone : JobSerializer
 {
+    public const int VisionCells = 5;
     public long ZoneId { get; set; }
 
     private readonly Dictionary<GameObjectType, Action<GameObject>> _addToZoneActions;
@@ -17,6 +18,12 @@ public partial class Zone : JobSerializer
     private ConcurrentDictionary<int, Player> _players = new ConcurrentDictionary<int, Player>();
     private ConcurrentDictionary<int, Monster> _monsters = new ConcurrentDictionary<int, Monster>();
     private ConcurrentDictionary<int, Projectile> _projectiles = new ConcurrentDictionary<int, Projectile>();
+
+    // Area
+    public Area[,] Areas { get; private set; }
+    public int AreaCells { get; private set; }
+    // Map
+    public Map Map { get; private set; } = new Map();
 
     public Zone()
     {
@@ -33,6 +40,54 @@ public partial class Zone : JobSerializer
                             { GameObjectType.Monster, RemoveMonsterFromZone },
                             { GameObjectType.Projectile, RemoveProjectileFromZone }
                         };
+    }
+
+    public Area GetArea(Vector2Int cellPos)
+    {
+        int x = (cellPos.x - Map.Bounds.MinX) / AreaCells;
+        int y = (Map.Bounds.MaxY - cellPos.y) / AreaCells;
+
+        if(x < 0 || x >= Areas.GetLength(1))
+        {
+            return null;
+        }
+
+        if(y < 0 || y >= Areas.GetLength(0))
+        {
+            return null;
+        }
+
+        return Areas[y, x];
+    }
+
+    public void Init(int mapId, int areaCells)
+    {
+        // TODO : 데이터 Sheet 들어가면 수정
+        Map.LoadMap(mapId, "../../../../Common/MapData");
+
+        // Area
+        AreaCells = areaCells;
+        int countY = (Map.Bounds.SizeY + areaCells - 1) / areaCells;
+        int countX = (Map.Bounds.SizeX + areaCells - 1) / areaCells;
+        Areas = new Area[countY, countX];
+        for(int y = 0; y < countY; y++)
+        {
+            for (int x = 0; x < countX; x++)
+            {
+                Areas[y, x] = new Area(y, x);
+            }
+        }
+
+        // Monster
+        var monster = ObjectManager.Instance.Add<Monster>();
+        monster.Init(1);
+        monster.CellPos = new Vector2Int(10, 10);
+        ScheduleJob(EnterZone, monster);
+    }
+
+    public void Update()
+    {
+        ProcessJobs();
     }
 
     public void AddGameObjectToZone(GameObject gameObject)
@@ -87,6 +142,8 @@ public partial class Zone : JobSerializer
 
         Map.ApplyMove(player, player.CellPos);
 
+        GetArea(player.CellPos).Players.Add(player);
+
         // 플레이어 입장 처리
         var allObjects = CollectSpawnableObjects(gameObject);
         player.OnEnterGame(allObjects);
@@ -130,6 +187,8 @@ public partial class Zone : JobSerializer
             return;
         }
 
+        GetArea(player.CellPos).Players.Remove(player);
+
         player.OnLeaveGame();
         _players.Remove(gameObject.Id, out _);
         Map.ApplyLeave(player);
@@ -160,25 +219,6 @@ public partial class Zone : JobSerializer
             return;
         }
         projectile.Zone = null;
-    }
-
-    public Map Map { get; private set; } = new Map();
-
-    public void Init(int mapId)
-    {
-        // TODO : 데이터 Sheet 들어가면 수정
-        Map.LoadMap(mapId, "../../../../Common/MapData");
-
-        // Monster
-        var monster = ObjectManager.Instance.Add<Monster>();
-        monster.Init(1);
-        monster.CellPos = new Vector2Int(10, 10);
-        ScheduleJob(EnterZone, monster);
-    }
-
-    public void Update()
-    {
-        ProcessJobs();
     }
 
     public void EnterZone(GameObject gameObject)
@@ -246,12 +286,35 @@ public partial class Zone : JobSerializer
         return null;
     }
 
-    public void BroadCast(IMessage packet, Func<Player, bool>? filter = null)
+    public void BroadCast(Vector2Int pos,IMessage packet, Func<Player, bool>? filter = null)
     {
-        foreach (var player in _players.Values)
+        var areas = GetAdjacentArea(pos);
+        foreach(var player in areas.SelectMany(a => a.Players))
         {
             if (filter == null || filter(player))
                 player.Session.Send(packet);
         }
+    }
+    
+    public List<Area> GetAdjacentArea(Vector2Int cellPos, int cells = VisionCells)
+    {
+        var areas = new HashSet<Area>();
+
+        int[] delta = new int[2] { -cells, +cells };
+
+        foreach (int dy in delta)
+        {
+            foreach(int dx in delta)
+            {
+                int y= cellPos.y + dy;
+                int x = cellPos.x + dx;
+                var area = GetArea(new Vector2Int(x, y));
+                if (area == null)
+                    continue;
+                areas.Add(area);
+            }
+        }
+
+        return areas.ToList();
     }
 }

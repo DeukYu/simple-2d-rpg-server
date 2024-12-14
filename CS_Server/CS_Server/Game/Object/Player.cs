@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Common;
+﻿using CS_Server.Game;
+using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
@@ -10,6 +11,7 @@ public class Player : GameObject
 {
     public long PlayerUid { get; set; }
     public ClientSession? Session { get; set; }
+    public VisionCube? Vision { get; private set; }
     public Inventory Inven { get; private set; } = new Inventory();
     public int WeaponDamage { get; private set; } = 0;
     public int ArmorDefense { get; private set; } = 0;
@@ -18,6 +20,7 @@ public class Player : GameObject
     public Player()
     {
         ObjectType = GameObjectType.Player;
+        Vision = new VisionCube(this);
     }
 
     private List<ItemInfo> GetPlayerItemsFromDb(long playerUid)

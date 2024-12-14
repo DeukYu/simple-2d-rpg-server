@@ -2,7 +2,7 @@
 
 public class Map
 {
-    Bounds Bounds { get; set; }
+    public Bounds Bounds { get; set; }
     private MapCell[,] _mapCells;
 
     public bool CanGo(Vector2Int cellPos, bool checkObject = true)
@@ -52,9 +52,21 @@ public class Map
         if (CanGo(dest, true) == false)
             return false;
 
-        {
             var localPos = Bounds.ToLocalCoordinates(dest);
             _mapCells[localPos.y, localPos.x].GameObject = gameObject;
+
+        Player p = gameObject as Player;
+        if (p != null)
+        {
+            var currArea = p.Zone.GetArea(new Vector2Int(posInfo.PosX, posInfo.PosY));
+            var nextArea = p.Zone.GetArea(dest);
+            if(currArea != nextArea)
+            {
+                if(currArea != null)
+                    currArea.Players.Remove(p);
+                if(nextArea != null)
+                    nextArea.Players.Add(p);
+            }
         }
 
         // 실제 좌표 이동
