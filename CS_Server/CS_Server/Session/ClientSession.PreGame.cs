@@ -161,7 +161,7 @@ public partial class ClientSession : PacketSession
                 return;
             }
 
-            zone.ScheduleJob(zone.EnterZone, GamePlayer);
+            zone.ScheduleJob(zone.EnterZone, GamePlayer, true);
         });
     }
 }

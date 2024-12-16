@@ -143,10 +143,8 @@ public class GameObject
         StatInfo.Hp = StatInfo.MaxHp;
         PosInfo.State = CreatureState.Idle;
         PosInfo.MoveDir = MoveDir.Down;
-        PosInfo.PosX = 0;
-        PosInfo.PosY = 0;
 
-        zone.EnterZone(this);
+        zone.EnterZone(this, true);
     }
     public virtual GameObject GetOwner()
     {

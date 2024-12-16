@@ -61,13 +61,15 @@ public partial class ClientSession : PacketSession
     {
         GameLogic.Instance.ScheduleJob(() =>
         {
+            if (GamePlayer == null)
+                return;
+
             Zone zone = GameLogic.Instance.FindZone(1);
             if (zone == null)
             {
                 Log.Error("OnConnected: zone is null");
                 return;
             }
-
             zone.ScheduleJob(zone.LeaveZone, GamePlayer);
         });
 

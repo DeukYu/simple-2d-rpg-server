@@ -82,7 +82,7 @@ public partial class Zone : JobSerializer
         var monster = ObjectManager.Instance.Add<Monster>();
         monster.Init(1);
         monster.CellPos = new Vector2Int(10, 10);
-        ScheduleJob(EnterZone, monster);
+        EnterZone(monster, randomPos: true);
     }
 
     public void Update()
@@ -161,6 +161,7 @@ public partial class Zone : JobSerializer
         _monsters.TryAdd(gameObject.Info.ObjectId, monster);
         monster.Zone = this;
         Map.ApplyMove(monster, monster.CellPos);
+        GetArea(monster.CellPos).Monsters.Add(monster);
 
         monster.Update();
     }
@@ -175,6 +176,7 @@ public partial class Zone : JobSerializer
         }
         _projectiles.TryAdd(gameObject.Info.ObjectId, projectile);
         projectile.Zone = this;
+        GetArea(projectile.CellPos).Projectiles.Add(projectile);
 
         projectile.Update();
     }
@@ -186,8 +188,6 @@ public partial class Zone : JobSerializer
             Log.Error("LeaveZone player is null");
             return;
         }
-
-        GetArea(player.CellPos).Players.Remove(player);
 
         player.OnLeaveGame();
         _players.Remove(gameObject.Id, out _);
@@ -218,16 +218,38 @@ public partial class Zone : JobSerializer
             Log.Error("LeaveZone projectile is null");
             return;
         }
+
+        Map.ApplyLeave(projectile);
+
         projectile.Zone = null;
     }
 
-    public void EnterZone(GameObject gameObject)
+    Random _rand = new Random();
+    public void EnterZone(GameObject gameObject, bool randomPos = false)
     {
         if (gameObject == null)
         {
             Log.Error("EnterZone player is null");
             return;
         }
+
+        // TODO : respawn 위치 
+        if(randomPos)
+        {
+            Vector2Int respawnPos;
+            while (true)
+            {
+                respawnPos.x = _rand.Next(Map.Bounds.MinX, Map.Bounds.MaxX);
+                respawnPos.y = _rand.Next(Map.Bounds.MinY, Map.Bounds.MaxY);
+                if (Map.Find(respawnPos) == null)
+                {
+                    break;
+                }
+
+                gameObject.CellPos = respawnPos;
+                break;
+            }
+        } 
 
         AddGameObjectToZone(gameObject);
 
@@ -237,11 +259,7 @@ public partial class Zone : JobSerializer
                 Objects = { gameObject.Info }
             };
 
-            foreach (var p in _players.Values)
-            {
-                if (p.Id != gameObject.Id)
-                    p.Session.Send(spawn);
-            }
+            BroadCast(gameObject.CellPos, spawn, p => p.Id != gameObject.Id);
         }
     }
 
@@ -268,11 +286,7 @@ public partial class Zone : JobSerializer
             {
                 ObjectIds = { gameObject.Id }
             };
-            foreach (var p in _players.Values)
-            {
-                if (p.Id != gameObject.Id)
-                    p.Session.Send(despawn);
-            }
+            BroadCast(gameObject.CellPos, despawn);
         }
     }
 
@@ -291,6 +305,18 @@ public partial class Zone : JobSerializer
         var areas = GetAdjacentArea(pos);
         foreach(var player in areas.SelectMany(a => a.Players))
         {
+            int dx = player.CellPos.x - pos.x;
+            int dy = player.CellPos.y - pos.y;
+
+            if (Math.Abs(dx) > Zone.VisionCells)
+            {
+                continue;
+            }
+            if (Math.Abs(dy) > Zone.VisionCells)
+            {
+                continue;
+            }
+
             if (filter == null || filter(player))
                 player.Session.Send(packet);
         }

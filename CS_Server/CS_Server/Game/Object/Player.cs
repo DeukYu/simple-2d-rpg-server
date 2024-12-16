@@ -86,7 +86,9 @@ public class Player : GameObject
     {
         // 게임 입장 처리
         SendEnterGamePacket();
-        SendSpawnPacket(objects);
+
+        // 시야각 업데이트 처리
+        Vision.Update();
     }
 
     public void OnLeaveGame()

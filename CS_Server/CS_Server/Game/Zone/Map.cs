@@ -1,4 +1,7 @@
-﻿namespace CS_Server;
+﻿using Google.Protobuf.Enum;
+using Shared;
+
+namespace CS_Server;
 
 public class Map
 {
@@ -35,6 +38,11 @@ public class Map
         if (Bounds.Contains(posInfo.PosX, posInfo.PosY) == false)
             return false;
 
+        // Area
+        var area = gameObject.Zone.GetArea(gameObject.CellPos);
+        area.Remove(gameObject);
+
+
         {
             var localPos = Bounds.ToLocalCoordinates(posInfo.PosX, posInfo.PosY);
             if (_mapCells[localPos.y, localPos.x].GameObject == gameObject)
@@ -44,30 +52,61 @@ public class Map
         return true;
     }
 
-    public bool ApplyMove(GameObject gameObject, Vector2Int dest)
+    public bool ApplyMove(GameObject gameObject, Vector2Int dest, bool checkObjects = true, bool isCollision = true)
     {
-        ApplyLeave(gameObject);
-
         var posInfo = gameObject.Info.PosInfo;
-        if (CanGo(dest, true) == false)
+        if (CanGo(dest, checkObjects) == false)
             return false;
 
-            var localPos = Bounds.ToLocalCoordinates(dest);
-            _mapCells[localPos.y, localPos.x].GameObject = gameObject;
-
-        Player p = gameObject as Player;
-        if (p != null)
+        if (isCollision)
         {
-            var currArea = p.Zone.GetArea(new Vector2Int(posInfo.PosX, posInfo.PosY));
-            var nextArea = p.Zone.GetArea(dest);
-            if(currArea != nextArea)
             {
-                if(currArea != null)
-                    currArea.Players.Remove(p);
-                if(nextArea != null)
-                    nextArea.Players.Add(p);
+                var localPos = Bounds.ToLocalCoordinates(posInfo.PosX, posInfo.PosY);
+                if (_mapCells[localPos.y, localPos.x].GameObject == gameObject)
+                    _mapCells[localPos.y, localPos.x].GameObject = null;
+            }
+            {
+                var localPos = Bounds.ToLocalCoordinates(dest);
+                _mapCells[localPos.y, localPos.x].GameObject = gameObject;
             }
         }
+
+        var type = ObjectManager.GetObjectTypeById(gameObject.Id);
+        if (type == GameObjectType.Player)
+        {
+            var player = gameObject as Player;
+
+            var currArea = player.Zone.GetArea(new Vector2Int(posInfo.PosX, posInfo.PosY));
+            var nextArea = player.Zone.GetArea(dest);
+            if (currArea != nextArea)
+            {
+                currArea.Players.Remove(player);
+                nextArea.Players.Add(player);
+            }
+        }
+        else if (type == GameObjectType.Monster)
+        {
+            var monster = gameObject as Monster;
+            var currArea = monster.Zone.GetArea(new Vector2Int(posInfo.PosX, posInfo.PosY));
+            var nextArea = monster.Zone.GetArea(dest);
+            if (currArea != nextArea)
+            {
+                currArea.Monsters.Remove(monster);
+                nextArea.Monsters.Add(monster);
+            }
+        }
+        else if (type == GameObjectType.Projectile)
+        {
+            var projectile = gameObject as Projectile;
+            var currArea = projectile.Zone.GetArea(new Vector2Int(posInfo.PosX, posInfo.PosY));
+            var nextArea = projectile.Zone.GetArea(dest);
+            if (currArea != nextArea)
+            {
+                currArea.Projectiles.Remove(projectile);
+                nextArea.Projectiles.Add(projectile);
+            }
+        }
+
 
         // 실제 좌표 이동
         posInfo.PosX = dest.x;

@@ -1,14 +1,35 @@
-﻿namespace CS_Server;
+﻿using Google.Protobuf.Enum;
+
+namespace CS_Server;
 
 public class Area
 {
     public int IndexY { get; set; }
     public int IndexX { get; set; }
     public HashSet<Player> Players { get; set; } = new HashSet<Player>();
+    public HashSet<Monster> Monsters { get; set; } = new HashSet<Monster>();
+    public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
     public Area(int indexY, int indexX)
     {
         IndexY = indexY;
         IndexX = indexX;
+    }
+    public void Remove(GameObject gameObject)
+    {
+        var type = ObjectManager.GetObjectTypeById(gameObject.Id);
+
+        if (type == GameObjectType.Player)
+        {
+            Players.Remove(gameObject as Player);
+        }
+        else if (type == GameObjectType.Monster)
+        {
+            Monsters.Remove(gameObject as Monster);
+        }
+        else if (type == GameObjectType.Projectile)
+        {
+            Projectiles.Remove(gameObject as Projectile);
+        }
     }
     public Player FindPlayer(Func<Player, bool> condition)
     {

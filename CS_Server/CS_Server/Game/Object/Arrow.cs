@@ -35,7 +35,7 @@ public class Arrow : Projectile
         _nextMoveTick = Environment.TickCount64 + tick;
 
         Vector2Int destPos = GetFrontCellPos();
-        if (Zone.Map.CanGo(destPos))
+        if (Zone.Map.ApplyMove(this, destPos, isCollision: false))
         {
             CellPos = destPos;
 
