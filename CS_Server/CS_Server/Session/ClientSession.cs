@@ -15,6 +15,10 @@ public partial class ClientSession : PacketSession
     object _lock = new object();
     List<ArraySegment<byte>> _reserveQueue = new List<ArraySegment<byte>>();
 
+    // 패킷 모아보내기
+    int _reservedSendBytes = 0;
+    long _lastSendTick = 0;
+
     long _pingpongTick = 0;
     public void Ping()
     {
@@ -55,7 +59,8 @@ public partial class ClientSession : PacketSession
 
         lock (_lock)
         {
-            _reserveQueue.Add(new ArraySegment<byte>(sendBuffer, 0, sendBuffer.Length));
+            _reserveQueue.Add(sendBuffer);
+            _reservedSendBytes += sendBuffer.Length;
         }
     }
 
@@ -66,6 +71,15 @@ public partial class ClientSession : PacketSession
         {
             if (_reserveQueue.Count == 0)
                 return;
+
+            // 0.1초가 지났거나, 일정 패킷이 모였을 때,
+            long delta = System.Environment.TickCount64 - _lastSendTick;
+            if(delta < 100 && _reservedSendBytes < 10000)
+                return;
+
+            // 패킷 모아 보내기
+            _reservedSendBytes = 0;
+            _lastSendTick = System.Environment.TickCount64;
 
             sendList = _reserveQueue;
             _reserveQueue = new List<ArraySegment<byte>>();
@@ -101,8 +115,6 @@ public partial class ClientSession : PacketSession
         });
 
         SessionManager.Instance.Remove(this);
-
-        Log.Info($"OnDisConnected: {endPoint}");
     }
     public override void OnRecvPacket(ArraySegment<byte> buffer)
     {

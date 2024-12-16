@@ -37,7 +37,7 @@ class SessionManager
             return null;
         }
 
-        Log.Info($"Session generated. SessionId: {sessionId}");
+        Log.Info($"Connected! Count({_sessions.Count}) SessionId({sessionId})");
         return session;
     }
 
@@ -59,5 +59,7 @@ class SessionManager
             Log.Error($"Failed to remove session. SessionId({session.SessionId})");
             return;
         }
+
+        Log.Info($"DisConnected! Count({_sessions.Count}) SessionId({session.SessionId})");
     }
 }

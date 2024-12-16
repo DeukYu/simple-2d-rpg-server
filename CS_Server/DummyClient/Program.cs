@@ -1,32 +1,27 @@
-﻿
+﻿using DummyClient.Session;
 using ServerCore;
 using System.Net;
 
 namespace DummyClient;
-
 class Program
 {
+    static int DummyClientCount { get; } = 500;
+
     static void Main(string[] args)
     {
+        Thread.Sleep(3000);
+
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
         Connector connector = new Connector();
 
-        connector.Connect(endPoint, () => { return SessionManager.Instance.Generate(); }, 100);
+        connector.Connect(endPoint, () => { return SessionManager.Instance.Generate(); }, DummyClientCount);
 
-        while (true)
+        while(true)
         {
-            try
-            {
-                SessionManager.Instance.SendForEach();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            Thread.Sleep(250);
+            Thread.Sleep(1000);
         }
     }
 }

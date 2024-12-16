@@ -8,11 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="5.3.4" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

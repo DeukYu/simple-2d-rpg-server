@@ -2,6 +2,7 @@
 using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
+using NLog.Targets;
 using ServerCore;
 using System.Collections.Concurrent;
 
@@ -47,17 +48,22 @@ public partial class Zone : JobSerializer
         int x = (cellPos.x - Map.Bounds.MinX) / AreaCells;
         int y = (Map.Bounds.MaxY - cellPos.y) / AreaCells;
 
-        if(x < 0 || x >= Areas.GetLength(1))
+        return GetArea(y, x);
+    }
+
+    public Area GetArea(int indexY, int indexX)
+    {
+        if (indexX < 0 || indexX >= Areas.GetLength(1))
         {
             return null;
         }
 
-        if(y < 0 || y >= Areas.GetLength(0))
+        if (indexY < 0 || indexY >= Areas.GetLength(0))
         {
             return null;
         }
 
-        return Areas[y, x];
+        return Areas[indexY, indexX];
     }
 
     public void Init(int mapId, int areaCells)
@@ -293,13 +299,36 @@ public partial class Zone : JobSerializer
         }
     }
 
-    public Player? FindPlayer(Func<GameObject, bool> condition)
+    private Player? FindPlayer(Func<GameObject, bool> condition)
     {
         foreach (var player in _players.Values)
         {
             if (condition(player))
                 return player;
         }
+        return null;
+    }
+
+    public Player FindClosedPlayer(Vector2Int cellPos, int range)
+    {
+        var players = GetAdjacentPlayers(cellPos, range);
+        
+        players.Sort((lhs, rhs) =>
+        {
+            int lhsDist = (lhs.CellPos - cellPos).cellDistance;
+            int rhsDist = (rhs.CellPos - cellPos).cellDistance;
+            return lhsDist - rhsDist;
+        });
+
+        foreach (var player in players)
+        {
+            var paths = Map.FindPath(cellPos, player.CellPos, checkObjects: true);
+            if (paths.Count < 2 || paths.Count > range)
+                continue;
+            return player;
+
+        }
+
         return null;
     }
 
@@ -325,11 +354,46 @@ public partial class Zone : JobSerializer
         }
     }
     
-    public List<Area> GetAdjacentArea(Vector2Int cellPos, int cells = VisionCells)
+    public List<Player> GetAdjacentPlayers(Vector2Int cellPos, int range)
+    {
+        var areas = GetAdjacentArea(cellPos, range);
+
+        return areas.SelectMany(a => a.Players).ToList();
+    }
+
+    public List<Area> GetAdjacentArea(Vector2Int cellPos, int range = VisionCells)
     {
         var areas = new HashSet<Area>();
 
-        int[] delta = new int[2] { -cells, +cells };
+        int maxY = cellPos.y + range;
+        int minY = cellPos.y - range;
+        int maxX = cellPos.x + range;
+        int minX = cellPos.x - range;
+
+        // 좌측 상단
+        var leftTop = new Vector2Int(minX, maxY);
+
+        int minIndexY = (Map.Bounds.MaxY - leftTop.y) / AreaCells;
+        int minIndexX = (leftTop.x - Map.Bounds.MinX) / AreaCells;
+
+        // 우축 하단
+        var rightBottom = new Vector2Int(maxX, minY);
+        int maxIndexY = (Map.Bounds.MaxY - rightBottom.y) / AreaCells;
+        int maxIndexX = (rightBottom.x - Map.Bounds.MinX) / AreaCells;
+
+        for(int x = minIndexX; x <= maxIndexX; x++)
+        {
+            for (int y = minIndexY; y <= maxIndexY; y++)
+            {
+                var area = GetArea(y, x);
+                if (area == null)
+                    continue;
+
+                areas.Add(area);
+            }
+        }
+
+        int[] delta = new int[2] { -range, +range };
 
         foreach (int dy in delta)
         {

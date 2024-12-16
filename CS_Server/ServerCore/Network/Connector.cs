@@ -19,6 +19,8 @@ public class Connector
             args.UserToken = socket;
 
             RegisterConnectAsync(args);
+
+            Thread.Sleep(10);
         }
     }
 

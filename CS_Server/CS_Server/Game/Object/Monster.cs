@@ -62,11 +62,7 @@ public class Monster : GameObject
 
         _nextSearchTick = Environment.TickCount64 + 1000;
 
-        var target = Zone.FindPlayer(p =>
-        {
-            var dir = p.CellPos - CellPos;
-            return dir.cellDistance <= _searchCellDist;
-        });
+        var target = Zone.FindClosedPlayer(cellPos, _searchCellDist);
 
         if (target == null)
         {
