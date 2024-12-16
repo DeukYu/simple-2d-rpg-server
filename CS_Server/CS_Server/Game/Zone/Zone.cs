@@ -78,11 +78,14 @@ public partial class Zone : JobSerializer
             }
         }
 
-        // Monster
-        var monster = ObjectManager.Instance.Add<Monster>();
-        monster.Init(1);
-        monster.CellPos = new Vector2Int(10, 10);
-        EnterZone(monster, randomPos: true);
+        // TODO : Monster
+        for(int i=0;i < 30; ++i)
+        {
+            var monster = ObjectManager.Instance.Add<Monster>();
+            monster.Init(1);
+            monster.CellPos = new Vector2Int(10, 10);
+            EnterZone(monster, randomPos: true);
+        }
     }
 
     public void Update()

@@ -1,5 +1,4 @@
 ﻿using Google.Protobuf.Enum;
-using Shared;
 
 namespace CS_Server;
 
@@ -151,7 +150,7 @@ public class Map
     int[] _deltaX = new int[] { 0, 0, -1, 1 };
     int[] _cost = new int[] { 10, 10, 10, 10 };
 
-    public List<Vector2Int> FindPath(Vector2Int startCellPos, Vector2Int destCellPos, bool checkObjects = true)
+    public List<Vector2Int> FindPath(Vector2Int startCellPos, Vector2Int destCellPos, bool checkObjects = true, int maxDist = 10)
     {
         List<Pos> path = new List<Pos>();
 
@@ -213,6 +212,10 @@ public class Map
             {
                 Pos next = new Pos(pqNode.Y + _deltaY[i], pqNode.X + _deltaX[i]);
 
+                // 너무 멀면 스킵
+                if (Math.Abs(pos.Y - next.Y) + Math.Abs(pos.X - next.X) >= maxDist)
+                    continue;
+
                 // 유효 범위를 벗어났으면 스킵
                 // 벽으로 막혀서 갈 수 없으면 스킵
                 if (next.Y != dest.Y || next.X != dest.X)
@@ -258,14 +261,34 @@ public class Map
     {
         List<Vector2Int> cells = new List<Vector2Int>();
 
-        Pos pos = dest;
-        while (parentDict[pos] != pos)
+        if (parentDict.ContainsKey(dest) == false)
         {
-            cells.Add(Bounds.PosToCell(pos));
-            pos = parentDict[pos];
+            var bestPos = new Pos();
+            int bestDist = int.MaxValue;
+
+            foreach (var pos in parentDict.Keys)
+            {
+                int dist = Math.Abs(dest.Y - pos.Y) + Math.Abs(dest.X - pos.X);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    bestPos = pos;
+                }
+            }
+            dest = bestPos;
         }
-        cells.Add(Bounds.PosToCell(pos));
-        cells.Reverse();
+
+        {
+            Pos pos = dest;
+            while (parentDict[pos] != pos)
+            {
+                cells.Add(Bounds.PosToCell(pos));
+                pos = parentDict[pos];
+            }
+            cells.Add(Bounds.PosToCell(pos));
+            cells.Reverse();
+        }
+
 
         return cells;
     }

@@ -6,6 +6,14 @@ import "Common.proto";
 
 option csharp_namespace = "Google.Protobuf.Protocol";
 
+message C2S_Ping{
+
+}
+
+message S2C_Ping{
+
+}
+
 message C2S_Login{
     string account_name = 1;
 }

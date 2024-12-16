@@ -15,6 +15,31 @@ public partial class ClientSession : PacketSession
     object _lock = new object();
     List<ArraySegment<byte>> _reserveQueue = new List<ArraySegment<byte>>();
 
+    long _pingpongTick = 0;
+    public void Ping()
+    {
+        if (_pingpongTick > 0)
+        {
+            var delta = System.Environment.TickCount64 - _pingpongTick;
+            if (delta > 30 * 1000)
+            {
+                Log.Info("Disconnected by PingCheck");
+                Disconnect();
+                return;
+            }
+        }
+
+        S2C_Ping pingPacket = new S2C_Ping();
+        Send(pingPacket);
+
+        GameLogic.Instance.ScheduleJobAfterDelay(5000, Ping);
+    }
+
+    public void HandlePing()
+    {
+        _pingpongTick = System.Environment.TickCount64;
+    }
+
     // 패킷 예약
     public void Send(IMessage packet)
     {
@@ -56,6 +81,8 @@ public partial class ClientSession : PacketSession
         // 연결 성공 패킷 전송
         S2C_Connected connectedPacket = new S2C_Connected { Result = (int)ErrorType.Success };
         Send(connectedPacket);
+
+        GameLogic.Instance.ScheduleJobAfterDelay(5000, Ping);
     }
     public override void OnDisConnected(EndPoint endPoint)
     {

@@ -107,7 +107,7 @@ public class Monster : GameObject
             return;
         }
 
-        var paths = Zone.Map.FindPath(CellPos, _target.CellPos, false);
+        var paths = Zone.Map.FindPath(CellPos, _target.CellPos, checkObjects: true);
         if (paths.Count < 2 || paths.Count > _chaseCellDist)
         {
             _target = null;

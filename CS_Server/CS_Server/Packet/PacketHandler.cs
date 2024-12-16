@@ -34,6 +34,12 @@ class PacketHandler
         return true;
     }
     
+    public static void C2S_PingHandler(PacketSession session, IMessage packet)
+    {
+        if (!TryParsePacket<C2S_Ping>(session, packet, out var clientSession, out var pingPacket))
+            return;
+        clientSession.HandlePing();
+    }
     public static void C2S_LoginHandler(PacketSession session, IMessage packet)
     {
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
