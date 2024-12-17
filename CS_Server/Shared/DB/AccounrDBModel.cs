@@ -2,16 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Shared;
+namespace Shared.DB;
 
-[Table("account_info")]
-public class AccountInfo
-{
-    [Key]
-    public long Id { get; set; } = 0;
-    public string AccountName { get; set; } = string.Empty;
-    public ICollection<PlayerInfo> Players { get; set; } = new List<PlayerInfo>();
-}
+
 
 [Table("player_info")]
 public class PlayerInfo
@@ -20,7 +13,7 @@ public class PlayerInfo
     public long Id { get; set; } = 0;
     public string PlayerName { get; set; } = string.Empty;
     public ICollection<PlayerItemInfo> Items { get; set; } = new List<PlayerItemInfo>();
-    public virtual PlayerStatInfo StatInfo { get; set; } = new PlayerStatInfo();
+    public PlayerStatInfo StatInfo { get; set; } = new PlayerStatInfo();
 
     [ForeignKey(nameof(AccountInfo))]
     public long AccountId { get; set; } = 0;

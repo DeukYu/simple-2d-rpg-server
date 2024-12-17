@@ -2,7 +2,7 @@ using Google.Protobuf.Enum;
 using Google.Protobuf.WebProtocol;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shared;
+using Shared.DB;
 
 namespace WebServer;
 

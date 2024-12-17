@@ -3,7 +3,7 @@ using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore;
 using ServerCore;
-using Shared;
+using Shared.DB;
 
 namespace CS_Server;
 
@@ -52,24 +52,26 @@ public partial class ClientSession : PacketSession
         lobbyPlayers.Clear();
 
         // 계정 정보를 가져온다.
-        var account = GetAccountInfo(accountName);
-        if(account == null)
+        var accountDB = new AccountDB();
+        var accountInfo = accountDB.AccountInfo.GetAccountInfo(accountName);
+        if (accountInfo == null)
         {
             // TODO : 임시적으로 계정 정보가 없으면 생성하도록 한다.
-            if (CreateAccountInfo(accountName, out account) == false)
+            if (CreateAccountInfo(accountName, out accountInfo) == false)
             {
                 Log.Error($"Failed to create account info. AccountName{accountName}");
                 return (int)ErrorType.DbError;
             }
 
+            // TODO : 정상 로직
             //Log.Error($"There is no account info. AccountName:{accountName}");
             //return (int)ErrorType.InvalidAccount;
         }
 
-        AccountId = account.Id;
+        AccountId = accountInfo.Id;
 
         // 캐릭터 목록 
-        foreach (var playerInfo in account.Players)
+        foreach (var playerInfo in accountInfo.Players)
         {
             var lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(playerInfo);
             lobbyPlayerInfos.Add(lobbyPlayerInfo);
@@ -89,40 +91,39 @@ public partial class ClientSession : PacketSession
             return (int)ErrorType.InvalidServerState;
         }
 
-        using (AccountDB accountDB = new AccountDB())
+        var accountDB = new AccountDB();
+
+        if (accountDB.PlayerInfo.IsPlayerNameExist(playerName))
         {
-            if (accountDB.PlayerInfo.IsPlayerNameExist(playerName))
-            {
-                Log.Error($"Already exist player name. PlayerName:{playerName}");
-                return (int)ErrorType.AlreadyExistName;
-            }
-
-            // 새로운 플레이어 생성
-            var newPlayer = accountDB.PlayerInfo.CreatePlayer(playerName, AccountId);
-            if (accountDB.SaveChangesEx() == false)
-            {
-                Log.Error("Failed to save changes to the database.");
-                return (int)ErrorType.DbError;
-            }
-
-            // 플레이어의 스탯 정보 생성
-            var initLevel = 1;
-            if (DataManager.StatDict.TryGetValue(initLevel, out var stat) == false)
-            {
-                Log.Error($"There is no stat info. PlayerName:{playerName} Level:{initLevel}");
-                return (int)ErrorType.InvalidGameData;
-            }
-
-            accountDB.PlayerStatInfo.CreatePlayerStat(newPlayer.Id, stat);
-            if (accountDB.SaveChangesEx() == false)
-            {
-                Log.Error("Failed to save changes to the database.");
-                return (int)ErrorType.DbError;
-            }
-
-            lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(newPlayer);
-            lobbyPlayers.Add(lobbyPlayerInfo);
+            Log.Error($"Already exist player name. PlayerName:{playerName}");
+            return (int)ErrorType.AlreadyExistName;
         }
+
+        // 새로운 플레이어 생성
+        var newPlayer = accountDB.PlayerInfo.CreatePlayer(playerName, AccountId);
+        if (accountDB.SaveChangesEx() == false)
+        {
+            Log.Error("Failed to save changes to the database.");
+            return (int)ErrorType.DbError;
+        }
+
+        // 플레이어의 스탯 정보 생성
+        var initLevel = 1;
+        if (DataManager.StatDict.TryGetValue(initLevel, out var stat) == false)
+        {
+            Log.Error($"There is no stat info. PlayerName:{playerName} Level:{initLevel}");
+            return (int)ErrorType.InvalidGameData;
+        }
+
+        accountDB.PlayerStatInfo.CreatePlayerStat(newPlayer.Id, stat);
+        if (accountDB.SaveChangesEx() == false)
+        {
+            Log.Error("Failed to save changes to the database.");
+            return (int)ErrorType.DbError;
+        }
+
+        lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(newPlayer);
+        lobbyPlayers.Add(lobbyPlayerInfo);
 
         return (int)ErrorType.Success;
     }

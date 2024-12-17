@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf.Common;
 using Shared;
+using Shared.DB;
 
 namespace CS_Server;
 

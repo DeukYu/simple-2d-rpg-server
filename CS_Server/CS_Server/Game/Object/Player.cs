@@ -3,7 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using Shared;
+using Shared.DB;
 
 namespace CS_Server;
 

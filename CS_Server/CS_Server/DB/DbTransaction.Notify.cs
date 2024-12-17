@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServerCore;
-using Shared;
+using Shared.DB;
 
 namespace CS_Server;
 

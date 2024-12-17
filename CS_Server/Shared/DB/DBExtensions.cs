@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Shared;
+namespace Shared.DB;
 
 public static class DBExtensions
 {

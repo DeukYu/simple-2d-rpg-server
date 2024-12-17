@@ -1,5 +1,4 @@
-﻿
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using ServerCore;
 using System.Reflection;
@@ -33,13 +32,14 @@ class PacketHandler
 
         return true;
     }
-    
+
     public static void C2S_PingHandler(PacketSession session, IMessage packet)
     {
         if (!TryParsePacket<C2S_Ping>(session, packet, out var clientSession, out var pingPacket))
             return;
         clientSession.HandlePing();
     }
+    
     public static void C2S_LoginHandler(PacketSession session, IMessage packet)
     {
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
@@ -51,6 +51,21 @@ class PacketHandler
             Players = { lobbyPlayers },
             Result = state
         };
+        clientSession.Send(res);
+    }
+    
+    public static void C2S_CreatePlayerHandler(PacketSession session, IMessage packet)
+    {
+        if (!TryParsePacket<C2S_CreatePlayer>(session, packet, out var clientSession, out var createPlayerPacket))
+            return;
+
+        int state = clientSession.HandleCreatePlayer(createPlayerPacket.Name, out var lobbyPlayer);
+        var res = new S2C_CreatePlayer
+        {
+            Player = lobbyPlayer,
+            Result = state
+        };
+        clientSession.Send(res);
     }
 
     public static void C2S_MoveHandler(PacketSession session, IMessage packet)
@@ -94,19 +109,6 @@ class PacketHandler
         }
 
         zone.ScheduleJob(zone.HandleSkill, player, skillPacket!);
-    }
-
-    public static void C2S_CreatePlayerHandler(PacketSession session, IMessage packet)
-    {
-        if (!TryParsePacket<C2S_CreatePlayer>(session, packet, out var clientSession, out var createPlayerPacket))
-            return;
-
-        int state = clientSession.HandleCreatePlayer(createPlayerPacket.Name, out var lobbyPlayer);
-        var res = new S2C_CreatePlayer
-        {
-            Player = lobbyPlayer,
-            Result = state
-        };
     }
 
     public static void C2S_EnterGameHandler(PacketSession session, IMessage packet)

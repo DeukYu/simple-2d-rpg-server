@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Shared;
+using Shared.DB;
 
 #nullable disable
 
 namespace Shared.Migrations
 {
     [DbContext(typeof(AccountDB))]
-    [Migration("20241128131002_init")]
-    partial class init
+    [Migration("20241217064506_migrationDB")]
+    partial class migrationDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Shared.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Shared.AccountInfo", b =>
+            modelBuilder.Entity("Shared.DB.AccountInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,7 +44,7 @@ namespace Shared.Migrations
                     b.ToTable("account_info");
                 });
 
-            modelBuilder.Entity("Shared.PlayerInfo", b =>
+            modelBuilder.Entity("Shared.DB.PlayerInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +69,37 @@ namespace Shared.Migrations
                     b.ToTable("player_info");
                 });
 
-            modelBuilder.Entity("Shared.PlayerStatInfo", b =>
+            modelBuilder.Entity("Shared.DB.PlayerItemInfo", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Equipped")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("PlayerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Slot")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("player_item_info");
+                });
+
+            modelBuilder.Entity("Shared.DB.PlayerStatInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -106,14 +136,15 @@ namespace Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("PlayerId")
+                        .IsUnique();
 
                     b.ToTable("player_stat_info");
                 });
 
-            modelBuilder.Entity("Shared.PlayerInfo", b =>
+            modelBuilder.Entity("Shared.DB.PlayerInfo", b =>
                 {
-                    b.HasOne("Shared.AccountInfo", "AccountInfo")
+                    b.HasOne("Shared.DB.AccountInfo", "AccountInfo")
                         .WithMany("Players")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -122,10 +153,10 @@ namespace Shared.Migrations
                     b.Navigation("AccountInfo");
                 });
 
-            modelBuilder.Entity("Shared.PlayerStatInfo", b =>
+            modelBuilder.Entity("Shared.DB.PlayerItemInfo", b =>
                 {
-                    b.HasOne("Shared.PlayerInfo", "PlayerInfo")
-                        .WithMany()
+                    b.HasOne("Shared.DB.PlayerInfo", "PlayerInfo")
+                        .WithMany("Items")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -133,9 +164,28 @@ namespace Shared.Migrations
                     b.Navigation("PlayerInfo");
                 });
 
-            modelBuilder.Entity("Shared.AccountInfo", b =>
+            modelBuilder.Entity("Shared.DB.PlayerStatInfo", b =>
+                {
+                    b.HasOne("Shared.DB.PlayerInfo", "PlayerInfo")
+                        .WithOne("StatInfo")
+                        .HasForeignKey("Shared.DB.PlayerStatInfo", "PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerInfo");
+                });
+
+            modelBuilder.Entity("Shared.DB.AccountInfo", b =>
                 {
                     b.Navigation("Players");
+                });
+
+            modelBuilder.Entity("Shared.DB.PlayerInfo", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("StatInfo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

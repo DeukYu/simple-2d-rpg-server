@@ -1,5 +1,5 @@
 ﻿using ServerCore;
-using Shared;
+using Shared.DB;
 
 namespace CS_Server;
 
@@ -29,10 +29,6 @@ public partial class DbTransaction : JobSerializer
                     Log.Error("Failed to save player stat info");
                     return;
                 }
-                zone.ScheduleJob(() =>
-                {
-                    Log.Info($"UpdatePlayerStatus: PlayerId: {playerStatInfo.PlayerId}, Hp: {playerStatInfo.Hp}, Mp: {playerStatInfo.Mp}");
-                });
             }
         });
     }

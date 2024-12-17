@@ -2,6 +2,7 @@
 using Google.Protobuf.Enum;
 using ServerCore;
 using Shared;
+using Shared.DB;
 using System.Runtime.CompilerServices;
 
 namespace CS_Server;

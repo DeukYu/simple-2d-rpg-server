@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Shared.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class migrationDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,6 +46,30 @@ namespace Shared.Migrations
                         name: "FK_player_info_account_info_AccountId",
                         column: x => x.AccountId,
                         principalTable: "account_info",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "player_item_info",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false),
+                    Slot = table.Column<int>(type: "int", nullable: false),
+                    Equipped = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    PlayerId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_player_item_info", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_player_item_info_player_info_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "player_info",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -97,14 +121,23 @@ namespace Shared.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_player_item_info_PlayerId",
+                table: "player_item_info",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_player_stat_info_PlayerId",
                 table: "player_stat_info",
-                column: "PlayerId");
+                column: "PlayerId",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "player_item_info");
+
             migrationBuilder.DropTable(
                 name: "player_stat_info");
 

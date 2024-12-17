@@ -326,9 +326,7 @@ public partial class Zone : JobSerializer
             if (paths.Count < 2 || paths.Count > range)
                 continue;
             return player;
-
         }
-
         return null;
     }
 

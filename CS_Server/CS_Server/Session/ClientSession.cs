@@ -25,7 +25,7 @@ public partial class ClientSession : PacketSession
         if (_pingpongTick > 0)
         {
             var delta = System.Environment.TickCount64 - _pingpongTick;
-            if (delta > 30 * 1000)
+            if (delta > 30 * 10000)
             {
                 Log.Info("Disconnected by PingCheck");
                 Disconnect();
