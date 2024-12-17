@@ -12,7 +12,17 @@ public static class LobbyPlayerInfoFactory
         {
             PlayerUid = playerInfo.Id,
             Name = playerInfo.PlayerName,
-            StatInfo = StatInfoMapper.MapToStatInfo(playerInfo.StatInfo)
+            StatInfo = new StatInfo
+            {
+                Level = playerInfo.Level,
+                Hp = playerInfo.Hp,
+                MaxHp = playerInfo.MaxHp,
+                Mp = playerInfo.Mp,
+                MaxMp = playerInfo.MaxMp,
+                Attack = playerInfo.Attack,
+                Speed = playerInfo.Speed,
+                TotalExp = playerInfo.TotalExp,
+            }
         };
     }
 
@@ -29,20 +39,6 @@ public static class LobbyPlayerInfoFactory
 
 public static class StatInfoMapper
 {
-    public static StatInfo MapToStatInfo(PlayerStatInfo playerStatInfo)
-    {
-        return new StatInfo
-        {
-            Level = playerStatInfo.Level,
-            Hp = playerStatInfo.Hp,
-            MaxHp = playerStatInfo.MaxHp,
-            Mp = playerStatInfo.Mp,
-            MaxMp = playerStatInfo.MaxMp,
-            Attack = playerStatInfo.Attack,
-            Speed = playerStatInfo.Speed,
-            TotalExp = playerStatInfo.TotalExp  // TODO : 추후에 수정해야 함
-        };
-    }
     public static StatInfo MapToStatData(StatData statData)
     {
         return new StatInfo

@@ -12,16 +12,6 @@ public partial class ClientSession : PacketSession
     public long AccountId { get; private set; }
     public List<LobbyPlayerInfo> lobbyPlayers { get; set; } = new List<LobbyPlayerInfo>();
 
-    private AccountInfo? GetAccountInfo(string accountName)
-    {
-        using (var accountDB = new AccountDB())
-        {
-            return accountDB.AccountInfo
-                .Include(x => x.Players)
-                .Where(x => x.AccountName == accountName).FirstOrDefault();
-        }
-    }
-
     private bool CreateAccountInfo(string accountName, out AccountInfo account)
     {
         using (var accountDB = new AccountDB())
@@ -91,40 +81,33 @@ public partial class ClientSession : PacketSession
             return (int)ErrorType.InvalidServerState;
         }
 
-        var accountDB = new AccountDB();
-
-        if (accountDB.PlayerInfo.IsPlayerNameExist(playerName))
+        using (var accountDB = new AccountDB())
         {
-            Log.Error($"Already exist player name. PlayerName:{playerName}");
-            return (int)ErrorType.AlreadyExistName;
+            if (accountDB.PlayerInfo.IsPlayerNameExist(playerName))
+            {
+                Log.Error($"Already exist player name. PlayerName:{playerName}");
+                return (int)ErrorType.AlreadyExistName;
+            }
+
+            // 플레이어의 스탯 정보 생성
+            var initLevel = 1;
+            if (DataManager.StatDict.TryGetValue(initLevel, out var stat) == false)
+            {
+                Log.Error($"There is no stat info. PlayerName:{playerName} Level:{initLevel}");
+                return (int)ErrorType.InvalidGameData;
+            }
+
+            // 새로운 플레이어 생성
+            var newPlayer = accountDB.PlayerInfo.CreatePlayer(playerName, AccountId, stat);
+            if (accountDB.SaveChangesEx() == false)
+            {
+                Log.Error("Failed to save changes to the database.");
+                return (int)ErrorType.DbError;
+            }
+
+            lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(newPlayer);
+            lobbyPlayers.Add(lobbyPlayerInfo);
         }
-
-        // 새로운 플레이어 생성
-        var newPlayer = accountDB.PlayerInfo.CreatePlayer(playerName, AccountId);
-        if (accountDB.SaveChangesEx() == false)
-        {
-            Log.Error("Failed to save changes to the database.");
-            return (int)ErrorType.DbError;
-        }
-
-        // 플레이어의 스탯 정보 생성
-        var initLevel = 1;
-        if (DataManager.StatDict.TryGetValue(initLevel, out var stat) == false)
-        {
-            Log.Error($"There is no stat info. PlayerName:{playerName} Level:{initLevel}");
-            return (int)ErrorType.InvalidGameData;
-        }
-
-        accountDB.PlayerStatInfo.CreatePlayerStat(newPlayer.Id, stat);
-        if (accountDB.SaveChangesEx() == false)
-        {
-            Log.Error("Failed to save changes to the database.");
-            return (int)ErrorType.DbError;
-        }
-
-        lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(newPlayer);
-        lobbyPlayers.Add(lobbyPlayerInfo);
-
         return (int)ErrorType.Success;
     }
 

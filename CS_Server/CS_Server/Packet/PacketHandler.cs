@@ -39,7 +39,7 @@ class PacketHandler
             return;
         clientSession.HandlePing();
     }
-    
+
     public static void C2S_LoginHandler(PacketSession session, IMessage packet)
     {
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
@@ -53,7 +53,7 @@ class PacketHandler
         };
         clientSession.Send(res);
     }
-    
+
     public static void C2S_CreatePlayerHandler(PacketSession session, IMessage packet)
     {
         if (!TryParsePacket<C2S_CreatePlayer>(session, packet, out var clientSession, out var createPlayerPacket))

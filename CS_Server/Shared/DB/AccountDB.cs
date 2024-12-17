@@ -12,8 +12,8 @@ public class AccountDB : DbContext
         if (optionsBuilder.IsConfigured == false)
         {
             optionsBuilder
-                .UseMySql(localConnection/*ConfigManager.Instance.DatabaseConfig.GetConnectionConfig()*/, new MySqlServerVersion(new Version(8, 0, 29)));
-            //.UseLoggerFactory(_logger);
+                .UseMySql(localConnection/*ConfigManager.Instance.DatabaseConfig.GetConnectionConfig()*/, new MySqlServerVersion(new Version(8, 0, 29)))
+                .UseLoggerFactory(_logger);
         }
     }
 
@@ -36,6 +36,5 @@ public class AccountDB : DbContext
 
     public DbSet<AccountInfo> AccountInfo { get; set; } = null!;
     public DbSet<PlayerInfo> PlayerInfo { get; set; } = null!;
-    public DbSet<PlayerStatInfo> PlayerStatInfo { get; set; } = null!;
     public DbSet<PlayerItemInfo> ItemInfo { get; set; } = null!;
 }

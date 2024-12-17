@@ -14,16 +14,16 @@ public partial class DbTransaction : JobSerializer
             return;
         }
 
-        var playerStatInfo = new PlayerStatInfo();
-        playerStatInfo.PlayerId = player.PlayerUid;
-        playerStatInfo.Hp = player.StatInfo.Hp;
-        playerStatInfo.Mp = player.StatInfo.Mp;
+        var playerInfo = new PlayerInfo();
+        playerInfo.Id = player.PlayerUid;
+        playerInfo.Hp = player.StatInfo.Hp;
+        playerInfo.Mp = player.StatInfo.Mp;
 
         Instance.ScheduleJob(() =>
         {
             using (AccountDB db = new AccountDB())
             {
-                db.SetModifiedProperties(playerStatInfo, nameof(playerStatInfo.Hp), nameof(playerStatInfo.Mp));
+                db.SetModifiedProperties(playerInfo, nameof(playerInfo.Hp), nameof(playerInfo.Mp));
                 if (db.SaveChangesEx() == false)
                 {
                     Log.Error("Failed to save player stat info");

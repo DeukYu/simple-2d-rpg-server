@@ -30,7 +30,7 @@ public partial class ClientSession : PacketSession
                 Log.Info("Disconnected by PingCheck");
                 Disconnect();
                 return;
-            }
+            } 
         }
 
         S2C_Ping pingPacket = new S2C_Ping();
