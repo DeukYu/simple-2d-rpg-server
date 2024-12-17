@@ -1,3 +1,4 @@
+using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.WebProtocol;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,40 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
+    [Route("create")]
+    public async Task<CreateAccountRes> CreateAccountRes(CreateAccountReq req)
+    {
+        var accountInfo = await _account.AccountInfo
+            .AsNoTracking()
+            .Where(x => x.AccountName == req.AccountName)
+            .SingleAsync();
+        if (accountInfo != null)
+        {
+            return new CreateAccountRes
+            {
+                Result = (int)ErrorType.AlreadyExistName
+            };
+        }
+        accountInfo = new AccountInfo
+        {
+            AccountName = req.AccountName
+        };
+        await _account.AccountInfo.AddAsync(accountInfo);
+        await _account.SaveChangesAsync();
+        return new CreateAccountRes
+        {
+            Result = (int)ErrorType.Success
+        };
+    }
+
+    [HttpPost]
     [Route("login")]
     public async Task<LoginAccountRes> LoginAccount(LoginAccountReq req)
     {
-        // TODO : 현재 DB가 없는 상태에선 무조건 OK를 보낸다.
-        // TODO : 나중에 DB 연동하면서 로직을 변경해야 한다.
-        // TODO : 로그인 계정이 존재하지 않더라도 계정을 생성하고 OK 패킷을 보내도록 처리한다.
-
-        var accountInfo = await _account.AccountInfo.Where(x => x.AccountName == req.AccountName).SingleAsync();
+        var accountInfo = await _account.AccountInfo
+            .AsNoTracking()
+            .Where(x => x.AccountName == req.AccountName)
+            .SingleAsync();
         if (accountInfo == null)
         {
             // 계정이 없으면 생성
@@ -38,10 +65,17 @@ public class AccountController : ControllerBase
             await _account.SaveChangesAsync();
         }
 
+        // TODO 서버 목록
+        new ServerInfo
+        {
+            Name = "Server1",
+            Ip = "127.0.0.1",
+            Congestion = 0,
+        };
+
 
         return new LoginAccountRes
         {
-            PlayerId = accountInfo.Id,
             Result = (int)ErrorType.Success
         };
     }

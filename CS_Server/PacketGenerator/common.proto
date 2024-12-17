@@ -49,3 +49,9 @@ message ItemInfo{
     int32 slot = 4;
     bool equipped = 5;
 }
+
+message ServerInfo{
+    string name = 1;
+    string ip = 2;
+    int32 congestion = 3;
+}
