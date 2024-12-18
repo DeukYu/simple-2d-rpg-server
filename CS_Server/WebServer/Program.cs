@@ -20,7 +20,11 @@ public class Program
             options.UseMySql(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig(), new MySqlServerVersion(new Version(8, 0, 29)));
         });
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().AddJsonOptions(options => 
+        { 
+            options.JsonSerializerOptions.PropertyNamingPolicy = null; 
+            options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+        });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
