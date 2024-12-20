@@ -52,6 +52,15 @@ dotnet add package Newtonsoft.Json
 - PacketGenerator : 패킷 관련한 클라이언트, 서버 코드 생성기
 - CsvToJson : Csv파일로 된 게임 데이터를 Json 형식으로 바꿔주는 Json 생성기
 
+## 추후 추가 예정
+- Monster Game Data 추가하여 관리
+- NUnit 테스트 작업
+- Dummy 테스트 작업
+- 몬스터 리워드 작업
+- 인벤토리 및 아이템 작업
+- DB 확장 매서드 vs 레포지터리 패턴 중 고민
+- Task Run vs Task Start
+
 ## 서버 구성도
 - ServerCore : Network 및 Util 관련하여 구성
 - Shared : Enum, Log, Config, Databae Model 등 서버 공통적으로 사용하는 부분들에 대해 구성
@@ -113,6 +122,7 @@ public sealed class AtomicFlag
 
 ## CS_Server
 - 기본 게임 서버를 위한 로직 처리
+- Task 사용하여 서버 로직 구현
 
 ### Session
 - Session 관련
@@ -181,3 +191,4 @@ private ushort ComputeMessageId(string messageName)
 
 ### Packet
 - Packet 관련 
+
