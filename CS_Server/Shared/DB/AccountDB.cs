@@ -5,7 +5,7 @@ namespace Shared.DB;
 
 public class AccountDB : DbContext
 {
-    private string localConnection = "Server=localhost;Port=3306;Database=account_db;Uid=root;Pwd=deukyu1874!;";
+    private string localConnection = "Server=localhost;Port=3306;Database=account_db;Uid=root;Pwd=1234;";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

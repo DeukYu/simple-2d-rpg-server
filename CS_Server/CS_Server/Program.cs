@@ -78,7 +78,8 @@ class Program
 
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
-        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+        var port = ConfigManager.Instance.ServerConfig.ServerPort;
+        IPEndPoint endPoint = new IPEndPoint(ipAddr, port);
 
         _listener.Initialize(endPoint, () => SessionManager.Instance.Generate());
         Log.Info("Listening...");

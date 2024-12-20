@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ServerCore;
+using Shared.Config;
 
 namespace Shared;
 
@@ -9,6 +10,7 @@ public sealed class ConfigManager
     public static ConfigManager Instance => _instance.Value;
     public DatabaseConfig DatabaseConfig { get; private set; } = new DatabaseConfig();
     public PathConfig PathConfig { get; private set; } = new PathConfig();
+    public ServerConfig ServerConfig { get; private set; } = new ServerConfig();
     private bool _isLoaded = false;
 
     public void ReloadConfig(string configPath)
@@ -26,6 +28,7 @@ public sealed class ConfigManager
         // DataBase Config
         DatabaseConfig = LoadConfigSection<DatabaseConfig>(text);
         PathConfig = LoadConfigSection<PathConfig>(text);
+        ServerConfig = LoadConfigSection<ServerConfig>(text);
 
         _isLoaded = true;
     }

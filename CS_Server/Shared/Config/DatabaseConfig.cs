@@ -4,7 +4,7 @@
 public class DatabaseConfig
 {
     public string Address { get; set; } = string.Empty;
-    public string Port { get; set; } = string.Empty;
+    public int Port { get; set; } = 0;
     public string Name { get; set; } = string.Empty;
     public string Account { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
