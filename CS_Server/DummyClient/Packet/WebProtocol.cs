@@ -24,19 +24,20 @@ namespace Google.Protobuf.WebProtocol {
     static WebProtocolReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChFXZWJQcm90b2NvbC5wcm90bxIIUHJvdG9jb2waDENvbW1vbi5wcm90byIn",
-            "Cg9Mb2dpbkFjY291bnRSZXESFAoMYWNjb3VudF9uYW1lGAEgASgJIkwKD0xv",
-            "Z2luQWNjb3VudFJlcxIOCgZyZXN1bHQYASABKAUSKQoLc2VydmVyX2luZm8Y",
-            "AiABKAsyFC5Qcm90b2NvbC5TZXJ2ZXJJbmZvIigKEENyZWF0ZUFjY291bnRS",
-            "ZXESFAoMYWNjb3VudF9uYW1lGAEgASgJIiIKEENyZWF0ZUFjY291bnRSZXMS",
-            "DgoGcmVzdWx0GAEgASgFQh6qAhtHb29nbGUuUHJvdG9idWYuV2ViUHJvdG9j",
-            "b2xiBnByb3RvMw=="));
+            "ChFXZWJQcm90b2NvbC5wcm90bxIIUHJvdG9jb2waDENvbW1vbi5wcm90byI5",
+            "Cg9Mb2dpbkFjY291bnRSZXESFAoMYWNjb3VudF9uYW1lGAEgASgJEhAKCHBh",
+            "c3N3b3JkGAIgASgJIk0KD0xvZ2luQWNjb3VudFJlcxIOCgZyZXN1bHQYASAB",
+            "KAUSKgoMc2VydmVyX2luZm9zGAIgAygLMhQuUHJvdG9jb2wuU2VydmVySW5m",
+            "byI6ChBDcmVhdGVBY2NvdW50UmVxEhQKDGFjY291bnRfbmFtZRgBIAEoCRIQ",
+            "CghwYXNzd29yZBgCIAEoCSIiChBDcmVhdGVBY2NvdW50UmVzEg4KBnJlc3Vs",
+            "dBgBIAEoBUIeqgIbR29vZ2xlLlByb3RvYnVmLldlYlByb3RvY29sYgZwcm90",
+            "bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Common.CommonReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountReq), global::Google.Protobuf.WebProtocol.LoginAccountReq.Parser, new[]{ "AccountName" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountRes), global::Google.Protobuf.WebProtocol.LoginAccountRes.Parser, new[]{ "Result", "ServerInfo" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.CreateAccountReq), global::Google.Protobuf.WebProtocol.CreateAccountReq.Parser, new[]{ "AccountName" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountReq), global::Google.Protobuf.WebProtocol.LoginAccountReq.Parser, new[]{ "AccountName", "Password" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountRes), global::Google.Protobuf.WebProtocol.LoginAccountRes.Parser, new[]{ "Result", "ServerInfos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.CreateAccountReq), global::Google.Protobuf.WebProtocol.CreateAccountReq.Parser, new[]{ "AccountName", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.CreateAccountRes), global::Google.Protobuf.WebProtocol.CreateAccountRes.Parser, new[]{ "Result" }, null, null, null, null)
           }));
     }
@@ -79,6 +80,7 @@ namespace Google.Protobuf.WebProtocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LoginAccountReq(LoginAccountReq other) : this() {
       accountName_ = other.accountName_;
+      password_ = other.password_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -100,6 +102,18 @@ namespace Google.Protobuf.WebProtocol {
       }
     }
 
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 2;
+    private string password_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Password {
+      get { return password_; }
+      set {
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -116,6 +130,7 @@ namespace Google.Protobuf.WebProtocol {
         return true;
       }
       if (AccountName != other.AccountName) return false;
+      if (Password != other.Password) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -124,6 +139,7 @@ namespace Google.Protobuf.WebProtocol {
     public override int GetHashCode() {
       int hash = 1;
       if (AccountName.Length != 0) hash ^= AccountName.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -146,6 +162,10 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(10);
         output.WriteString(AccountName);
       }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Password);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -160,6 +180,10 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(10);
         output.WriteString(AccountName);
       }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Password);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -172,6 +196,9 @@ namespace Google.Protobuf.WebProtocol {
       int size = 0;
       if (AccountName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(AccountName);
+      }
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -187,6 +214,9 @@ namespace Google.Protobuf.WebProtocol {
       }
       if (other.AccountName.Length != 0) {
         AccountName = other.AccountName;
+      }
+      if (other.Password.Length != 0) {
+        Password = other.Password;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -207,6 +237,10 @@ namespace Google.Protobuf.WebProtocol {
             AccountName = input.ReadString();
             break;
           }
+          case 18: {
+            Password = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -224,6 +258,10 @@ namespace Google.Protobuf.WebProtocol {
             break;
           case 10: {
             AccountName = input.ReadString();
+            break;
+          }
+          case 18: {
+            Password = input.ReadString();
             break;
           }
         }
@@ -268,7 +306,7 @@ namespace Google.Protobuf.WebProtocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LoginAccountRes(LoginAccountRes other) : this() {
       result_ = other.result_;
-      serverInfo_ = other.serverInfo_ != null ? other.serverInfo_.Clone() : null;
+      serverInfos_ = other.serverInfos_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -290,16 +328,15 @@ namespace Google.Protobuf.WebProtocol {
       }
     }
 
-    /// <summary>Field number for the "server_info" field.</summary>
-    public const int ServerInfoFieldNumber = 2;
-    private global::Google.Protobuf.Common.ServerInfo serverInfo_;
+    /// <summary>Field number for the "server_infos" field.</summary>
+    public const int ServerInfosFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Google.Protobuf.Common.ServerInfo> _repeated_serverInfos_codec
+        = pb::FieldCodec.ForMessage(18, global::Google.Protobuf.Common.ServerInfo.Parser);
+    private readonly pbc::RepeatedField<global::Google.Protobuf.Common.ServerInfo> serverInfos_ = new pbc::RepeatedField<global::Google.Protobuf.Common.ServerInfo>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Google.Protobuf.Common.ServerInfo ServerInfo {
-      get { return serverInfo_; }
-      set {
-        serverInfo_ = value;
-      }
+    public pbc::RepeatedField<global::Google.Protobuf.Common.ServerInfo> ServerInfos {
+      get { return serverInfos_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -318,7 +355,7 @@ namespace Google.Protobuf.WebProtocol {
         return true;
       }
       if (Result != other.Result) return false;
-      if (!object.Equals(ServerInfo, other.ServerInfo)) return false;
+      if(!serverInfos_.Equals(other.serverInfos_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -327,7 +364,7 @@ namespace Google.Protobuf.WebProtocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
-      if (serverInfo_ != null) hash ^= ServerInfo.GetHashCode();
+      hash ^= serverInfos_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -350,10 +387,7 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (serverInfo_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(ServerInfo);
-      }
+      serverInfos_.WriteTo(output, _repeated_serverInfos_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -368,10 +402,7 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (serverInfo_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(ServerInfo);
-      }
+      serverInfos_.WriteTo(ref output, _repeated_serverInfos_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -385,9 +416,7 @@ namespace Google.Protobuf.WebProtocol {
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
       }
-      if (serverInfo_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ServerInfo);
-      }
+      size += serverInfos_.CalculateSize(_repeated_serverInfos_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -403,12 +432,7 @@ namespace Google.Protobuf.WebProtocol {
       if (other.Result != 0) {
         Result = other.Result;
       }
-      if (other.serverInfo_ != null) {
-        if (serverInfo_ == null) {
-          ServerInfo = new global::Google.Protobuf.Common.ServerInfo();
-        }
-        ServerInfo.MergeFrom(other.ServerInfo);
-      }
+      serverInfos_.Add(other.serverInfos_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -429,10 +453,7 @@ namespace Google.Protobuf.WebProtocol {
             break;
           }
           case 18: {
-            if (serverInfo_ == null) {
-              ServerInfo = new global::Google.Protobuf.Common.ServerInfo();
-            }
-            input.ReadMessage(ServerInfo);
+            serverInfos_.AddEntriesFrom(input, _repeated_serverInfos_codec);
             break;
           }
         }
@@ -455,10 +476,7 @@ namespace Google.Protobuf.WebProtocol {
             break;
           }
           case 18: {
-            if (serverInfo_ == null) {
-              ServerInfo = new global::Google.Protobuf.Common.ServerInfo();
-            }
-            input.ReadMessage(ServerInfo);
+            serverInfos_.AddEntriesFrom(ref input, _repeated_serverInfos_codec);
             break;
           }
         }
@@ -503,6 +521,7 @@ namespace Google.Protobuf.WebProtocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public CreateAccountReq(CreateAccountReq other) : this() {
       accountName_ = other.accountName_;
+      password_ = other.password_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -524,6 +543,18 @@ namespace Google.Protobuf.WebProtocol {
       }
     }
 
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 2;
+    private string password_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Password {
+      get { return password_; }
+      set {
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -540,6 +571,7 @@ namespace Google.Protobuf.WebProtocol {
         return true;
       }
       if (AccountName != other.AccountName) return false;
+      if (Password != other.Password) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -548,6 +580,7 @@ namespace Google.Protobuf.WebProtocol {
     public override int GetHashCode() {
       int hash = 1;
       if (AccountName.Length != 0) hash ^= AccountName.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -570,6 +603,10 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(10);
         output.WriteString(AccountName);
       }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Password);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -584,6 +621,10 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(10);
         output.WriteString(AccountName);
       }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Password);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -596,6 +637,9 @@ namespace Google.Protobuf.WebProtocol {
       int size = 0;
       if (AccountName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(AccountName);
+      }
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -611,6 +655,9 @@ namespace Google.Protobuf.WebProtocol {
       }
       if (other.AccountName.Length != 0) {
         AccountName = other.AccountName;
+      }
+      if (other.Password.Length != 0) {
+        Password = other.Password;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -631,6 +678,10 @@ namespace Google.Protobuf.WebProtocol {
             AccountName = input.ReadString();
             break;
           }
+          case 18: {
+            Password = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -648,6 +699,10 @@ namespace Google.Protobuf.WebProtocol {
             break;
           case 10: {
             AccountName = input.ReadString();
+            break;
+          }
+          case 18: {
+            Password = input.ReadString();
             break;
           }
         }

@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.DB;
 
-namespace WebServer;
+namespace WebServer.Controller;
 
 [ApiController]
-[Route("[controller]")]
+[Route("account")]
 public class AccountController : ControllerBase
 {
     private readonly AccountDB _account;
@@ -24,21 +24,26 @@ public class AccountController : ControllerBase
     {
         var accountInfo = await _account.AccountInfo
             .AsNoTracking()
-            .Where(x => x.AccountName == req.AccountName)
-            .SingleAsync();
-        if (accountInfo != null)
+            .FirstOrDefaultAsync(x => x.AccountName == req.AccountName);
+        if (accountInfo == null)
+        {
+            accountInfo = new AccountInfo
+            {
+                AccountName = req.AccountName,
+                Password = req.Password
+            };
+
+            await _account.AccountInfo.AddAsync(accountInfo);
+            await _account.SaveChangesAsync();
+        }
+        else
         {
             return new CreateAccountRes
             {
                 Result = (int)ErrorType.AlreadyExistName
             };
         }
-        accountInfo = new AccountInfo
-        {
-            AccountName = req.AccountName
-        };
-        await _account.AccountInfo.AddAsync(accountInfo);
-        await _account.SaveChangesAsync();
+
         return new CreateAccountRes
         {
             Result = (int)ErrorType.Success
@@ -51,32 +56,32 @@ public class AccountController : ControllerBase
     {
         var accountInfo = await _account.AccountInfo
             .AsNoTracking()
-            .Where(x => x.AccountName == req.AccountName)
-            .SingleAsync();
+            .FirstOrDefaultAsync(x => x.AccountName == req.AccountName && x.Password == req.Password);
+
         if (accountInfo == null)
         {
             // 계정이 없으면 생성
             accountInfo = new AccountInfo
             {
-                AccountName = req.AccountName
+                AccountName = req.AccountName,
+                Password = req.Password
             };
 
             await _account.AccountInfo.AddAsync(accountInfo);
             await _account.SaveChangesAsync();
         }
 
-        // TODO 서버 목록
-        new ServerInfo
+        // TODO : 서버 목록 임시
+        var serverInfos = new List<ServerInfo>()
         {
-            Name = "Server1",
-            Ip = "127.0.0.1",
-            Congestion = 0,
+            new ServerInfo() { Name = "Server1", Ip = "127.0.0.1", Congestion = 0},
+            new ServerInfo() { Name = "Server2", Ip = "127.0.0.1", Congestion = 1},
         };
-
 
         return new LoginAccountRes
         {
-            Result = (int)ErrorType.Success
+            Result = (int)ErrorType.Success,
+            ServerInfos = { serverInfos }
         };
     }
 }
