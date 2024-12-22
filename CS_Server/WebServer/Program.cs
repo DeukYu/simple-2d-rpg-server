@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.DB;
+using WebServer.Repositories;
+using WebServer.Services;
 
 namespace WebServer;
 
@@ -12,6 +14,9 @@ public class Program
         ConfigManager.Instance.LoadConfig(configPath);
 
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddScoped<IAccountService, AccountService>();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
         // Add services to the container.
 

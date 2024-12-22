@@ -1,9 +1,6 @@
-using Google.Protobuf.Common;
-using Google.Protobuf.Enum;
 using Google.Protobuf.WebProtocol;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Shared.DB;
+using WebServer.Services;
 
 namespace WebServer.Controller;
 
@@ -11,42 +8,21 @@ namespace WebServer.Controller;
 [Route("account")]
 public class AccountController : ControllerBase
 {
-    private readonly AccountDB _account;
+    private readonly IAccountService _accountService;
 
-    public AccountController(AccountDB context)
+    public AccountController(IAccountService accountService)
     {
-        _account = context;
+        _accountService = accountService;
     }
 
     [HttpPost]
     [Route("create")]
     public async Task<CreateAccountRes> CreateAccountRes(CreateAccountReq req)
     {
-        var accountInfo = await _account.AccountInfo
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.AccountName == req.AccountName);
-        if (accountInfo == null)
+        var result = await _accountService.CreateAccountAsync(req.AccountName, req.Password);
+        return new CreateAccountRes 
         {
-            accountInfo = new AccountInfo
-            {
-                AccountName = req.AccountName,
-                Password = req.Password
-            };
-
-            await _account.AccountInfo.AddAsync(accountInfo);
-            await _account.SaveChangesAsync();
-        }
-        else
-        {
-            return new CreateAccountRes
-            {
-                Result = (int)ErrorType.AlreadyExistName
-            };
-        }
-
-        return new CreateAccountRes
-        {
-            Result = (int)ErrorType.Success
+            Result = result
         };
     }
 
@@ -54,33 +30,10 @@ public class AccountController : ControllerBase
     [Route("login")]
     public async Task<LoginAccountRes> LoginAccount(LoginAccountReq req)
     {
-        var accountInfo = await _account.AccountInfo
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.AccountName == req.AccountName && x.Password == req.Password);
-
-        if (accountInfo == null)
-        {
-            // 계정이 없으면 생성
-            accountInfo = new AccountInfo
-            {
-                AccountName = req.AccountName,
-                Password = req.Password
-            };
-
-            await _account.AccountInfo.AddAsync(accountInfo);
-            await _account.SaveChangesAsync();
-        }
-
-        // TODO : 서버 목록 임시
-        var serverInfos = new List<ServerInfo>()
-        {
-            new ServerInfo() { Name = "Server1", Ip = "127.0.0.1", Congestion = 0},
-            new ServerInfo() { Name = "Server2", Ip = "127.0.0.1", Congestion = 1},
-        };
-
+        var (result, serverInfos) = await _accountService.LoginAccountAsync(req.AccountName, req.Password);
         return new LoginAccountRes
         {
-            Result = (int)ErrorType.Success,
+            Result = result,
             ServerInfos = { serverInfos }
         };
     }
