@@ -27,6 +27,28 @@ dotnet add package MySql.EntityFrameworkCore
 ```
 dotnet add package Newtonsoft.Json
 ```
+
+## 서버 아키텍처 
+![아키텍처](https://github.com/user-attachments/assets/fa0cc737-2720-4347-93d6-86dcf6700f37)
+
+- Web Server
+  - ASP.NET Core로 로그인, 회원 가입 등을 위한 서버 구축
+  - AccountDB 에서 계정 정보를 확인한 후, 계정의 Token을 생성하여 게임 서버로 접근하는 클라이언트 식별 정보 제공
+  - 로그인 확인 응답(Res)를 받은 클라이언트는 게임 서버 연결을 요청한다.
+- Game Server
+  - .NET 에서 제공하는 Socket기반 비동기식 통신을 구현
+  - Protobuf를 적용해 proto 파일에서 정의한 패킷의 Handler를 구현하는 방식으로 설계
+- AccountDB
+  - 계정 및 플레이어 정보
+- SharedDB
+  - 계정 인증 및 서버 정보 
+
+## 서버 구성도
+- ServerCore : Network 및 Util 관련하여 구성
+- Shared : Enum, Log, Config, Databae Model 등 서버 공통적으로 사용하는 부분들에 대해 구성
+- CS_Server : 기본 게임 로직 관련 구성
+- WebServer : 로그인 관련 및 인증 로직으로 구성
+
 ## 시스템 구현 내용
 - Client-Server Communication
     - 서버-클라이언트  실시간 데이터 전송을 처리할 수 있도록 TCP 소켓을 사용해 통합
@@ -40,13 +62,17 @@ dotnet add package Newtonsoft.Json
     - MapData를 읽어와서 처리하도록 구현 (현재 txt파일을 읽어오고 있지만, 추후에 json형식으로 변경 예정)
 
 ## 컨텐츠 구현 내용
-- 플레이어 이동 동기화 구현
-- 플레이어 공격(스킬), Hit 판정, 데미지 동기화 구현 (Projectile 포함)
-- 플레이어 스탯 시스템 구현
-- 맵, 오브젝트 충돌 처리 구현
-- 몬스터 동기화 작업
-- 데미지에 따른 Dead 구현
-- 채팅 동기화 구현
+- 아웃 컨텐츠
+  - 로그인 구현
+  - 계정 생성 구현
+- 인게임 컨텐츠
+  - 플레이어 이동 동기화 구현
+  - 플레이어 공격(스킬), Hit 판정, 데미지 동기화 구현 (Projectile 포함)
+  - 플레이어 스탯 시스템 구현
+  - 맵, 오브젝트 충돌 처리 구현
+  - 몬스터 동기화 작업
+  - 데미지에 따른 Dead 구현
+  - 채팅 동기화 구현
 
 ## Tool 관련
 - PacketGenerator : 패킷 관련한 클라이언트, 서버 코드 생성기
@@ -60,12 +86,6 @@ dotnet add package Newtonsoft.Json
 - 인벤토리 및 아이템 작업
 - DB 확장 매서드 vs 레포지터리 패턴 중 고민
 - Task Run vs Task Start
-
-## 서버 구성도
-- ServerCore : Network 및 Util 관련하여 구성
-- Shared : Enum, Log, Config, Databae Model 등 서버 공통적으로 사용하는 부분들에 대해 구성
-- CS_Server : 기본 게임 로직 관련 구성
-- WebServer : 로그인 관련 및 인증 로직으로 구성
 
 # Server (CS_Server)
 ## ServerCore
