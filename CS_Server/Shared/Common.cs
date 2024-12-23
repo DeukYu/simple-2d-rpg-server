@@ -38,9 +38,10 @@ namespace Google.Protobuf.Common {
             "DgoGYXR0YWNrGAYgASgFEg0KBXNwZWVkGAcgASgCEgsKA2V4cBgIIAEoBRIR",
             "Cgl0b3RhbF9leHAYCSABKAUiXAoISXRlbUluZm8SEAoIaXRlbV91aWQYASAB",
             "KAMSDwoHaXRlbV9pZBgCIAEoBRINCgVjb3VudBgDIAEoBRIMCgRzbG90GAQg",
-            "ASgFEhAKCGVxdWlwcGVkGAUgASgIIjoKClNlcnZlckluZm8SDAoEbmFtZRgB",
-            "IAEoCRIKCgJpcBgCIAEoCRISCgpjb25nZXN0aW9uGAMgASgFQhmqAhZHb29n",
-            "bGUuUHJvdG9idWYuQ29tbW9uYgZwcm90bzM="));
+            "ASgFEhAKCGVxdWlwcGVkGAUgASgIIlAKClNlcnZlckluZm8SDAoEbmFtZRgB",
+            "IAEoCRISCgppcF9hZGRyZXNzGAIgASgJEgwKBHBvcnQYAyABKAUSEgoKY29u",
+            "Z2VzdGlvbhgEIAEoBUIZqgIWR29vZ2xlLlByb3RvYnVmLkNvbW1vbmIGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -50,7 +51,7 @@ namespace Google.Protobuf.Common {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.SkillInfo), global::Google.Protobuf.Common.SkillInfo.Parser, new[]{ "SkillId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.StatInfo), global::Google.Protobuf.Common.StatInfo.Parser, new[]{ "Level", "Hp", "MaxHp", "Mp", "MaxMp", "Attack", "Speed", "Exp", "TotalExp" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.ItemInfo), global::Google.Protobuf.Common.ItemInfo.Parser, new[]{ "ItemUid", "ItemId", "Count", "Slot", "Equipped" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.ServerInfo), global::Google.Protobuf.Common.ServerInfo.Parser, new[]{ "Name", "Ip", "Congestion" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Common.ServerInfo), global::Google.Protobuf.Common.ServerInfo.Parser, new[]{ "Name", "IpAddress", "Port", "Congestion" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1993,7 +1994,8 @@ namespace Google.Protobuf.Common {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ServerInfo(ServerInfo other) : this() {
       name_ = other.name_;
-      ip_ = other.ip_;
+      ipAddress_ = other.ipAddress_;
+      port_ = other.port_;
       congestion_ = other.congestion_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -2016,20 +2018,32 @@ namespace Google.Protobuf.Common {
       }
     }
 
-    /// <summary>Field number for the "ip" field.</summary>
-    public const int IpFieldNumber = 2;
-    private string ip_ = "";
+    /// <summary>Field number for the "ip_address" field.</summary>
+    public const int IpAddressFieldNumber = 2;
+    private string ipAddress_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Ip {
-      get { return ip_; }
+    public string IpAddress {
+      get { return ipAddress_; }
       set {
-        ip_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        ipAddress_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "port" field.</summary>
+    public const int PortFieldNumber = 3;
+    private int port_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int Port {
+      get { return port_; }
+      set {
+        port_ = value;
       }
     }
 
     /// <summary>Field number for the "congestion" field.</summary>
-    public const int CongestionFieldNumber = 3;
+    public const int CongestionFieldNumber = 4;
     private int congestion_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2056,7 +2070,8 @@ namespace Google.Protobuf.Common {
         return true;
       }
       if (Name != other.Name) return false;
-      if (Ip != other.Ip) return false;
+      if (IpAddress != other.IpAddress) return false;
+      if (Port != other.Port) return false;
       if (Congestion != other.Congestion) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2066,7 +2081,8 @@ namespace Google.Protobuf.Common {
     public override int GetHashCode() {
       int hash = 1;
       if (Name.Length != 0) hash ^= Name.GetHashCode();
-      if (Ip.Length != 0) hash ^= Ip.GetHashCode();
+      if (IpAddress.Length != 0) hash ^= IpAddress.GetHashCode();
+      if (Port != 0) hash ^= Port.GetHashCode();
       if (Congestion != 0) hash ^= Congestion.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2090,12 +2106,16 @@ namespace Google.Protobuf.Common {
         output.WriteRawTag(10);
         output.WriteString(Name);
       }
-      if (Ip.Length != 0) {
+      if (IpAddress.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Ip);
+        output.WriteString(IpAddress);
+      }
+      if (Port != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Port);
       }
       if (Congestion != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteInt32(Congestion);
       }
       if (_unknownFields != null) {
@@ -2112,12 +2132,16 @@ namespace Google.Protobuf.Common {
         output.WriteRawTag(10);
         output.WriteString(Name);
       }
-      if (Ip.Length != 0) {
+      if (IpAddress.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Ip);
+        output.WriteString(IpAddress);
+      }
+      if (Port != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Port);
       }
       if (Congestion != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteInt32(Congestion);
       }
       if (_unknownFields != null) {
@@ -2133,8 +2157,11 @@ namespace Google.Protobuf.Common {
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
-      if (Ip.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Ip);
+      if (IpAddress.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(IpAddress);
+      }
+      if (Port != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Port);
       }
       if (Congestion != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Congestion);
@@ -2154,8 +2181,11 @@ namespace Google.Protobuf.Common {
       if (other.Name.Length != 0) {
         Name = other.Name;
       }
-      if (other.Ip.Length != 0) {
-        Ip = other.Ip;
+      if (other.IpAddress.Length != 0) {
+        IpAddress = other.IpAddress;
+      }
+      if (other.Port != 0) {
+        Port = other.Port;
       }
       if (other.Congestion != 0) {
         Congestion = other.Congestion;
@@ -2180,10 +2210,14 @@ namespace Google.Protobuf.Common {
             break;
           }
           case 18: {
-            Ip = input.ReadString();
+            IpAddress = input.ReadString();
             break;
           }
           case 24: {
+            Port = input.ReadInt32();
+            break;
+          }
+          case 32: {
             Congestion = input.ReadInt32();
             break;
           }
@@ -2207,10 +2241,14 @@ namespace Google.Protobuf.Common {
             break;
           }
           case 18: {
-            Ip = input.ReadString();
+            IpAddress = input.ReadString();
             break;
           }
           case 24: {
+            Port = input.ReadInt32();
+            break;
+          }
+          case 32: {
             Congestion = input.ReadInt32();
             break;
           }

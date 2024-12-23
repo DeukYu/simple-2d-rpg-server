@@ -26,17 +26,17 @@ namespace Google.Protobuf.WebProtocol {
           string.Concat(
             "ChFXZWJQcm90b2NvbC5wcm90bxIIUHJvdG9jb2waDENvbW1vbi5wcm90byI5",
             "Cg9Mb2dpbkFjY291bnRSZXESFAoMYWNjb3VudF9uYW1lGAEgASgJEhAKCHBh",
-            "c3N3b3JkGAIgASgJIk0KD0xvZ2luQWNjb3VudFJlcxIOCgZyZXN1bHQYASAB",
-            "KAUSKgoMc2VydmVyX2luZm9zGAIgAygLMhQuUHJvdG9jb2wuU2VydmVySW5m",
-            "byI6ChBDcmVhdGVBY2NvdW50UmVxEhQKDGFjY291bnRfbmFtZRgBIAEoCRIQ",
-            "CghwYXNzd29yZBgCIAEoCSIiChBDcmVhdGVBY2NvdW50UmVzEg4KBnJlc3Vs",
-            "dBgBIAEoBUIeqgIbR29vZ2xlLlByb3RvYnVmLldlYlByb3RvY29sYgZwcm90",
-            "bzM="));
+            "c3N3b3JkGAIgASgJInAKD0xvZ2luQWNjb3VudFJlcxIOCgZyZXN1bHQYASAB",
+            "KAUSEgoKYWNjb3VudF9pZBgCIAEoAxINCgV0b2tlbhgDIAEoCRIqCgxzZXJ2",
+            "ZXJfaW5mb3MYBCADKAsyFC5Qcm90b2NvbC5TZXJ2ZXJJbmZvIjoKEENyZWF0",
+            "ZUFjY291bnRSZXESFAoMYWNjb3VudF9uYW1lGAEgASgJEhAKCHBhc3N3b3Jk",
+            "GAIgASgJIiIKEENyZWF0ZUFjY291bnRSZXMSDgoGcmVzdWx0GAEgASgFQh6q",
+            "AhtHb29nbGUuUHJvdG9idWYuV2ViUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Common.CommonReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountReq), global::Google.Protobuf.WebProtocol.LoginAccountReq.Parser, new[]{ "AccountName", "Password" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountRes), global::Google.Protobuf.WebProtocol.LoginAccountRes.Parser, new[]{ "Result", "ServerInfos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.LoginAccountRes), global::Google.Protobuf.WebProtocol.LoginAccountRes.Parser, new[]{ "Result", "AccountId", "Token", "ServerInfos" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.CreateAccountReq), global::Google.Protobuf.WebProtocol.CreateAccountReq.Parser, new[]{ "AccountName", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WebProtocol.CreateAccountRes), global::Google.Protobuf.WebProtocol.CreateAccountRes.Parser, new[]{ "Result" }, null, null, null, null)
           }));
@@ -306,6 +306,8 @@ namespace Google.Protobuf.WebProtocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LoginAccountRes(LoginAccountRes other) : this() {
       result_ = other.result_;
+      accountId_ = other.accountId_;
+      token_ = other.token_;
       serverInfos_ = other.serverInfos_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -328,10 +330,34 @@ namespace Google.Protobuf.WebProtocol {
       }
     }
 
+    /// <summary>Field number for the "account_id" field.</summary>
+    public const int AccountIdFieldNumber = 2;
+    private long accountId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public long AccountId {
+      get { return accountId_; }
+      set {
+        accountId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "token" field.</summary>
+    public const int TokenFieldNumber = 3;
+    private string token_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Token {
+      get { return token_; }
+      set {
+        token_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "server_infos" field.</summary>
-    public const int ServerInfosFieldNumber = 2;
+    public const int ServerInfosFieldNumber = 4;
     private static readonly pb::FieldCodec<global::Google.Protobuf.Common.ServerInfo> _repeated_serverInfos_codec
-        = pb::FieldCodec.ForMessage(18, global::Google.Protobuf.Common.ServerInfo.Parser);
+        = pb::FieldCodec.ForMessage(34, global::Google.Protobuf.Common.ServerInfo.Parser);
     private readonly pbc::RepeatedField<global::Google.Protobuf.Common.ServerInfo> serverInfos_ = new pbc::RepeatedField<global::Google.Protobuf.Common.ServerInfo>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -355,6 +381,8 @@ namespace Google.Protobuf.WebProtocol {
         return true;
       }
       if (Result != other.Result) return false;
+      if (AccountId != other.AccountId) return false;
+      if (Token != other.Token) return false;
       if(!serverInfos_.Equals(other.serverInfos_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -364,6 +392,8 @@ namespace Google.Protobuf.WebProtocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
+      if (AccountId != 0L) hash ^= AccountId.GetHashCode();
+      if (Token.Length != 0) hash ^= Token.GetHashCode();
       hash ^= serverInfos_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -387,6 +417,14 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
+      if (AccountId != 0L) {
+        output.WriteRawTag(16);
+        output.WriteInt64(AccountId);
+      }
+      if (Token.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Token);
+      }
       serverInfos_.WriteTo(output, _repeated_serverInfos_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -402,6 +440,14 @@ namespace Google.Protobuf.WebProtocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
+      if (AccountId != 0L) {
+        output.WriteRawTag(16);
+        output.WriteInt64(AccountId);
+      }
+      if (Token.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Token);
+      }
       serverInfos_.WriteTo(ref output, _repeated_serverInfos_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -415,6 +461,12 @@ namespace Google.Protobuf.WebProtocol {
       int size = 0;
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
+      }
+      if (AccountId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(AccountId);
+      }
+      if (Token.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Token);
       }
       size += serverInfos_.CalculateSize(_repeated_serverInfos_codec);
       if (_unknownFields != null) {
@@ -431,6 +483,12 @@ namespace Google.Protobuf.WebProtocol {
       }
       if (other.Result != 0) {
         Result = other.Result;
+      }
+      if (other.AccountId != 0L) {
+        AccountId = other.AccountId;
+      }
+      if (other.Token.Length != 0) {
+        Token = other.Token;
       }
       serverInfos_.Add(other.serverInfos_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -452,7 +510,15 @@ namespace Google.Protobuf.WebProtocol {
             Result = input.ReadInt32();
             break;
           }
-          case 18: {
+          case 16: {
+            AccountId = input.ReadInt64();
+            break;
+          }
+          case 26: {
+            Token = input.ReadString();
+            break;
+          }
+          case 34: {
             serverInfos_.AddEntriesFrom(input, _repeated_serverInfos_codec);
             break;
           }
@@ -475,7 +541,15 @@ namespace Google.Protobuf.WebProtocol {
             Result = input.ReadInt32();
             break;
           }
-          case 18: {
+          case 16: {
+            AccountId = input.ReadInt64();
+            break;
+          }
+          case 26: {
+            Token = input.ReadString();
+            break;
+          }
+          case 34: {
             serverInfos_.AddEntriesFrom(ref input, _repeated_serverInfos_codec);
             break;
           }

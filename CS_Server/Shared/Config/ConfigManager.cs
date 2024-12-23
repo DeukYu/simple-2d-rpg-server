@@ -6,31 +6,79 @@ namespace Shared;
 
 public sealed class ConfigManager
 {
+    private enum LoadResult
+    {
+        NotLoaded,
+        Success,
+        Failed
+    }
+
+    private LoadResult _loadResult = LoadResult.NotLoaded;
+
     private static readonly Lazy<ConfigManager> _instance = new Lazy<ConfigManager>(() => new ConfigManager());
     public static ConfigManager Instance => _instance.Value;
-    public DatabaseConfig DatabaseConfig { get; private set; } = new DatabaseConfig();
+    public DatabaseConfig AccountDbConfig { get; private set; } = new DatabaseConfig();
+    public DatabaseConfig SharedDbConfig { get; private set; } = new DatabaseConfig();
     public PathConfig PathConfig { get; private set; } = new PathConfig();
     public ServerConfig ServerConfig { get; private set; } = new ServerConfig();
-    private bool _isLoaded = false;
 
     public void ReloadConfig(string configPath)
     {
-        _isLoaded = false;
+        _loadResult = LoadResult.NotLoaded;
         LoadConfig(configPath);
     }
     public void LoadConfig(string configPath)
     {
-        if (_isLoaded)
+        if (_loadResult == LoadResult.Success)
+        {
+            Log.Warn("Config already loaded.");
             return;
+        }
 
-        var text = File.ReadAllText(configPath);
+        try
+        {
+            var text = File.ReadAllText(configPath);
 
-        // DataBase Config
-        DatabaseConfig = LoadConfigSection<DatabaseConfig>(text);
-        PathConfig = LoadConfigSection<PathConfig>(text);
-        ServerConfig = LoadConfigSection<ServerConfig>(text);
+            // DataBase Config
+            if (TryLoadDatabaseConfig(text, "account_db", out var accountDb) == false ||
+                TryLoadDatabaseConfig(text, "shared_db", out var sharedDb) == false)
+                return;
 
-        _isLoaded = true;
+            AccountDbConfig = accountDb;
+            SharedDbConfig = sharedDb;
+
+            PathConfig = LoadConfigSection<PathConfig>(text);
+            ServerConfig = LoadConfigSection<ServerConfig>(text);
+
+            _loadResult = LoadResult.Success;
+        }
+        catch (Exception e)
+        {
+            Log.Error($"Failed to load config: {e.Message}");
+            _loadResult = LoadResult.Failed;
+        }
+    }
+
+    private bool TryLoadDatabaseConfig(string jsonText, string dbName, out DatabaseConfig config)
+    {
+        config = new DatabaseConfig();
+
+        var databaseSettings = LoadConfigSection<DatabaseSettings>(jsonText);
+        if (databaseSettings == null)
+        {
+            Log.Error("Failed to load DatabaseSettings.");
+            return false;
+        }
+
+        var dbConfig = databaseSettings.Databases.FirstOrDefault(db => db.Name == dbName);
+        if (dbConfig == null)
+        {
+            Log.Error($"Database configuration for {dbName} not found.");
+            return false;
+        }
+
+        config = dbConfig;
+        return true;
     }
 
     public static T LoadConfigSection<T>(string jsonText) where T : new()

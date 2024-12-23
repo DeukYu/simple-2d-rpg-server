@@ -30,11 +30,13 @@ public class AccountController : ControllerBase
     [Route("login")]
     public async Task<LoginAccountRes> LoginAccount(LoginAccountReq req)
     {
-        var (result, serverInfos) = await _accountService.LoginAccountAsync(req.AccountName, req.Password);
+        var result = await _accountService.LoginAccountAsync(req.AccountName, req.Password);
         return new LoginAccountRes
         {
-            Result = result,
-            ServerInfos = { serverInfos }
+            Result = result.ResultCode,
+            AccountId = result.AccountId,
+            Token = result.Token,
+            ServerInfos = {result.ServerInfos }
         };
     }
 }

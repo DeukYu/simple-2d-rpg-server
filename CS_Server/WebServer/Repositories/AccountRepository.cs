@@ -39,6 +39,7 @@ public class AccountRepository : IAccountRepository
         };
 
         await _context.AccountInfo.AddAsync(account);
+        await _context.SaveChangesExAsync();
     }
 
     public async Task SaveChangesAsync()

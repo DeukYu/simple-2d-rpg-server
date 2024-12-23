@@ -15,7 +15,9 @@ message LoginAccountReq
 message LoginAccountRes
 {
 	int32 result = 1;
-	repeated ServerInfo server_infos = 2;
+	int64 account_id = 2;
+	string token = 3;
+	repeated ServerInfo server_infos = 4;
 }
 
 message CreateAccountReq

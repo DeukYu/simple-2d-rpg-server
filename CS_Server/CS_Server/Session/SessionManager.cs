@@ -12,7 +12,15 @@ class SessionManager
     private readonly ConcurrentDictionary<int, ClientSession> _sessions = new ConcurrentDictionary<int, ClientSession>();
 
     object _lock = new object();
-
+    public int GetCongestion()
+    {
+        int count = 0;
+        lock (_lock)
+        {
+            count = _sessions.Count;
+        }
+        return count / 100;
+    }
     public List<ClientSession> GetSessions()
     {
         var sessions = new List<ClientSession>();

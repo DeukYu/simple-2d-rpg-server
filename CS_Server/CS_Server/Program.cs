@@ -1,5 +1,7 @@
 ﻿using ServerCore;
 using Shared;
+using Shared.DB;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace CS_Server;
@@ -64,6 +66,42 @@ class Program
         }
     }
 
+    private static void StartServerInfoTask()
+    {
+        var t = new System.Timers.Timer();
+        t.AutoReset = true;
+        t.Elapsed += new System.Timers.ElapsedEventHandler((s, e) =>
+        {
+            using (var sharedDB = new SharedDB())
+            {
+                var serverConfigInfo = sharedDB.ServerConfigInfo.FirstOrDefault();
+                if (serverConfigInfo != null)
+                {
+                    serverConfigInfo.IpAddress = DnsUtil.GetLocalIpAddress().ToString();
+                    serverConfigInfo.Port = ConfigManager.Instance.ServerConfig.ServerPort;
+                    sharedDB.SaveChangesEx();
+
+                }
+                else
+                {
+                    sharedDB.ServerConfigInfo.Add(new ServerConfigInfo
+                    {
+                        Name = Program.Name,
+                        IpAddress = DnsUtil.GetLocalIpAddress().ToString(),
+                        Port = ConfigManager.Instance.ServerConfig.ServerPort,
+                        Congestion = SessionManager.Instance.GetCongestion(),
+                    });
+                    sharedDB.SaveChangesEx();
+                }
+            }
+        });
+        t.Interval = 10 * 1000;
+        t.Start();
+    }
+
+    public static string Name { get; } = "로컬 서버";
+    public static int Port { get; } = 7777;
+
     static void Main(string[] args)
     {
         var configPath = "../../../../config.json";
@@ -83,6 +121,8 @@ class Program
 
         _listener.Initialize(endPoint, () => SessionManager.Instance.Generate());
         Log.Info("Listening...");
+
+        StartServerInfoTask();
 
         // DbTask : Main Trhead
         var dbTask = new Task(DbTask, TaskCreationOptions.LongRunning);

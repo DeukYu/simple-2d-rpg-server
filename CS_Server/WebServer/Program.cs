@@ -15,21 +15,28 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddScoped<IAccountService, AccountService>();
-        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-
         // Add services to the container.
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+        });
+
+        builder.Services.AddDbContext<SharedDB>(options =>
+        {
+            options.UseMySql(ConfigManager.Instance.SharedDbConfig.GetConnectionConfig(), new MySqlServerVersion(new Version(8, 0, 29)));
+        });
 
         builder.Services.AddDbContext<AccountDB>(options =>
         {
-            options.UseMySql(ConfigManager.Instance.DatabaseConfig.GetConnectionConfig(), new MySqlServerVersion(new Version(8, 0, 29)));
+            options.UseMySql(ConfigManager.Instance.AccountDbConfig.GetConnectionConfig(), new MySqlServerVersion(new Version(8, 0, 29)));
         });
 
-        builder.Services.AddControllers().AddJsonOptions(options => 
-        { 
-            options.JsonSerializerOptions.PropertyNamingPolicy = null; 
-            options.JsonSerializerOptions.DictionaryKeyPolicy = null;
-        });
+
+        builder.Services.AddScoped<IAccountService, AccountService>();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<ISharedRepository, SharedRepository>();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

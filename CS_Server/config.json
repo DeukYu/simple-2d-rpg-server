@@ -1,11 +1,22 @@
 {
-    "Address": "localhost",
-    "Port": 3306,
-    "Name": "account_db",
-    "Account": "root",
-    "Password": "deukyu1874!",
+    "Databases": [
+        {
+            "Name": "account_db",
+            "Address": "localhost",
+            "Port": 3306,
+            "Account": "root",
+            "Password": "1234"
+        },
+        {
+            "Name": "shared_db",
+            "Address": "localhost",
+            "Port": 3306,
+            "Account": "root",
+            "Password": "1234"
+        }
+    ],
     "MapPath": "../../../../Common/MapData",
     "GameDataPath": "../../../../Common/GameData",
     "ServerPort": 8000,
-    "WebServerPort": 8001,
+    "WebServerPort": 8001
 }
