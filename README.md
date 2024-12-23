@@ -8,6 +8,7 @@
 - C# .NET 8.0
 - C# ASP.NET
 - MySQL
+- Entity Framework
 
 ## Nuget Package
 - NLog : 서버 내에서 로그를 남기기 위하여 사용됩니다.
@@ -73,19 +74,11 @@ dotnet add package Newtonsoft.Json
   - 몬스터 동기화 작업
   - 데미지에 따른 Dead 구현
   - 채팅 동기화 구현
+  - 하나의 존을 여러 개의 Area로 시야처리 되도록 구현
 
 ## Tool 관련
 - PacketGenerator : 패킷 관련한 클라이언트, 서버 코드 생성기
 - CsvToJson : Csv파일로 된 게임 데이터를 Json 형식으로 바꿔주는 Json 생성기
-
-## 추후 추가 예정
-- Monster Game Data 추가하여 관리
-- NUnit 테스트 작업
-- Dummy 테스트 작업
-- 몬스터 리워드 작업
-- 인벤토리 및 아이템 작업
-- DB 확장 매서드 vs 레포지터리 패턴 중 고민
-- Task Run vs Task Start
 
 # Server (CS_Server)
 ## ServerCore
