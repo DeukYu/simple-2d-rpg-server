@@ -22,7 +22,8 @@ public class AccountRepository : IAccountRepository
     {
         return await _context.AccountInfo
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.AccountName == accountName);
+            .Where(x => x.AccountName == accountName)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<bool> IsAccountExistAsync(string accountName)

@@ -3,6 +3,7 @@ using Shared;
 using Shared.DB;
 using WebServer.Repositories;
 using WebServer.Services;
+using WebServer.Packet;
 
 namespace WebServer;
 
@@ -16,7 +17,13 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddControllers().AddJsonOptions(options =>
+        builder.Services
+            .AddControllers(options =>
+            {
+                options.InputFormatters.Add(new ProtobufInputFormatter());
+                options.OutputFormatters.Add(new ProtobufOutputFormatter());
+            })
+            .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = null;
             options.JsonSerializerOptions.DictionaryKeyPolicy = null;

@@ -17,10 +17,10 @@ public class AccountController : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public async Task<CreateAccountRes> CreateAccountRes(CreateAccountReq req)
+    public async Task<CreateAccountRes> CreateAccountRes([FromBody] CreateAccountReq req)
     {
         var result = await _accountService.CreateAccountAsync(req.AccountName, req.Password);
-        return new CreateAccountRes 
+        return new CreateAccountRes
         {
             Result = result
         };
@@ -28,7 +28,7 @@ public class AccountController : ControllerBase
 
     [HttpPost]
     [Route("login")]
-    public async Task<LoginAccountRes> LoginAccount(LoginAccountReq req)
+    public async Task<LoginAccountRes> LoginAccount([FromBody] LoginAccountReq req)
     {
         var result = await _accountService.LoginAccountAsync(req.AccountName, req.Password);
         return new LoginAccountRes
@@ -36,7 +36,7 @@ public class AccountController : ControllerBase
             Result = result.ResultCode,
             AccountId = result.AccountId,
             Token = result.Token,
-            ServerInfos = {result.ServerInfos }
+            ServerInfos = { result.ServerInfos }
         };
     }
 }
