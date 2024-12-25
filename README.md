@@ -1,6 +1,5 @@
 # simple-2d-rpg-server
-- C# 서버를 제작중입니다.
-- 포트폴리오 작업과 함께 README 파일도 업데이트 하고 있습니다.
+- Simpe RPG 게임
 - Client : https://github.com/DeukYu/simple-2d-rpg-client
 
 ## 환경설정
