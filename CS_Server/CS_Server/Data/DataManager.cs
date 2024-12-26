@@ -20,6 +20,6 @@ public class DataManager
         MonterDataDict = DataLoader.Load<MonsterDataLoader, int, MonsterData>("MonsterData");
         RewardDataDict = DataLoader.Load<RewardDataLoader, int, List<RewardData>>("RewardData");
 
-        Log.Info("Data loaded");
+        Log.Info("Data loaded.");
     }
 }

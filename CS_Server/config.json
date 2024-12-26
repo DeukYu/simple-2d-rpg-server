@@ -17,6 +17,7 @@
     ],
     "MapPath": "../../../../Common/MapData",
     "GameDataPath": "../../../../Common/GameData",
+    "ServerName":  "득유 서버",
     "ServerPort": 8000,
     "WebServerPort": 8001
 }

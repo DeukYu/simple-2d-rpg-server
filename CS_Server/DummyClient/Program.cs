@@ -13,7 +13,7 @@ class Program
 
         // DNS (Domain Name System)
         IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
-        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+        IPEndPoint endPoint = new IPEndPoint(ipAddr, 8000);
 
         Connector connector = new Connector();
 

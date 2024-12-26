@@ -50,6 +50,7 @@ public sealed class ConfigManager
             PathConfig = LoadConfigSection<PathConfig>(text);
             ServerConfig = LoadConfigSection<ServerConfig>(text);
 
+            Log.Info("Config loaded.");
             _loadResult = LoadResult.Success;
         }
         catch (Exception e)

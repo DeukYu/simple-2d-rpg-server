@@ -1,8 +1,8 @@
 ﻿using ServerCore;
 using Shared;
 using Shared.DB;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Threading;
 
 namespace CS_Server;
 
@@ -10,129 +10,178 @@ namespace CS_Server;
 // 2. GameLogic (1)
 // 3. Send (1)
 // 4. DB (1)
-
+// 5. Server Status Update (1)
 class Program
 {
-    static Listener _listener = new Listener();
+    private static Listener _listener = new Listener();
+    private static CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    static void GameLogicTask()
+    static async Task Main(string[] args)
+    {
+        // 초기 설정 로드
+        InitializeServerConfig();
+
+        // GameLogic 관련 초기화
+        InitializeGameLogic();
+
+        // 서버 네트워크 설정
+        InitializeListener();
+
+        // 서버 상태 업데이트 작업
+        StartServerInfoTask(_cancellationTokenSource.Token);
+
+        // Task 실행
+        var gameLogicTask = RunGameLogicTask(_cancellationTokenSource.Token);
+        var networkTask = RunNetworkTask(_cancellationTokenSource.Token);
+        var dbTask = RunDbTask(_cancellationTokenSource.Token);
+
+        // Ctrl + C 종료 이벤트 처리
+        Console.CancelKeyPress += (s, e) =>
+        {
+            e.Cancel = true;
+            ShutdownServer();
+        };
+
+        // 모든 작업이 종료될 때까지 대기
+        await Task.WhenAll(dbTask, networkTask, gameLogicTask);
+    }
+
+    #region Initialize
+    private static void InitializeServerConfig()
     {
         try
         {
-            while (true)
+            var configPath = "../../../../config.json";
+            ConfigManager.Instance.LoadConfig(configPath);
+            DataManager.LoadData();
+        }
+        catch (Exception e)
+        {
+            Log.Error($"[InitializeServerConfig] 설정 파일 로드 실패: {e.Message}");
+            throw;
+        }
+    }
+    private static void InitializeGameLogic()
+    {
+        try
+        {
+            GameLogic.Instance.ScheduleJob(() =>
             {
-                GameLogic.Instance.ProcessJobs();
-                Thread.Sleep(0);
+                GameLogic.Instance.Add(1);  // 추후 추가되는 Zone에 따라 수정 예정
+            });
+        }
+        catch (Exception e)
+        {
+            Log.Error($"[InitializeGameLogic] 게임 로직 초기화 실패: {e.Message}");
+            throw;
+        }
+    }
+    private static void InitializeListener()
+    {
+        try
+        {
+            // DNS (Domain Name System)
+            IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
+            var port = ConfigManager.Instance.ServerConfig.ServerPort;
+            IPEndPoint endPoint = new IPEndPoint(ipAddr, port);
+
+            _listener.Initialize(endPoint, () => SessionManager.Instance.Generate());
+            Log.Info("Listening...");
+        }
+        catch (Exception e)
+        {
+            Log.Error($"[InitializeListener] Listener 초기화 실패: {e.Message}");
+            throw;
+        }
+    }
+    #endregion
+    #region Task
+    private static async Task RunTaskAsync(Func<Task> taskFunc, string taskName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await taskFunc();
+                await Task.Delay(1, cancellationToken);
             }
         }
         catch (Exception e)
         {
-            Log.Error(e.ToString());
+            Log.Error($"[RunTaskAsync] {taskName} 실패: {e}");
         }
     }
-    static void NetworkTask()
+    private static async Task RunGameLogicTask(CancellationToken cancellationToken)
     {
-        try
+        await RunTaskAsync(async () =>
+        {
+            GameLogic.Instance.ProcessJobs();
+            await Task.CompletedTask;
+        }, "GameLogic", cancellationToken);
+    }
+    private static async Task RunNetworkTask(CancellationToken cancellationToken)
+    {
+        await RunTaskAsync(async () =>
+        {
+            var sessions = SessionManager.Instance.GetSessions();
+            foreach (ClientSession session in sessions)
+            {
+                session.FlushSend();
+            }
+            await Task.CompletedTask;
+        }, "Network", cancellationToken);
+    }
+    private static async Task RunDbTask(CancellationToken cancellationToken)
+    {
+        await RunTaskAsync(() =>
+        {
+            DbTransaction.Instance.ProcessJobs();
+            return Task.CompletedTask;
+        }, "DB", cancellationToken);
+    }
+    private static void StartServerInfoTask(CancellationToken cancellationToken)
+    {
+        Task.Run(async () =>
         {
             while (true)
             {
-                var sessions = SessionManager.Instance.GetSessions();
-                foreach (ClientSession session in sessions)
+                try
                 {
-                    session.FlushSend();
-                }
-                Thread.Sleep(0);
-            }
-        }
-        catch (Exception e)
-        {
-            Log.Error(e.ToString());
-        }
-    }
-
-    static void DbTask()
-    {
-        try
-        {
-            while (true)
-            {
-                DbTransaction.Instance.ProcessJobs();
-                Thread.Sleep(0);
-            }
-        }
-        catch (Exception e)
-        {
-            Log.Error(e.ToString());
-        }
-    }
-
-    private static void StartServerInfoTask()
-    {
-        var t = new System.Timers.Timer();
-        t.AutoReset = true;
-        t.Elapsed += new System.Timers.ElapsedEventHandler((s, e) =>
-        {
-            using (var sharedDB = new SharedDB())
-            {
-                var serverConfigInfo = sharedDB.ServerConfigInfo.FirstOrDefault();
-                if (serverConfigInfo != null)
-                {
-                    serverConfigInfo.IpAddress = DnsUtil.GetLocalIpAddress().ToString();
-                    serverConfigInfo.Port = ConfigManager.Instance.ServerConfig.ServerPort;
-                    sharedDB.SaveChangesEx();
-
-                }
-                else
-                {
-                    sharedDB.ServerConfigInfo.Add(new ServerConfigInfo
+                    using (var sharedDB = new SharedDB())
                     {
-                        Name = Program.Name,
-                        IpAddress = DnsUtil.GetLocalIpAddress().ToString(),
-                        Port = ConfigManager.Instance.ServerConfig.ServerPort,
-                        Congestion = SessionManager.Instance.GetCongestion(),
-                    });
-                    sharedDB.SaveChangesEx();
+                        var serverConfigInfo = sharedDB.ServerConfigInfo.FirstOrDefault();
+                        if (serverConfigInfo != null)
+                        {
+                            serverConfigInfo.IpAddress = DnsUtil.GetLocalIpAddress().ToString();
+                            serverConfigInfo.Port = ConfigManager.Instance.ServerConfig.ServerPort;
+                            serverConfigInfo.Congestion = SessionManager.Instance.GetCongestion();
+                        }
+                        else
+                        {
+                            sharedDB.ServerConfigInfo.Add(new ServerConfigInfo
+                            {
+                                Name = ConfigManager.Instance.ServerConfig.ServerName,
+                                IpAddress = DnsUtil.GetLocalIpAddress().ToString(),
+                                Port = ConfigManager.Instance.ServerConfig.ServerPort,
+                                Congestion = SessionManager.Instance.GetCongestion(),
+                            });
+                        }
+                        await sharedDB.SaveChangesExAsync();
+                    }
                 }
+                catch (Exception e)
+                {
+                    Log.Error($"[StartServerInfoTask] 서버 정보 업데이트 실패: {e}");
+                }
+                await Task.Delay(10 * 1000);
             }
-        });
-        t.Interval = 10 * 1000;
-        t.Start();
+        }, cancellationToken);
     }
-
-    public static string Name { get; } = "로컬 서버";
-    public static int Port { get; } = 7777;
-
-    static void Main(string[] args)
+    private static void ShutdownServer()
     {
-        var configPath = "../../../../config.json";
-        ConfigManager.Instance.LoadConfig(configPath);
-        DataManager.LoadData();
-
-        // TODO : Zone 생성하는데, 여러 Zone을 만들어서 테스트해보기
-        GameLogic.Instance.ScheduleJob(() =>
-        {
-            GameLogic.Instance.Add(1);
-        });
-
-        // DNS (Domain Name System)
-        IPAddress ipAddr = DnsUtil.GetLocalIpAddress();
-        var port = ConfigManager.Instance.ServerConfig.ServerPort;
-        IPEndPoint endPoint = new IPEndPoint(ipAddr, port);
-
-        _listener.Initialize(endPoint, () => SessionManager.Instance.Generate());
-        Log.Info("Listening...");
-
-        StartServerInfoTask();
-
-        // DbTask : Main Trhead
-        var dbTask = new Task(DbTask, TaskCreationOptions.LongRunning);
-        dbTask.Start();
-
-        // NetworkTask
-        var networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
-        networkTask.Start();
-
-        // GameLogicTask
-        GameLogicTask();
+        Log.Info("서버 종료 중...");
+        _cancellationTokenSource.Cancel();
+        Log.Info("서버 종료 완료");
     }
+    #endregion
 }
