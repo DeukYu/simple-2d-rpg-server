@@ -28,8 +28,8 @@ public abstract class PacketSession : Session
             buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
         }
 
-        if (packetCount > 1)
-            Log.Info($"Packet Count: {packetCount}");
+        //if (packetCount > 1)
+        //    Log.Info($"Packet Count: {packetCount}");
 
         return processLen;
     }

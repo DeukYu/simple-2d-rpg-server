@@ -38,7 +38,7 @@ class PacketHandler
     // 서버 연결 되었을 때
     public static void S2C_ConnectedHandler(PacketSession session, IMessage packet)
     {
-        C2S_Login loginPacket = new C2S_Login();
+        C2S_LoginTest loginPacket = new C2S_LoginTest();
         var serverSession = (ServerSession)session;
         loginPacket.AccountName = $"DummyClient_{serverSession.DummyId.ToString("0000")}";
         serverSession.Send(loginPacket);

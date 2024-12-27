@@ -7,7 +7,7 @@ public interface IAccountRepository
 {
     Task<AccountInfo?> GetAccountByNameAsync(string accountName);
     Task<bool> IsAccountExistAsync(string accountName);
-    Task CreateAccountAsync(string accountName, string password);
+    Task<AccountInfo?> CreateAccountAsync(string accountName, string password);
     Task SaveChangesAsync();
 }
 
@@ -31,7 +31,7 @@ public class AccountRepository : IAccountRepository
         return await _context.AccountInfo.AnyAsync(x => x.AccountName == accountName);
     }
 
-    public async Task CreateAccountAsync(string accountName, string password)
+    public async Task<AccountInfo?> CreateAccountAsync(string accountName, string password)
     {
         var account = new AccountInfo
         {
@@ -40,7 +40,12 @@ public class AccountRepository : IAccountRepository
         };
 
         await _context.AccountInfo.AddAsync(account);
-        await _context.SaveChangesExAsync();
+        var status = await _context.SaveChangesExAsync();
+        if (status == false)
+        {
+            return null;
+        }
+        return account;
     }
 
     public async Task SaveChangesAsync()

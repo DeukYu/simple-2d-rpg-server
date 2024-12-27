@@ -27,7 +27,49 @@ public partial class ClientSession : PacketSession
     }
 
     // 플레이어 로그인 핸들러 : 로그인 + 캐릭터 목록
-    public int HandleLogin(string accountName, out List<LobbyPlayerInfo> lobbyPlayerInfos)
+    public int HandleLogin(long accountUid, string token, out List<LobbyPlayerInfo> lobbyPlayerInfos)
+    {
+        lobbyPlayerInfos = new List<LobbyPlayerInfo>();
+        if (!IsServerState(ServerState.Login, out int errorType))
+            return errorType;
+        // LobbyPlayerInfo를 초기화
+        lobbyPlayers.Clear();
+
+        // Token 정보 확인한다.
+        using(var sharedDB = new SharedDB())
+        {
+            var tokenInfo = sharedDB.TokenInfo.GetTokenInfo(accountUid);
+            if(tokenInfo == null || tokenInfo.Token != token || tokenInfo.Expired < DateTime.UtcNow)
+            {
+                Log.Error($"Invalid token. AccountUid : {accountUid} Token : {token}");
+                return (int)ErrorType.InvalidToken;
+            }
+        }
+
+        // 계정 정보를 가져온다.
+        using(var accountDB = new AccountDB())
+        {
+            var accountInfo = accountDB.AccountInfo.GetAccountInfo(accountUid);
+            if (accountInfo == null)
+            {
+                Log.Error($"There is no account info. AccountUid:{accountUid}");
+                return (int)ErrorType.InvalidAccount;
+            }
+            AccountId = accountInfo.Id;
+
+            // 캐릭터 목록 
+            foreach (var playerInfo in accountInfo.Players)
+            {
+                var lobbyPlayerInfo = LobbyPlayerInfoFactory.CreateLobbyPlayerInfo(playerInfo);
+                lobbyPlayerInfos.Add(lobbyPlayerInfo);
+            }
+        }
+        
+        lobbyPlayers = lobbyPlayerInfos;
+        ServerState = ServerState.Lobby;
+        return (int)ErrorType.Success;
+    }
+    public int HandleLoginTest(string accountName, out List<LobbyPlayerInfo> lobbyPlayerInfos)
     {
         lobbyPlayerInfos = new List<LobbyPlayerInfo>();
 

@@ -15,6 +15,11 @@ message S2C_Ping{
 }
 
 message C2S_Login{
+    int64 accountUid = 1;
+    string token = 2;
+}
+
+message C2S_LoginTest{
     string account_name = 1;
 }
 

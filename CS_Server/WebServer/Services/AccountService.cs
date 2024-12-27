@@ -51,13 +51,7 @@ public class AccountService : IAccountService
     {
         var accountInfo = await _accountRepository.GetAccountByNameAsync(accountName);
         if (accountInfo == null)
-        {
-            var result = await CreateAccountAsync(accountName, password);
-            if (result != (int)ErrorType.Success)
-            {
-                return new LoginAccountResult() { ResultCode = result };
-            }
-        }
+            return new LoginAccountResult() { ResultCode = (int)ErrorType.InvalidAccount };
 
         var token = Guid.NewGuid().ToString();
         var expired = DateTime.UtcNow.AddMinutes(5);

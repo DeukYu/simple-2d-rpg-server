@@ -45,10 +45,11 @@ namespace Google.Protobuf.Enum {
             "QXJtb3IQAhIUChBBcm1vcl9UeXBlX0Jvb3RzEAMqaAoOQ29uc3VtYWJsZVR5",
             "cGUSGAoUQ29uc3VtYWJsZV9UeXBlX05vbmUQABIdChlDb25zdW1hYmxlX1R5",
             "cGVfSHBfUG90aW9uEAESHQoZQ29uc3VtYWJsZV9UeXBlX01wX1BvdGlvbhAC",
-            "Ko4BCglFcnJvclR5cGUSCwoHU3VjY2VzcxAAEggKBEZhaWwQARIMCghEYl9F",
-            "cnJvchACEhMKD0ludmFsaWRfQWNjb3VudBADEhgKFEludmFsaWRfU2VydmVy",
-            "X1N0YXRlEAoSFgoSQWxyZWFkeV9FeGlzdF9OYW1lEBQSFQoRSW52YWxpZF9H",
-            "YW1lX0RhdGEQHkIXqgIUR29vZ2xlLlByb3RvYnVmLkVudW1iBnByb3RvMw=="));
+            "KqABCglFcnJvclR5cGUSCwoHU3VjY2VzcxAAEggKBEZhaWwQARIMCghEYl9F",
+            "cnJvchACEhMKD0ludmFsaWRfQWNjb3VudBADEhAKDEludmFsaWRUb2tlbhAE",
+            "EhgKFEludmFsaWRfU2VydmVyX1N0YXRlEAoSFgoSQWxyZWFkeV9FeGlzdF9O",
+            "YW1lEBQSFQoRSW52YWxpZF9HYW1lX0RhdGEQHkIXqgIUR29vZ2xlLlByb3Rv",
+            "YnVmLkVudW1iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.CreatureState), typeof(global::Google.Protobuf.Enum.MoveDir), typeof(global::Google.Protobuf.Enum.GameObjectType), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.ServerState), typeof(global::Google.Protobuf.Enum.ItemType), typeof(global::Google.Protobuf.Enum.WeaponType), typeof(global::Google.Protobuf.Enum.ArmorType), typeof(global::Google.Protobuf.Enum.ConsumableType), typeof(global::Google.Protobuf.Enum.ErrorType), }, null, null));
@@ -122,6 +123,7 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("Fail")] Fail = 1,
     [pbr::OriginalName("Db_Error")] DbError = 2,
     [pbr::OriginalName("Invalid_Account")] InvalidAccount = 3,
+    [pbr::OriginalName("InvalidToken")] InvalidToken = 4,
     [pbr::OriginalName("Invalid_Server_State")] InvalidServerState = 10,
     [pbr::OriginalName("Already_Exist_Name")] AlreadyExistName = 20,
     [pbr::OriginalName("Invalid_Game_Data")] InvalidGameData = 30,

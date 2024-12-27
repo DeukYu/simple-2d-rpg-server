@@ -45,7 +45,21 @@ class PacketHandler
         if (!TryParsePacket<C2S_Login>(session, packet, out var clientSession, out var loginPacket))
             return;
 
-        int state = clientSession.HandleLogin(loginPacket.AccountName, out var lobbyPlayers);
+        int state = clientSession.HandleLogin(loginPacket.AccountUid, loginPacket.Token, out var lobbyPlayers);
+        var res = new S2C_Login
+        {
+            Players = { lobbyPlayers },
+            Result = state
+        };
+        clientSession.Send(res);
+    }
+
+    public static void C2S_LoginTestHandler(PacketSession session, IMessage packet)
+    {
+        if (!TryParsePacket<C2S_LoginTest>(session, packet, out var clientSession, out var loginTestPacket))
+            return;
+
+        int state = clientSession.HandleLoginTest(loginTestPacket.AccountName, out var lobbyPlayers);
         var res = new S2C_Login
         {
             Players = { lobbyPlayers },

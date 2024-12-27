@@ -23,6 +23,13 @@ public static class AccountInfoExtensions
             .Where(x => x.AccountName == accountName)
             .FirstOrDefault();
     }
+    public static AccountInfo? GetAccountInfo(this DbSet<AccountInfo> accountInfo, long accountId)
+    {
+        return accountInfo
+            .Include(x => x.Players)
+            .Where(x => x.Id == accountId)
+            .FirstOrDefault();
+    }
 
     public static AccountInfo CreateAccount(this DbSet<AccountInfo> accountInfo, string accountName)
     {
