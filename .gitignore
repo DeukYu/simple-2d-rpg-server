@@ -23,6 +23,9 @@
 *.out
 *.app
 
+# exe Eception
+!protoc.exe
+
 # =========================
 # Operating System Files
 # =========================
