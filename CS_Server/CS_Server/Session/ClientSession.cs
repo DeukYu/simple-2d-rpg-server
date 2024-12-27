@@ -44,6 +44,17 @@ public partial class ClientSession : PacketSession
         _pingpongTick = System.Environment.TickCount64;
     }
 
+    private bool IsServerState(ServerState expectedState, out int errorType)
+    {
+        if(ServerState != expectedState)
+        {
+            errorType = (int)ErrorType.InvalidServerState;
+            return false;
+        }
+        errorType = (int)ErrorType.Success;
+        return true;
+    }
+
     // 패킷 예약
     public void Send(IMessage packet)
     {

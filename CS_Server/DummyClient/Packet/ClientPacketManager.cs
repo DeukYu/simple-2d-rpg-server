@@ -129,16 +129,14 @@ class PacketManager
         }
         else
         {
-            Action<PacketSession, IMessage> action = null;
-            if (_handler.TryGetValue(id, out action))
+            if (_handler.TryGetValue(id, out var action))
                 action.Invoke(session, pkt);
         }
     }
 
-    public Action<PacketSession, IMessage> GetPacketHandler(ushort id)
+    public Action<PacketSession, IMessage>? GetPacketHandler(ushort id)
     {
-        Action<PacketSession, IMessage> action = null;
-        if (_handler.TryGetValue(id, out action))
+        if (_handler.TryGetValue(id, out var action))
             return action;
         return null;
     }

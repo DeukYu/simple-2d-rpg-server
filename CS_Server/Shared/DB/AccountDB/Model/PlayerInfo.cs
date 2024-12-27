@@ -38,7 +38,6 @@ public static class PlayerInfoExtensions
         var player = new PlayerInfo
         {
             PlayerName = playerName,
-            AccountId = accountId,
             Level = statData.Level,
             Hp = statData.MaxHp,
             MaxHp = statData.MaxHp,
@@ -47,6 +46,7 @@ public static class PlayerInfoExtensions
             Attack = statData.Attack,
             Speed = statData.Speed,
             TotalExp = 0,
+            AccountId = accountId,
         };
         playerInfo.Add(player);
         return player;

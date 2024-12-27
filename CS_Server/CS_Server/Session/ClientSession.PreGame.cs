@@ -1,7 +1,6 @@
 ﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using Microsoft.EntityFrameworkCore;
 using ServerCore;
 using Shared.DB;
 
@@ -32,11 +31,8 @@ public partial class ClientSession : PacketSession
     {
         lobbyPlayerInfos = new List<LobbyPlayerInfo>();
 
-        // 서버 상태가 로그인 상태가 아니면 리턴
-        if (ServerState != ServerState.Login)
-        {
-            return (int)ErrorType.InvalidServerState;
-        }
+        if (!IsServerState(ServerState.Login, out int errorType))
+            return errorType;
 
         // LobbyPlayerInfo를 초기화
         lobbyPlayers.Clear();
@@ -76,10 +72,9 @@ public partial class ClientSession : PacketSession
     public int HandleCreatePlayer(string playerName, out LobbyPlayerInfo lobbyPlayerInfo)
     {
         lobbyPlayerInfo = null;
-        if (ServerState != ServerState.Lobby)
-        {
-            return (int)ErrorType.InvalidServerState;
-        }
+
+        if(!IsServerState(ServerState.Lobby, out int errorType))
+            return errorType;
 
         using (var accountDB = new AccountDB())
         {
@@ -112,20 +107,20 @@ public partial class ClientSession : PacketSession
     }
 
     // 플레이어 입장
-    public void HandleEnterGame(C2S_EnterGame packet)
+    public void HandleEnterGame(string playerName)
     {
-        if (ServerState != ServerState.Lobby)
-        {
+        if(!IsServerState(ServerState.Lobby, out _))
             return;
-        }
 
-        var lobbyPlayerInfo = lobbyPlayers.Find(x => x.Name == packet.Name);
+        // Validate Player
+        var lobbyPlayerInfo = lobbyPlayers.Find(x => x.Name == playerName);
         if (lobbyPlayerInfo == null)
         {
             Log.Error("HandleEnterGame: lobbyPlayerInfo is null.");
             return;
         }
 
+        // Create GamePlayer
         GamePlayer = ObjectManager.Instance.Add<Player>();
         if (GamePlayer == null)
         {
@@ -136,6 +131,7 @@ public partial class ClientSession : PacketSession
         GamePlayer.SetPlayer(this, lobbyPlayerInfo);
         ServerState = ServerState.InGame;
 
+        // Schedule Zone Entry
         GameLogic.Instance.ScheduleJob(() =>
         {
             Zone zone = GameLogic.Instance.FindZone(1);

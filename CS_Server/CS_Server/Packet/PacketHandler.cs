@@ -117,7 +117,7 @@ class PacketHandler
             return;
         Log.Info($"C2S_EnterGameHandler: {enterGamePacket}");
 
-        clientSession.HandleEnterGame(enterGamePacket);
+        clientSession.HandleEnterGame(enterGamePacket.Name);
     }
 
     public static void C2S_EquipItemHandler(PacketSession session, IMessage packet)
