@@ -67,17 +67,13 @@ public class AccountService : IAccountService
         }
 
         var serverConfigInfos = _sharedRepository.GetServerConfigInfosAsync().Result;
-        var serverInfos = new List<ServerInfo>();
-        foreach (var serverConfigInfo in serverConfigInfos)
+        var serverInfos = serverConfigInfos.Select(x => new ServerInfo
         {
-            serverInfos.Add(new ServerInfo()
-            {
-                Name = serverConfigInfo.Name,
-                IpAddress = serverConfigInfo.IpAddress,
-                Port = serverConfigInfo.Port,
-                Congestion = serverConfigInfo.Congestion
-            });
-        }
+            Name = x.Name,
+            IpAddress = x.IpAddress,
+            Port = x.Port,
+            Congestion = x.Congestion
+        }).ToList();
 
         return new LoginAccountResult
         {

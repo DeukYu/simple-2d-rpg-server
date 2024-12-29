@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using ServerCore;
 
 namespace Shared.DB;
 
@@ -20,21 +21,27 @@ public class PlayerInfo
     public int Attack { get; set; } = 0;
     public float Speed { get; set; } = 0;
     public int TotalExp { get; set; } = 0;
-    public ICollection<PlayerItemInfo> Items { get; set; }
+    public ICollection<PlayerItemInfo> Items { get; set; } = new List<PlayerItemInfo>();
 
     [ForeignKey(nameof(AccountInfo))]
     public long AccountId { get; set; } = 0;
-    public virtual AccountInfo AccountInfo { get; set; } = new AccountInfo();
 }
 
 public static class PlayerInfoExtensions
 {
     public static bool IsPlayerNameExist(this DbSet<PlayerInfo> playerInfo, string playerName)
     {
-        return playerInfo.Any(x => x.PlayerName == playerName);
+        return playerInfo.AsNoTracking().Any(x => x.PlayerName == playerName);
     }
+
     public static PlayerInfo CreatePlayer(this DbSet<PlayerInfo> playerInfo, string playerName, long accountId, StatData statData)
     {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            Log.Error("Invalid PlayerName");
+            return null;
+        }
+
         var player = new PlayerInfo
         {
             PlayerName = playerName,

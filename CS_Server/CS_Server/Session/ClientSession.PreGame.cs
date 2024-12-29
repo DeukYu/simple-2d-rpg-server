@@ -2,7 +2,9 @@
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using Shared;
 using Shared.DB;
+using Shared.Migrations.AccountDBMigrations;
 
 namespace CS_Server;
 
@@ -134,7 +136,6 @@ public partial class ClientSession : PacketSession
                 return (int)ErrorType.InvalidGameData;
             }
 
-            // 새로운 플레이어 생성
             var newPlayer = accountDB.PlayerInfo.CreatePlayer(playerName, AccountId, stat);
             if (accountDB.SaveChangesEx() == false)
             {
