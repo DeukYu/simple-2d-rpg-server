@@ -1,10 +1,41 @@
 ﻿using Google.Protobuf.Enum;
+using Newtonsoft.Json;
+using ServerCore;
+using System.Diagnostics;
 
 namespace CS_Server;
+
+[Serializable]
+public class MapData
+{
+    public BoundsData Bounds;
+    public List<RowData> CollisionData;
+}
+
+[Serializable]
+public class BoundsData
+{
+    public int MinX;
+    public int MaxX;
+    public int MinY;
+    public int MaxY;
+}
+
+[Serializable]
+public class RowData
+{
+    public List<int> Columns = new List<int>();
+
+    public RowData(int size)
+    {
+        Columns = new List<int>(new int[size]);
+    }
+}
 
 public class Map
 {
     public Bounds Bounds { get; set; }
+
     private MapCell[,] _mapCells;
 
     public bool CanGo(Vector2Int cellPos, bool checkObject = true)
@@ -116,30 +147,50 @@ public class Map
 
     public void LoadMap(int mapId, string pathPrefix)
     {
-        string mapName = "Map_" + mapId.ToString("000");
-
-        var text = File.ReadAllText($"{pathPrefix}/{mapName}.txt");
-        var reader = new StringReader(text);
-
-        Bounds = new Bounds(
-            int.Parse(reader.ReadLine()!),
-            int.Parse(reader.ReadLine()!),
-            int.Parse(reader.ReadLine()!),
-            int.Parse(reader.ReadLine()!)
-        );
-
-        int xCount = Bounds.SizeX;
-        int yCount = Bounds.SizeY;
-
-        _mapCells = new MapCell[yCount, xCount];
-
-        for (int y = 0; y < yCount; y++)
+        string mapName = $"Map_{mapId:D3}";
+        var filePath = $"{pathPrefix}/{mapName}.json";
+        if(!File.Exists(filePath))
         {
-            string line = reader.ReadLine()!;
-            for (int x = 0; x < xCount; x++)
+            Log.Error($"File not found. {filePath}");
+            return;
+        }
+
+        try
+        {
+            string jsonText = File.ReadAllText(filePath);
+            var mapData = JsonConvert.DeserializeObject<MapData>(jsonText);
+
+            // Set bounds
+            Bounds = new Bounds(
+                mapData.Bounds.MinX,
+                mapData.Bounds.MaxX,
+                mapData.Bounds.MinY,
+                mapData.Bounds.MaxY
+            );
+
+            int xCount = Bounds.SizeX;
+            int yCount = Bounds.SizeY;
+
+            // Initialize map cells
+            _mapCells = new MapCell[yCount, xCount];
+
+            for (int y = 0; y < yCount; y++)
             {
-                _mapCells[y, x].Collision = (line[x] == '1' ? true : false);
+                var row = mapData.CollisionData[y];
+                for (int x = 0; x < xCount; x++)
+                {
+                    _mapCells[y, x] = new MapCell
+                    {
+                        Collision = row.Columns[x] == 1
+                    };
+                }
             }
+
+            Log.Info($"Map {mapName} loaded successfully from {filePath}");
+        }
+        catch (IOException ex)
+        {
+            Log.Error($"Failed to load map: {filePath}, Error: {ex.Message}");
         }
     }
 

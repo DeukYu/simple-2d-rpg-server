@@ -47,6 +47,7 @@ public class Player : GameObject
     public void SetPlayer(ClientSession session, LobbyPlayerInfo lobbyPlayerInfo)
     {
         PlayerUid = lobbyPlayerInfo.PlayerUid;
+        Info.Name = lobbyPlayerInfo.Name;
 
         // Info
         Info.PosInfo.State = CreatureState.Idle;
@@ -56,6 +57,7 @@ public class Player : GameObject
 
         // Stat
         StatInfo.Level = lobbyPlayerInfo.StatInfo.Level;
+        StatInfo.Speed = lobbyPlayerInfo.StatInfo.Speed;
         StatInfo.Hp = lobbyPlayerInfo.StatInfo.Hp;
         StatInfo.MaxHp = lobbyPlayerInfo.StatInfo.MaxHp;
         StatInfo.Mp = lobbyPlayerInfo.StatInfo.Mp;
@@ -169,18 +171,6 @@ public class Player : GameObject
             ObjectInfo = Info,
         };
         Session.Send(enterGameRes);
-    }
-
-    private void SendSpawnPacket(List<ObjectInfo> objects)
-    {
-        if (objects.Count > 0)
-        {
-            var spawnRes = new S2C_Spawn
-            {
-                Objects = { objects },
-            };
-            Session.Send(spawnRes);
-        }
     }
 
     public void SendItemListPacket(List<ItemInfo> itemList)

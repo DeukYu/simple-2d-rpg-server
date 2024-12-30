@@ -116,7 +116,7 @@ public partial class ClientSession : PacketSession
             if (GamePlayer == null)
                 return;
 
-            Zone zone = GameLogic.Instance.FindZone(1);
+            Zone zone = GameLogic.Instance.Find(1);
             if (zone == null)
             {
                 Log.Error("OnConnected: zone is null");

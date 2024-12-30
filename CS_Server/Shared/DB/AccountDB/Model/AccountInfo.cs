@@ -11,7 +11,7 @@ public class AccountInfo
     public long Id { get; set; } = 0;
     public string AccountName { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public ICollection<PlayerInfo> Players { get; set; } = new List<PlayerInfo>();
+    public ICollection<PlayerInfo> Players { get; set; }
 }
 
 public static class AccountInfoExtensions

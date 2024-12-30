@@ -67,7 +67,7 @@ class Program
         {
             GameLogic.Instance.ScheduleJob(() =>
             {
-                GameLogic.Instance.Add(1);  // 추후 추가되는 Zone에 따라 수정 예정
+                GameLogic.Instance.Init();
             });
         }
         catch (Exception e)
@@ -115,7 +115,7 @@ class Program
     {
         await RunTaskAsync(async () =>
         {
-            GameLogic.Instance.ProcessJobs();
+            GameLogic.Instance.Update();
             await Task.CompletedTask;
         }, "GameLogic", cancellationToken);
     }

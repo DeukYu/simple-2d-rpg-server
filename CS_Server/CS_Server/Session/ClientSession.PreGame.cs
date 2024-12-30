@@ -1,10 +1,7 @@
 ﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
-using Google.Protobuf.Protocol;
 using ServerCore;
-using Shared;
 using Shared.DB;
-using Shared.Migrations.AccountDBMigrations;
 
 namespace CS_Server;
 
@@ -177,13 +174,12 @@ public partial class ClientSession : PacketSession
         // Schedule Zone Entry
         GameLogic.Instance.ScheduleJob(() =>
         {
-            Zone zone = GameLogic.Instance.FindZone(1);
+            Zone zone = GameLogic.Instance.Find(1);
             if (zone == null)
             {
                 Log.Error("OnConnected: zone is null");
                 return;
             }
-
             zone.ScheduleJob(zone.EnterZone, GamePlayer, true);
         });
     }

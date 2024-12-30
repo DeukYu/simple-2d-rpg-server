@@ -37,18 +37,18 @@ namespace Google.Protobuf.Protocol {
             "AiABKAsyFC5Qcm90b2NvbC5PYmplY3RJbmZvIh8KDVMyQ19MZWF2ZUdhbWUS",
             "DgoGcmVzdWx0GAEgASgFIjIKCVMyQ19TcGF3bhIlCgdvYmplY3RzGAEgAygL",
             "MhQuUHJvdG9jb2wuT2JqZWN0SW5mbyIxCgtTMkNfRGVzcGF3bhIOCgZyZXN1",
-            "bHQYASABKAUSEgoKb2JqZWN0X2lkcxgCIAMoAyI0CghDMlNfTW92ZRIoCghw",
+            "bHQYASABKAUSEgoKb2JqZWN0X2lkcxgCIAMoBSI0CghDMlNfTW92ZRIoCghw",
             "b3NfaW5mbxgBIAEoCzIWLlByb3RvY29sLlBvc2l0aW9uSW5mbyJXCghTMkNf",
-            "TW92ZRIOCgZyZXN1bHQYASABKAUSEQoJb2JqZWN0X2lkGAIgASgDEigKCHBv",
+            "TW92ZRIOCgZyZXN1bHQYASABKAUSEQoJb2JqZWN0X2lkGAIgASgFEigKCHBv",
             "c19pbmZvGAMgASgLMhYuUHJvdG9jb2wuUG9zaXRpb25JbmZvIjQKCUMyU19T",
             "a2lsbBInCgpza2lsbF9pbmZvGAEgASgLMhMuUHJvdG9jb2wuU2tpbGxJbmZv",
             "IlcKCVMyQ19Ta2lsbBIOCgZyZXN1bHQYASABKAUSEQoJb2JqZWN0X2lkGAIg",
-            "ASgDEicKCnNraWxsX2luZm8YAyABKAsyEy5Qcm90b2NvbC5Ta2lsbEluZm8i",
+            "ASgFEicKCnNraWxsX2luZm8YAyABKAsyEy5Qcm90b2NvbC5Ta2lsbEluZm8i",
             "PQoMUzJDX0NoYW5nZUhwEg4KBnJlc3VsdBgBIAEoBRIRCglvYmplY3RfaWQY",
-            "AiABKAMSCgoCaHAYAyABKAUiQgoIUzJDX0RlYWQSDgoGcmVzdWx0GAEgASgF",
-            "EhEKCW9iamVjdF9pZBgCIAEoAxITCgthdHRhY2tlcl9pZBgDIAEoAyIgCghD",
+            "AiABKAUSCgoCaHAYAyABKAUiQgoIUzJDX0RlYWQSDgoGcmVzdWx0GAEgASgF",
+            "EhEKCW9iamVjdF9pZBgCIAEoBRITCgthdHRhY2tlcl9pZBgDIAEoAyIgCghD",
             "MlNfQ2hhdBIUCgxjaGF0X21lc3NhZ2UYASABKAkiQwoIUzJDX0NoYXQSDgoG",
-            "cmVzdWx0GAEgASgFEhEKCW9iamVjdF9pZBgCIAEoAxIUCgxjaGF0X21lc3Nh",
+            "cmVzdWx0GAEgASgFEhEKCW9iamVjdF9pZBgCIAEoBRIUCgxjaGF0X21lc3Nh",
             "Z2UYAyABKAkiMQoMUzJDX0l0ZW1MaXN0EiEKBWl0ZW1zGAEgAygLMhIuUHJv",
             "dG9jb2wuSXRlbUluZm8iMAoLUzJDX0FkZEl0ZW0SIQoFaXRlbXMYASADKAsy",
             "Ei5Qcm90b2NvbC5JdGVtSW5mbyIzCg1DMlNfRXF1aXBJdGVtEhAKCGl0ZW1f",
@@ -2489,12 +2489,12 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "object_ids" field.</summary>
     public const int ObjectIdsFieldNumber = 2;
-    private static readonly pb::FieldCodec<long> _repeated_objectIds_codec
-        = pb::FieldCodec.ForInt64(18);
-    private readonly pbc::RepeatedField<long> objectIds_ = new pbc::RepeatedField<long>();
+    private static readonly pb::FieldCodec<int> _repeated_objectIds_codec
+        = pb::FieldCodec.ForInt32(18);
+    private readonly pbc::RepeatedField<int> objectIds_ = new pbc::RepeatedField<int>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<long> ObjectIds {
+    public pbc::RepeatedField<int> ObjectIds {
       get { return objectIds_; }
     }
 
@@ -2905,10 +2905,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 2;
-    private long objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public long ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -2953,7 +2953,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
-      if (ObjectId != 0L) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (posInfo_ != null) hash ^= PosInfo.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2977,9 +2977,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (posInfo_ != null) {
         output.WriteRawTag(26);
@@ -2999,9 +2999,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (posInfo_ != null) {
         output.WriteRawTag(26);
@@ -3020,8 +3020,8 @@ namespace Google.Protobuf.Protocol {
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
       }
-      if (ObjectId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (posInfo_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(PosInfo);
@@ -3041,7 +3041,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Result != 0) {
         Result = other.Result;
       }
-      if (other.ObjectId != 0L) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.posInfo_ != null) {
@@ -3070,7 +3070,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 26: {
@@ -3100,7 +3100,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 26: {
@@ -3375,10 +3375,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 2;
-    private long objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public long ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -3423,7 +3423,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
-      if (ObjectId != 0L) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (skillInfo_ != null) hash ^= SkillInfo.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -3447,9 +3447,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (skillInfo_ != null) {
         output.WriteRawTag(26);
@@ -3469,9 +3469,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (skillInfo_ != null) {
         output.WriteRawTag(26);
@@ -3490,8 +3490,8 @@ namespace Google.Protobuf.Protocol {
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
       }
-      if (ObjectId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (skillInfo_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(SkillInfo);
@@ -3511,7 +3511,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Result != 0) {
         Result = other.Result;
       }
-      if (other.ObjectId != 0L) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.skillInfo_ != null) {
@@ -3540,7 +3540,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 26: {
@@ -3570,7 +3570,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 26: {
@@ -3647,10 +3647,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 2;
-    private long objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public long ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -3695,7 +3695,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
-      if (ObjectId != 0L) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (Hp != 0) hash ^= Hp.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -3719,9 +3719,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (Hp != 0) {
         output.WriteRawTag(24);
@@ -3741,9 +3741,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (Hp != 0) {
         output.WriteRawTag(24);
@@ -3762,8 +3762,8 @@ namespace Google.Protobuf.Protocol {
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
       }
-      if (ObjectId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (Hp != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Hp);
@@ -3783,7 +3783,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Result != 0) {
         Result = other.Result;
       }
-      if (other.ObjectId != 0L) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.Hp != 0) {
@@ -3809,7 +3809,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 24: {
@@ -3836,7 +3836,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 24: {
@@ -3910,10 +3910,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 2;
-    private long objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public long ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -3958,7 +3958,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
-      if (ObjectId != 0L) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (AttackerId != 0L) hash ^= AttackerId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -3982,9 +3982,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (AttackerId != 0L) {
         output.WriteRawTag(24);
@@ -4004,9 +4004,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (AttackerId != 0L) {
         output.WriteRawTag(24);
@@ -4025,8 +4025,8 @@ namespace Google.Protobuf.Protocol {
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
       }
-      if (ObjectId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (AttackerId != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(AttackerId);
@@ -4046,7 +4046,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Result != 0) {
         Result = other.Result;
       }
-      if (other.ObjectId != 0L) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.AttackerId != 0L) {
@@ -4072,7 +4072,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 24: {
@@ -4099,7 +4099,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 24: {
@@ -4362,10 +4362,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 2;
-    private long objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public long ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -4410,7 +4410,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Result != 0) hash ^= Result.GetHashCode();
-      if (ObjectId != 0L) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (ChatMessage.Length != 0) hash ^= ChatMessage.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -4434,9 +4434,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (ChatMessage.Length != 0) {
         output.WriteRawTag(26);
@@ -4456,9 +4456,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(Result);
       }
-      if (ObjectId != 0L) {
+      if (ObjectId != 0) {
         output.WriteRawTag(16);
-        output.WriteInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (ChatMessage.Length != 0) {
         output.WriteRawTag(26);
@@ -4477,8 +4477,8 @@ namespace Google.Protobuf.Protocol {
       if (Result != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Result);
       }
-      if (ObjectId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (ChatMessage.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(ChatMessage);
@@ -4498,7 +4498,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Result != 0) {
         Result = other.Result;
       }
-      if (other.ObjectId != 0L) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.ChatMessage.Length != 0) {
@@ -4524,7 +4524,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 26: {
@@ -4551,7 +4551,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            ObjectId = input.ReadInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 26: {

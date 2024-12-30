@@ -2,7 +2,6 @@
 using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using NLog.Targets;
 using ServerCore;
 using System.Collections.Concurrent;
 
@@ -54,21 +53,16 @@ public partial class Zone : JobSerializer
     public Area GetArea(int indexY, int indexX)
     {
         if (indexX < 0 || indexX >= Areas.GetLength(1))
-        {
             return null;
-        }
 
         if (indexY < 0 || indexY >= Areas.GetLength(0))
-        {
             return null;
-        }
 
         return Areas[indexY, indexX];
     }
 
     public void Init(int mapId, int areaCells)
     {
-        // TODO : 데이터 Sheet 들어가면 수정
         Map.LoadMap(mapId, "../../../../Common/MapData");
 
         // Area
@@ -76,7 +70,7 @@ public partial class Zone : JobSerializer
         int countY = (Map.Bounds.SizeY + areaCells - 1) / areaCells;
         int countX = (Map.Bounds.SizeX + areaCells - 1) / areaCells;
         Areas = new Area[countY, countX];
-        for(int y = 0; y < countY; y++)
+        for (int y = 0; y < countY; y++)
         {
             for (int x = 0; x < countX; x++)
             {
@@ -85,7 +79,7 @@ public partial class Zone : JobSerializer
         }
 
         // TODO : Monster
-        for(int i=0;i < 30; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             var monster = ObjectManager.Instance.Add<Monster>();
             monster.Init(1);
@@ -243,7 +237,7 @@ public partial class Zone : JobSerializer
         }
 
         // TODO : respawn 위치 
-        if(randomPos)
+        if (randomPos)
         {
             Vector2Int respawnPos;
             while (true)
@@ -258,7 +252,7 @@ public partial class Zone : JobSerializer
                 gameObject.CellPos = respawnPos;
                 break;
             }
-        } 
+        }
 
         AddGameObjectToZone(gameObject);
 
@@ -299,20 +293,10 @@ public partial class Zone : JobSerializer
         }
     }
 
-    private Player? FindPlayer(Func<GameObject, bool> condition)
-    {
-        foreach (var player in _players.Values)
-        {
-            if (condition(player))
-                return player;
-        }
-        return null;
-    }
-
     public Player FindClosedPlayer(Vector2Int cellPos, int range)
     {
         var players = GetAdjacentPlayers(cellPos, range);
-        
+
         players.Sort((lhs, rhs) =>
         {
             int lhsDist = (lhs.CellPos - cellPos).cellDistance;
@@ -330,10 +314,10 @@ public partial class Zone : JobSerializer
         return null;
     }
 
-    public void BroadCast(Vector2Int pos,IMessage packet, Func<Player, bool>? filter = null)
+    public void BroadCast(Vector2Int pos, IMessage packet, Func<Player, bool>? filter = null)
     {
         var areas = GetAdjacentArea(pos);
-        foreach(var player in areas.SelectMany(a => a.Players))
+        foreach (var player in areas.SelectMany(a => a.Players))
         {
             int dx = player.CellPos.x - pos.x;
             int dy = player.CellPos.y - pos.y;
@@ -351,7 +335,7 @@ public partial class Zone : JobSerializer
                 player.Session.Send(packet);
         }
     }
-    
+
     public List<Player> GetAdjacentPlayers(Vector2Int cellPos, int range)
     {
         var areas = GetAdjacentArea(cellPos, range);
@@ -379,7 +363,7 @@ public partial class Zone : JobSerializer
         int maxIndexY = (Map.Bounds.MaxY - rightBottom.y) / AreaCells;
         int maxIndexX = (rightBottom.x - Map.Bounds.MinX) / AreaCells;
 
-        for(int x = minIndexX; x <= maxIndexX; x++)
+        for (int x = minIndexX; x <= maxIndexX; x++)
         {
             for (int y = minIndexY; y <= maxIndexY; y++)
             {
@@ -395,9 +379,9 @@ public partial class Zone : JobSerializer
 
         foreach (int dy in delta)
         {
-            foreach(int dx in delta)
+            foreach (int dx in delta)
             {
-                int y= cellPos.y + dy;
+                int y = cellPos.y + dy;
                 int x = cellPos.x + dx;
                 var area = GetArea(new Vector2Int(x, y));
                 if (area == null)

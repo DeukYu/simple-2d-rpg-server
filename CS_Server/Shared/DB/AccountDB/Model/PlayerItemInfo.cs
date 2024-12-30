@@ -13,7 +13,7 @@ public class PlayerItemInfo
     public int Slot { get; set; } = 0;
     public bool Equipped { get; set; } = false;
 
-    [ForeignKey(nameof(PlayerInfo))]
+    [ForeignKey("PlayerInfo")]
     public long PlayerId { get; set; } = 0;
     public virtual PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
 }

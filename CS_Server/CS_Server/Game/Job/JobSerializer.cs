@@ -44,7 +44,7 @@ public class JobSerializer
     // 작업을 큐에서 제거하고 반환
     public JobBase? DequeueJob()
     {
-        if (_jobQueue.IsEmpty)
+        if (_jobQueue.Count == 0)
         {
             _flushInProgress.Release();
             return null;

@@ -11,20 +11,21 @@ namespace Shared.DB;
 public class PlayerInfo
 {
     [Key]
-    public long Id { get; set; } = 0;
-    public string PlayerName { get; set; } = string.Empty;
-    public int Level { get; set; } = 0;
-    public int Hp { get; set; } = 0;
-    public int MaxHp { get; set; } = 0;
-    public int Mp { get; set; } = 0;
-    public int MaxMp { get; set; } = 0;
-    public int Attack { get; set; } = 0;
-    public float Speed { get; set; } = 0;
-    public int TotalExp { get; set; } = 0;
-    public ICollection<PlayerItemInfo> Items { get; set; } = new List<PlayerItemInfo>();
+    public long Id { get; set; } 
+    public string PlayerName { get; set; }
+    public int Level { get; set; }
+    public int Hp { get; set; }
+    public int MaxHp { get; set; }
+    public int Mp { get; set; } 
+    public int MaxMp { get; set; } 
+    public int Attack { get; set; }
+    public float Speed { get; set; }
+    public int TotalExp { get; set; }
+    public ICollection<PlayerItemInfo> Items { get; set; }
 
-    [ForeignKey(nameof(AccountInfo))]
+    [ForeignKey("AccountInfo")]
     public long AccountId { get; set; } = 0;
+    public virtual AccountInfo AccountInfo { get; set; }
 }
 
 public static class PlayerInfoExtensions

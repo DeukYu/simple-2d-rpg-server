@@ -60,7 +60,7 @@ message S2C_Spawn{
 
 message S2C_Despawn{
     int32 result = 1;
-    repeated int64 object_ids = 2;
+    repeated int32 object_ids = 2;
 }
 
 message C2S_Move {
@@ -69,7 +69,7 @@ message C2S_Move {
 
 message S2C_Move{
     int32 result = 1;
-    int64 object_id = 2;
+    int32 object_id = 2;
     PositionInfo pos_info = 3;
 }
 
@@ -79,19 +79,19 @@ message C2S_Skill{
 
 message S2C_Skill{
     int32 result = 1;
-	int64 object_id = 2;
+	int32 object_id = 2;
     SkillInfo skill_info = 3;
 }
 
 message S2C_ChangeHp{
     int32 result = 1;
-    int64 object_id = 2;
+    int32 object_id = 2;
     int32 hp = 3;
 }
 
 message S2C_Dead{
     int32 result = 1;
-    int64 object_id = 2;
+    int32 object_id = 2;
     int64 attacker_id = 3;
 }
 
@@ -101,7 +101,7 @@ message C2S_Chat{
 
 message S2C_Chat{
     int32 result = 1;
-    int64 object_id =2;
+    int32 object_id =2;
     string chat_message = 3;
 }
 
