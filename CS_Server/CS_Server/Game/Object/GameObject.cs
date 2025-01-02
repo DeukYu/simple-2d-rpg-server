@@ -1,7 +1,6 @@
 ﻿using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
-using ServerCore;
 
 namespace CS_Server;
 

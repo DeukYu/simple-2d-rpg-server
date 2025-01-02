@@ -77,15 +77,14 @@ public partial class Zone : JobSerializer
                 Areas[y, x] = new Area(y, x);
             }
         }
-
-        // TODO : Monster
-        for (int i = 0; i < 10; ++i)
-        {
-            var monster = ObjectManager.Instance.Add<Monster>();
-            monster.Init(1);
-            monster.CellPos = new Vector2Int(10, 10);
-            EnterZone(monster, randomPos: true);
-        }
+        //// TODO : Monster
+        //for (int i = 0; i < 500; ++i)
+        //{
+        //    var monster = ObjectManager.Instance.Add<Monster>();
+        //    monster.Init(1);
+        //    monster.CellPos = new Vector2Int(10, 10);
+        //    EnterZone(monster, randomPos: true);
+        //}
     }
 
     public void Update()
@@ -322,14 +321,8 @@ public partial class Zone : JobSerializer
             int dx = player.CellPos.x - pos.x;
             int dy = player.CellPos.y - pos.y;
 
-            if (Math.Abs(dx) > Zone.VisionCells)
-            {
+            if (Math.Abs(dx) > Zone.VisionCells || Math.Abs(dy) > Zone.VisionCells)
                 continue;
-            }
-            if (Math.Abs(dy) > Zone.VisionCells)
-            {
-                continue;
-            }
 
             if (filter == null || filter(player))
                 player.Session.Send(packet);

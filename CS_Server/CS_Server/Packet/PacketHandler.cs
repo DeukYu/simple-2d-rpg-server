@@ -101,7 +101,7 @@ class PacketHandler
             return;
         }
 
-        zone.ScheduleJob(zone.HandleMove, player, movePacket!);
+        zone.ScheduleJob(zone.HandleMove, player, movePacket.PosInfo);
     }
 
     public static void C2S_SkillHandler(PacketSession session, IMessage packet)

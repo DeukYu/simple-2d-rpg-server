@@ -23,6 +23,36 @@ public class Player : GameObject
         Vision = new VisionCube(this);
     }
 
+    // about skill
+    public bool IsUseableSkill()
+    {
+        if (State != CreatureState.Idle)
+            return false;
+
+        State = CreatureState.Skill;
+        return true;
+    }
+
+    // about move
+    public bool IsValidMove(PositionInfo destPosition)
+    {
+        var currPos = new Vector2Int(PosInfo.PosX, PosInfo.PosY);
+        var destPos = new Vector2Int(destPosition.PosX, destPosition.PosY);
+
+        if(currPos == destPos)
+            return true;
+
+        return Zone.Map.CanGo(destPos);
+    }
+
+    public void UpdatePosition(PositionInfo movePosInfo)
+    {
+        PosInfo.State = movePosInfo.State;
+        PosInfo.MoveDir = movePosInfo.MoveDir;
+        Zone.Map.ApplyMove(this, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
+    }
+
+    // Item 
     private List<ItemInfo> GetPlayerItemsFromDb(long playerUid)
     {
         using (var db = new AccountDB())

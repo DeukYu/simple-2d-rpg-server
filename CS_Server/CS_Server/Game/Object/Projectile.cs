@@ -13,6 +13,5 @@ public class Projectile : GameObject
 
     public virtual void Update()
     {
-        // TODO
     }
 }

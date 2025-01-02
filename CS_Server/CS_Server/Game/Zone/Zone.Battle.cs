@@ -8,58 +8,26 @@ namespace CS_Server;
 
 public partial class Zone : JobSerializer
 {
-    private bool IsValidMove(Player player, PositionInfo movePosInfo)
-    {
-        var currentPos = new Vector2Int(player.PosInfo.PosX, player.PosInfo.PosY);
-        var destPos = new Vector2Int(movePosInfo.PosX, movePosInfo.PosY);
-
-        if (currentPos == destPos)
-        {
-            return true;
-        }
-
-        return Map.CanGo(destPos);
-    }
-
-    private void UpdatePlayerPosition(Player player, PositionInfo movePosInfo)
-    {
-        ObjectInfo playerInfo = player.Info;
-        playerInfo.PosInfo.State = movePosInfo.State;
-        playerInfo.PosInfo.MoveDir = movePosInfo.MoveDir;
-        Map.ApplyMove(player, new Vector2Int(movePosInfo.PosX, movePosInfo.PosY));
-    }
-
-    public void HandleMove(Player player, C2S_Move packet)
+    public void HandleMove(Player player, PositionInfo positionInfo)
     {
         if (player == null)
         {
-            Log.Error("HandleMove player is null");
+            Log.Error("HandleMove player is null.");
             return;
         }
 
-        if (IsValidMove(player, packet.PosInfo) == false)
+        if (player.IsValidMove(positionInfo) == false)
         {
+            Log.Error("HandleMove IsValidMove is false.");
             return;
         }
 
-        PositionInfo movePosInfo = packet.PosInfo;
-        ObjectInfo playerInfo = player.Info;
-
-        // 다른 좌표로 이동할 경우, 갈 수 있는지 체크
-        if (movePosInfo.PosX != playerInfo.PosInfo.PosX || movePosInfo.PosY != playerInfo.PosInfo.PosY)
-        {
-            if (Map.CanGo(new Vector2Int(movePosInfo.PosX, movePosInfo.PosY)) == false)
-            {
-                return;
-            }
-        }
-
-        UpdatePlayerPosition(player, movePosInfo);
+        player.UpdatePosition(positionInfo);
 
         S2C_Move res = new S2C_Move
         {
             ObjectId = player.Info.ObjectId,
-            PosInfo = packet.PosInfo,
+            PosInfo = positionInfo,
         };
         BroadCast(player.CellPos,res);
     }
@@ -68,12 +36,13 @@ public partial class Zone : JobSerializer
     {
         if (player == null)
         {
-            Log.Error("HandleSkill player is null");
+            Log.Error("HandleSkill player is null.");
             return;
         }
 
-        if (CanUseSkill(player) == false)
+        if (player.IsUseableSkill())
         {
+            Log.Error("HandleSkill IsUseableSkill is false.");
             return;
         }
 
@@ -83,6 +52,16 @@ public partial class Zone : JobSerializer
             Log.Error("HandleSkill skillData is null");
             return;
         }
+
+        S2C_Skill res = new S2C_Skill
+        {
+            ObjectId = player.Info.ObjectId,
+            SkillInfo = new SkillInfo
+            {
+                SkillId = 1,
+            }
+        };
+        BroadCast(player.CellPos, res);
 
         switch (skillData.SkillType)
         {
@@ -98,30 +77,6 @@ public partial class Zone : JobSerializer
                 Log.Error("HandleSkill invalid skill type");
                 return;
         }
-
-        S2C_Skill res = new S2C_Skill
-        {
-            ObjectId = player.Info.ObjectId,
-            SkillInfo = new SkillInfo
-            {
-                SkillId = 1,
-            }
-        };
-        BroadCast(player.CellPos, res);
-    }
-
-    private bool CanUseSkill(Player player)
-    {
-        ObjectInfo info = player.Info;
-        if (info.PosInfo.State != CreatureState.Idle)
-        {
-            Log.Error("HandleSkill player is not idle");
-            return false;
-        }
-
-        info.PosInfo.State = CreatureState.Skill;
-
-        return true;
     }
 
     private SkillData? GetSkillData(int skillId)
