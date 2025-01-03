@@ -8,13 +8,11 @@ public class ObjectManager
 {
     public static ObjectManager Instance { get; } = new ObjectManager();
     private ConcurrentDictionary<int, Player> _players = new ConcurrentDictionary<int, Player>();
-
-    //private ConcurrentDictionary<int, GameObject> _objects = new ConcurrentDictionary<int, GameObject>();
     private int _counter = 0;
 
     int GenerateIdForType(GameObjectType type)
     {
-        if(!Enum.IsDefined(typeof(GameObjectType), type))
+        if (!Enum.IsDefined(typeof(GameObjectType), type))
         {
             Log.Error($"Invalid GameObjectType : {type}");
             return 0;

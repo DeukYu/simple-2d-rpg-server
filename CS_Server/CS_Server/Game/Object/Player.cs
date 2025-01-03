@@ -3,6 +3,7 @@ using Google.Protobuf.Common;
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using Shared;
 using Shared.DB;
 
 namespace CS_Server;
@@ -31,6 +32,53 @@ public class Player : GameObject
 
         State = CreatureState.Skill;
         return true;
+    }
+
+    public void HandlerSkill(SkillData skillData)
+    {
+        switch(skillData.SkillType)
+        {
+            case SkillType.Auto:
+                HandleAutoSkill(skillData);
+                break;
+            case SkillType.Projectile:
+                HandleProjectileSkill(skillData);
+                break;
+        }
+    }
+
+    private void HandleAutoSkill(SkillData skillData)
+    {
+        var skillPos = GetFrontCellPos();
+        var target = Zone.Map.Find(skillPos);
+        if (target != null)
+        {
+            target.OnDamaged(this, skillData.Damage + StatInfo.Attack);
+        }
+    }
+
+    private void HandleProjectileSkill(SkillData skillData)
+    {
+        if (DataManager.ProjectileInfoDict.TryGetValue(skillData.ProjectileId, out var projectileInfo) == false)
+        {
+            Log.Error($"HandleSkill projectileInfo is null. ProjectileId{skillData.ProjectileId}");
+            return;
+        }
+        var arrow = ObjectManager.Instance.Add<Arrow>();
+        if (arrow == null)
+        {
+            Log.Error("HandleSkill arrow is null");
+            return;
+        }
+
+        arrow.Owner = this;
+        arrow.SkillData = skillData;
+        arrow.PosInfo.State = CreatureState.Move;
+        arrow.PosInfo.MoveDir = PosInfo.MoveDir;
+        arrow.PosInfo.PosX = PosInfo.PosX;
+        arrow.PosInfo.PosY = PosInfo.PosY;
+        arrow.Speed = projectileInfo.Speed;
+        Zone.ScheduleJob(Zone.EnterZone, arrow, false);
     }
 
     // about move

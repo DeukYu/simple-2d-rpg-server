@@ -367,22 +367,6 @@ public partial class Zone : JobSerializer
                 areas.Add(area);
             }
         }
-
-        int[] delta = new int[2] { -range, +range };
-
-        foreach (int dy in delta)
-        {
-            foreach (int dx in delta)
-            {
-                int y = cellPos.y + dy;
-                int x = cellPos.x + dx;
-                var area = GetArea(new Vector2Int(x, y));
-                if (area == null)
-                    continue;
-                areas.Add(area);
-            }
-        }
-
         return areas.ToList();
     }
 }

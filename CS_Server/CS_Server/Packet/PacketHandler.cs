@@ -121,8 +121,8 @@ class PacketHandler
             Log.Error("C2S_SkillHandler: Zone is null");
             return;
         }
-
-        zone.ScheduleJob(zone.HandleSkill, player, skillPacket!);
+        
+        zone.ScheduleJob(zone.HandleSkill, player, skillPacket.SkillInfo);
     }
 
     public static void C2S_EnterGameHandler(PacketSession session, IMessage packet)
