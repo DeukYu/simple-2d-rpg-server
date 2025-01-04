@@ -261,7 +261,7 @@ public partial class Zone : JobSerializer
                 Objects = { gameObject.Info }
             };
 
-            BroadCast(gameObject.CellPos, spawn, p => p.Id != gameObject.Id);
+            BroadCast(gameObject.CellPos, spawn);
         }
     }
 

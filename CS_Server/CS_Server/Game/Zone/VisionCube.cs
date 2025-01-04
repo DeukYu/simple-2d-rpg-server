@@ -11,6 +11,24 @@ public class VisionCube
     {
         Owner = owner;
     }
+    private bool IsWithinVision(GameObject obj, Vector2Int ownerPos)
+    {
+        var destPos = obj.CellPos - ownerPos;
+        
+        return Math.Abs(destPos.x) <= Zone.VisionCells && Math.Abs(destPos.y) <= Zone.VisionCells;
+    }
+
+    private void AddObjectsToSet(HashSet<GameObject> objects, IEnumerable<GameObject> source, Vector2Int ownerPos)
+    {
+        foreach (var obj in source)
+        {
+            if (IsWithinVision(obj, ownerPos))
+            {
+                objects.Add(obj);
+            }
+        }
+    }
+
     public HashSet<GameObject> GatherObjects()
     {
         if (Owner == null || Owner.Zone == null)
@@ -19,62 +37,14 @@ public class VisionCube
         }
 
         HashSet<GameObject> objects = new HashSet<GameObject>();
-
         var cellPos = Owner.CellPos;
         List<Area> areas = Owner.Zone.GetAdjacentArea(cellPos);
 
-        foreach (var area in areas)
+        foreach(var area in areas)
         {
-            foreach (var player in area.Players)
-            {
-                int dx = player.CellPos.x - cellPos.x;
-                int dy = player.CellPos.y - cellPos.y;
-
-                if (Math.Abs(dx) > Zone.VisionCells)
-                {
-                    continue;
-                }
-                if (Math.Abs(dy) > Zone.VisionCells)
-                {
-                    continue;
-                }
-
-                objects.Add(player);
-            }
-
-            foreach (var monster in area.Monsters)
-            {
-                int dx = monster.CellPos.x - cellPos.x;
-                int dy = monster.CellPos.y - cellPos.y;
-
-                if (Math.Abs(dx) > Zone.VisionCells)
-                {
-                    continue;
-                }
-                if (Math.Abs(dy) > Zone.VisionCells)
-                {
-                    continue;
-                }
-
-                objects.Add(monster);
-            }
-
-            foreach (var projectile in area.Projectiles)
-            {
-                int dx = projectile.CellPos.x - cellPos.x;
-                int dy = projectile.CellPos.y - cellPos.y;
-
-                if (Math.Abs(dx) > Zone.VisionCells)
-                {
-                    continue;
-                }
-                if (Math.Abs(dy) > Zone.VisionCells)
-                {
-                    continue;
-                }
-
-                objects.Add(projectile);
-            }
+            AddObjectsToSet(objects, area.Players, cellPos);
+            AddObjectsToSet(objects, area.Monsters, cellPos);
+            AddObjectsToSet(objects, area.Projectiles, cellPos);
         }
 
         return objects;
@@ -88,7 +58,21 @@ public class VisionCube
 
         var currentObjects = GatherObjects();
 
-        // 기존에 없었는데, 새로 생긴 애들 Spawn 처리
+        // 새로 추가된 객체 처리 (Spawn)
+        HandleSpawn(currentObjects);
+
+        // 사라진 객체 처리 (Despawn)
+        HandleDespawn(currentObjects);
+
+        // 현재 객체 목록을 이전 객체 목록으로 갱신
+        PreviousObjects = currentObjects;
+
+        // 일정 시간 후 업데이트 스케줄링
+        Owner.Zone.ScheduleJobAfterDelay(500, Update);
+    }
+
+    private void HandleSpawn(HashSet<GameObject> currentObjects)
+    {
         var addObjects = currentObjects.Except(PreviousObjects).ToList();
         if (addObjects.Count > 0)
         {
@@ -101,9 +85,11 @@ public class VisionCube
             }
             Owner.Session.Send(spawn);
         }
-        // 기존에 있었는데, 사라진 애들 Despawn 처리
+    }
+    private void HandleDespawn(HashSet<GameObject> currentObjects)
+    {
         var removeObjects = PreviousObjects.Except(currentObjects).ToList();
-        if(removeObjects.Count > 0)
+        if (removeObjects.Count > 0)
         {
             S2C_Despawn despawn = new S2C_Despawn();
             foreach (var obj in removeObjects)
@@ -112,9 +98,5 @@ public class VisionCube
             }
             Owner.Session.Send(despawn);
         }
-
-        PreviousObjects = currentObjects;
-
-        Owner.Zone.ScheduleJobAfterDelay(500, Update);
     }
 }
