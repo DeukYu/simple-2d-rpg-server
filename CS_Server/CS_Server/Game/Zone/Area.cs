@@ -9,49 +9,48 @@ public class Area
     public HashSet<Player> Players { get; set; } = new HashSet<Player>();
     public HashSet<Monster> Monsters { get; set; } = new HashSet<Monster>();
     public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
+    private Dictionary<GameObjectType, HashSet<GameObject>> _gameObjects = new()
+    {
+        { GameObjectType.Player, new HashSet<GameObject>() },
+        { GameObjectType.Monster, new HashSet<GameObject>() },
+        { GameObjectType.Projectile, new HashSet<GameObject>() }
+    };
     public Area(int indexY, int indexX)
     {
         IndexY = indexY;
         IndexX = indexX;
     }
-    public void Remove(GameObject gameObject)
+    public void AddGameObject(GameObject gameObject)
     {
         var type = ObjectManager.GetObjectTypeById(gameObject.Id);
-
-        if (type == GameObjectType.Player)
+        if (_gameObjects.TryGetValue(type, out var gameObjects))
         {
-            Players.Remove(gameObject as Player);
-        }
-        else if (type == GameObjectType.Monster)
-        {
-            Monsters.Remove(gameObject as Monster);
-        }
-        else if (type == GameObjectType.Projectile)
-        {
-            Projectiles.Remove(gameObject as Projectile);
+            gameObjects.Add(gameObject);
         }
     }
-    public Player FindPlayer(Func<Player, bool> condition)
+    public HashSet<T> GetGameObjects<T>(GameObjectType type) where T : GameObject
     {
-        foreach (Player player in Players)
+        return _gameObjects[type].Cast<T>().ToHashSet();
+    }
+    public void RemoveGameObject(GameObject gameObject)
+    {
+        var type = ObjectManager.GetObjectTypeById(gameObject.Id);
+        if (_gameObjects.TryGetValue(type, out var gameObjects))
         {
-            if (condition.Invoke(player))
-            {
-                return player;
-            }
+            gameObjects.Remove(gameObject);
         }
-        return null;
+    }
+    public Player? FindPlayer(Func<Player, bool> condition)
+    {
+        return _gameObjects[GameObjectType.Player]
+            .Cast<Player>()
+            .FirstOrDefault(condition);
     }
     public List<Player> FindPlayers(Func<Player, bool> condition)
     {
-        var players = new List<Player>();
-        foreach (Player player in Players)
-        {
-            if (condition.Invoke(player))
-            {
-                players.Add(player);
-            }
-        }
-        return players;
+        return _gameObjects[GameObjectType.Player]
+            .Cast<Player>()
+            .Where(condition)
+            .ToList();
     }
 }

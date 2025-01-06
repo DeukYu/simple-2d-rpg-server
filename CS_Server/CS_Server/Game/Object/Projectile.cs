@@ -6,12 +6,13 @@ namespace CS_Server;
 public class Projectile : GameObject
 {
     public SkillData SkillData { get; set; } = new SkillData();
+    public ProjectileInfoData ProjectileInfoData { get; set; } = new ProjectileInfoData();
     public Projectile()
     {
         ObjectType = GameObjectType.Projectile;
     }
 
-    public virtual void Update()
+    public override void Update()
     {
     }
 }

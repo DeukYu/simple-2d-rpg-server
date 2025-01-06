@@ -71,13 +71,7 @@ public class Player : GameObject
             return;
         }
 
-        arrow.Owner = this;
-        arrow.SkillData = skillData;
-        arrow.PosInfo.State = CreatureState.Move;
-        arrow.PosInfo.MoveDir = PosInfo.MoveDir;
-        arrow.PosInfo.PosX = PosInfo.PosX;
-        arrow.PosInfo.PosY = PosInfo.PosY;
-        arrow.Speed = projectileInfo.Speed;
+        arrow.Init(this, skillData, projectileInfo);
         Zone.ScheduleJob(Zone.EnterZone, arrow, false);
     }
 

@@ -6,40 +6,41 @@ namespace CS_Server;
 
 public class GameObject
 {
-    public Zone Zone { get; set; } = null;
+    public Zone Zone { get; set; }
     public GameObjectType ObjectType { get; protected set; } = GameObjectType.None;
     public ObjectInfo Info { get; set; } = new ObjectInfo();
     public PositionInfo PosInfo { get; private set; } = new PositionInfo();
     public StatInfo StatInfo { get; private set; } = new StatInfo();
-    public virtual int TotalAttack { get { return StatInfo.Attack; } }
-    public virtual int TotalDefense { get { return 0; } }   // TODO
+    public virtual int TotalAttack => StatInfo.Attack;
+    public virtual int TotalDefense => 0;
+    public virtual GameObject GetOwner() => this;
     public float Speed
     {
-        get { return StatInfo.Speed; }
-        set { StatInfo.Speed = value; }
+        get => StatInfo.Speed;
+        set => StatInfo.Speed = value;
     }
 
     public MoveDir Dir
     {
-        get { return PosInfo.MoveDir; }
-        set { PosInfo.MoveDir = value; }
+        get => PosInfo.MoveDir;
+        set => PosInfo.MoveDir = value;
     }
 
     public CreatureState State
     {
-        get { return PosInfo.State; }
-        set { PosInfo.State = value; }
+        get => PosInfo.State;
+        set => PosInfo.State = value;
     }
     public int Hp
     {
-        get { return StatInfo.Hp; }
-        set { StatInfo.Hp = Math.Clamp(value, 0, StatInfo.MaxHp); }
+        get => StatInfo.Hp;
+        set => StatInfo.Hp = Math.Clamp(value, 0, StatInfo.MaxHp);
     }
 
     public int Id
     {
-        get { return Info.ObjectId; }
-        set { Info.ObjectId = value; }
+        get => Info.ObjectId;
+        set => Info.ObjectId = value;
     }
 
     public GameObject()
@@ -48,10 +49,7 @@ public class GameObject
         Info.StatInfo = StatInfo;
     }
 
-    public virtual void Update()
-    {
-
-    }
+    public virtual void Update() { }
 
     public Vector2Int CellPos
     {
@@ -102,51 +100,51 @@ public class GameObject
         return MoveDir.Down;
     }
 
+    private void ApplyDamage(int damage)
+    {
+        StatInfo.Hp -= damage;
+        StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
+    }
+
     public virtual void OnDamaged(GameObject attacker, int damage)
     {
         if (Zone == null)
-        {
             return;
-        }
 
         damage = Math.Max(damage - TotalDefense, 0);
 
-        StatInfo.Hp -= damage;
-        StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
+        ApplyDamage(damage);
 
-        S2C_ChangeHp changeHpPacket = new S2C_ChangeHp();
-        changeHpPacket.ObjectId = Id;
-        changeHpPacket.Hp = StatInfo.Hp;
-        Zone.BroadCast(CellPos,changeHpPacket);
+        Zone.BroadCast(CellPos, new S2C_ChangeHp
+        {
+            ObjectId = Id,
+            Hp = StatInfo.Hp
+        });
 
         if (StatInfo.Hp <= 0)
-        {
             OnDead(attacker);
-        }
+    }
+
+    private void OnRivive(Zone zone)
+    {
+        zone.LeaveZone(this);
+        StatInfo.Hp = StatInfo.MaxHp;
+        PosInfo.State = CreatureState.Idle;
+        PosInfo.MoveDir = MoveDir.Down;
+        zone.EnterZone(this, true);
     }
     public virtual void OnDead(GameObject attacker)
     {
         if (Zone == null)
-        {
             return;
-        }
-
-        S2C_Dead deadPacket = new S2C_Dead();
-        deadPacket.ObjectId = Id;
-        deadPacket.AttackerId = attacker.Id;
-        Zone.BroadCast(CellPos, deadPacket);
 
         var zone = Zone;
-        zone.LeaveZone(this);
+        zone.BroadCast(CellPos, new S2C_Dead
+        {
+            ObjectId = Id,
+            AttackerId = attacker.Id
+        });
 
-        StatInfo.Hp = StatInfo.MaxHp;
-        PosInfo.State = CreatureState.Idle;
-        PosInfo.MoveDir = MoveDir.Down;
-
-        zone.EnterZone(this, true);
-    }
-    public virtual GameObject GetOwner()
-    {
-        return this;
+        OnRivive(zone);
     }
 }

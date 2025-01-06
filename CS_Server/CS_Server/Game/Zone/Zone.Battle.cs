@@ -33,16 +33,10 @@ public partial class Zone : JobSerializer
     public void HandleSkill(Player player, SkillInfo skillInfo)
     {
         if (player == null)
-        {
-            Log.Error("HandleSkill player is null.");
             return;
-        }
 
         if (player.IsUseableSkill() == false)
-        {
-            Log.Error("HandleSkill IsUseableSkill is false.");
             return;
-        }
 
         if (DataManager.SkillDict.TryGetValue(skillInfo.SkillId, out var skillData) == false)
         {
