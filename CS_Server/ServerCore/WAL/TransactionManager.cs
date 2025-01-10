@@ -12,7 +12,7 @@ public class TransactionManager
 
     public long BeginTransaction()
     {
-        return ++_transactionCounter;
+        return Interlocked.Increment(ref _transactionCounter);  // Thread-Safe
     }
 
     public void LogTransaction(long transactionId, string operation, string data)
@@ -23,6 +23,6 @@ public class TransactionManager
             Operation = operation,
             Data = data
         };
-        _walLogger.AppendLog(entry);
+        _walLogger.AppendLog(entry);    // Thread-Safe
     }
 }

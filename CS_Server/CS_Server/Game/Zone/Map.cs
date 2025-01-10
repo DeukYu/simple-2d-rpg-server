@@ -98,7 +98,7 @@ public class Map
 
     public bool ApplyMove(GameObject gameObject, Vector2Int dest, bool checkObjects = true, bool isCollision = true)
     {
-        var posInfo = gameObject.Info.PosInfo;
+        var posInfo = gameObject.PosInfo;
 
         // 이동 가능 여부 확인
         if (CanGo(dest, checkObjects) == false)
@@ -116,7 +116,7 @@ public class Map
         }
 
         // 영역 이동 처리
-        UpdateArea(gameObject, new Vector2Int(posInfo.PosX, posInfo.PosY), dest);
+        UpdateArea(gameObject, gameObject.CellPos, dest);
 
         // 실제 좌표 이동
         posInfo.PosX = dest.x;

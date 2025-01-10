@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Enum;
+using ServerCore;
 
 namespace CS_Server;
 
@@ -8,6 +9,12 @@ public class Inventory
 
     public void Add(Item item)
     {
+        if (Items.ContainsKey(item.ItemUid))
+        {
+            Log.Error($"Item with UID {item.ItemUid} already exists in the inventory.");
+            return;
+        }
+
         Items.Add(item.ItemUid, item);
     }
 
@@ -18,43 +25,36 @@ public class Inventory
 
     public Item? Find(Func<Item, bool> condition)
     {
-        foreach (Item item in Items.Values)
-        {
-            if (condition.Invoke(item))
-            {
-                return item;
-            }
-        }
-        return null;
+        return Items.Values.FirstOrDefault(condition);
     }
 
-    public int? GetEmptySlot()
+    public int? GetEmptySlot(int maxSlots = 20)
     {
-        for (int slot = 0; slot < 20; slot++)
+        for (int slot = 0; slot < maxSlots; slot++)
         {
-            var item = Items.Values.FirstOrDefault(item => item.Slot == slot);
-            if (item == null)
+            if (!Items.Values.Any(item => item.Slot == slot))
                 return slot;
         }
         return null;
     }
 
-    public bool TryGetEquipItem(ItemType itemType, out Item item)
+    public bool TryGetEquipItem(ItemType itemType, out Item? item)
     {
         item = null;
 
-        if (itemType == ItemType.Weapon)
+        switch (itemType)
         {
-            item = Find(i => i.Equipped && i.ItemType == ItemType.Weapon);
-            return item != null;
+            case ItemType.Weapon:
+                item = Find(i => i.Equipped && i.ItemType == ItemType.Weapon);
+                break;
+            case ItemType.Armor:
+                var armorType = ((Armor)item).ArmorType;
+                item = Find(i => i.Equipped && i.ItemType == ItemType.Armor && ((Armor)i).ArmorType == armorType);
+                break;
+            default:
+                item = Find(i => i.Equipped && i.ItemType == itemType);
+                break;
         }
-        else if (itemType == ItemType.Armor)
-        {
-            var armorType = ((Armor)item).ArmorType;
-            item = Find(i => i.Equipped && i.ItemType == ItemType.Armor && ((Armor)i).ArmorType == armorType);
-            return item != null;
-        }
-
         return false;
     }
 }

@@ -16,7 +16,7 @@ public class RecoveryManager
         {
             Console.WriteLine($"Recovering: {entry.TransactionId}, {entry.Operation}, {entry.Data}");
             
-            // 복구 작업 실행
+            // TODO: 복구 작업 실행
         }
     }
 }

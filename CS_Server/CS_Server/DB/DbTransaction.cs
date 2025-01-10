@@ -10,14 +10,14 @@ public partial class DbTransaction : JobSerializer
     public static void UpdatePlayerStatus(Player player, Zone zone)
     {
         if (player == null || zone == null)
-        {
             return;
-        }
 
-        var playerInfo = new PlayerInfo();
-        playerInfo.Id = player.PlayerUid;
-        playerInfo.Hp = player.StatInfo.Hp;
-        playerInfo.Mp = player.StatInfo.Mp;
+        var playerInfo = new PlayerInfo
+        {
+            Id = player.PlayerUid,
+            Hp = player.StatInfo.Hp,
+            Mp = player.StatInfo.Mp,
+        };
 
         Instance.ScheduleJob(() =>
         {
@@ -34,10 +34,8 @@ public partial class DbTransaction : JobSerializer
     }
     public static void RewardPlayer(Player player, RewardData rewardData, Zone zone)
     {
-        if(player == null || rewardData == null || zone == null)
-        {
+        if (player == null || rewardData == null || zone == null)
             return;
-        }
 
         // TODO : 문제 발생
         int? slot = player.Inven.GetEmptySlot();
@@ -49,8 +47,7 @@ public partial class DbTransaction : JobSerializer
             ItemId = rewardData.ItemId,
             Count = rewardData.Count,
             Slot = slot.Value,
-            PlayerId = player.PlayerUid
-
+            PlayerId = player.PlayerUid,
         };
 
         Instance.ScheduleJob(() =>
